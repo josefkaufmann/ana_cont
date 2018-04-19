@@ -3,6 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import ana_cont.ana_cont.ana_cont
 
+# NOTE: the kernel 'time_fermionic_phsym' does not work well for insulating systems
+# in any case it is not worse to use the usual 'time_fermionic' kernel
+# and make the data ph-symmetric
 
 
 taugrid,gtau,err=np.loadtxt('testdata/gtau.dat').transpose()

@@ -3,6 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import ana_cont
 
+# NOTE: the kernel 'freq_fermionic_phsym' does not work well for insulating systems
+# in any case it is not worse to use the usual 'freq_fermionic' kernel
+# and make the data ph-symmetric (i.e. set real part to zero)
 
 
 iwgrid,giw,err=np.loadtxt('testdata/giw.dat').transpose()

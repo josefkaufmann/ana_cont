@@ -11,7 +11,8 @@ wgrid=np.linspace(-5,5.,500)
 model=np.ones_like(wgrid)
 model=model/np.trapz(model,wgrid)
 
-probl=ana_cont.AnalyticContinuationProblem(im_axis=taugrid,re_axis=wgrid,im_data=gtau,kernel_mode='time_fermionic')
+# IMPORTANT: if a time kernel is used, the user has to specify beta!
+probl=ana_cont.AnalyticContinuationProblem(im_axis=taugrid,re_axis=wgrid,im_data=gtau,kernel_mode='time_fermionic',beta=1.)
 
 sol=probl.solve(method='maxent_svd',model=model,stdev=10*err)
 
