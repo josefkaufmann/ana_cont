@@ -3,10 +3,8 @@
 # some parts are copied from w2dynamics install script.
 
 BASE_DIR=$(pwd)
-cd ana_cont/src
 python setup.py build_ext --inplace
-
-cd $BASE_DIR
+rm -r build
 
 if [ -f $HOME/.profile ]; then
     PROFILE_FILE=$HOME/.profile
