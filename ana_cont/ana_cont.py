@@ -52,7 +52,7 @@ class AnalyticContinuationProblem(object):
             raise NotImplementedError
         if method=='pade':
             self.solver=PadeSolver(im_axis=self.im_axis,re_axis=self.re_axis,im_data=self.im_data)
-            return solver.solve()
+            return self.solver.solve()
 
     def error_propagation(self,obs,args):
         return self.solver.error_propagation(obs,args)
@@ -328,24 +328,21 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         alphaOpt=10**expOpt
         print 'prediction for optimal alpha:',alphaOpt,'log10(alphaOpt)=',np.log10(alphaOpt)
 
-        # Starting from the predicted value, we find the optimal alpha by newton's root finding method.
 
-        # the passing of ustart via saving to disk is very ugly, 
-        # but it works, and I can't think of anything better at the moment.
-        def root_fun(alpha):
-            ustart=np.load('ustart.npy')
-            res=self.maxent_optimization(alpha,ustart,iterfac=100000)
+        # Starting from the predicted value of alpha, and starting the optimization at the solution for the next-lowest alpha,
+        # we find the optimal alpha by newton's root finding method.
+
+        def root_fun(alpha,u0): # this function is just for the newton root-finding
+            res=self.maxent_optimization(alpha,u0,iterfac=100000)
             optarr.append(res)
-            np.save('ustart',res.u_opt)
+            u0[:]=res.u_opt
             return res.convergence-1.
 
-        np.save('ustart',optarr[-2].u_opt)
-        alpha_opt=opt.newton(root_fun,alphaOpt,tol=1e-6)
+        ustart=optarr[-2].u_opt
+        alpha_opt=opt.newton(root_fun,alphaOpt,tol=1e-6,args=(ustart,))
         print 'final optimal alpha:',alpha_opt,'log10(alpha_opt)=',np.log10(alpha_opt)
 
-        ustart=np.load('ustart.npy')
         sol=self.maxent_optimization(alpha_opt,ustart,iterfac=250000)
-        os.remove('ustart.npy')
         self.alpha_opt=alpha_opt
         self.A_opt=sol.A_opt
         return sol,optarr
