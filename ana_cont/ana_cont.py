@@ -16,6 +16,11 @@ class AnalyticContinuationProblem(object):
         self.im_data=im_data
         if self.kernel_mode=='freq_bosonic':
             pass # not necessary to do anything additionally here
+        elif self.kernel_mode=='time_bosonic':
+            self.im_axis=im_axis/beta
+            self.re_axis=re_axis*beta
+            self.im_data=im_data*beta
+            self.beta=beta
         elif self.kernel_mode=='freq_fermionic':
             self.im_data=np.concatenate((im_data.real,im_data.imag))
         elif self.kernel_mode=='freq_fermionic_phsym':
@@ -47,6 +52,9 @@ class AnalyticContinuationProblem(object):
                 bt=sol[0].backtransform
                 n=bt.shape[0]/2
                 sol[0].backtransform=bt[:n]+1j*bt[n:]
+            elif self.kernel_mode=='time_bosonic':
+                sol[0].A_opt*=self.beta
+                sol[0].backtransform/=self.beta
             return sol
         if method=='maxent_mc':
             raise NotImplementedError
@@ -127,8 +135,14 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             self.kernel=(self.re_axis**2)[None,:]/((self.re_axis**2)[None,:]+(self.im_axis**2)[:,None])
             self.kernel[0,0]=1. # analytically with de l'Hospital
         elif self.kernel_mode=='time_bosonic':
-            print 'Kernel not implemented'
-            sys.exit()
+            self.var=stdev**2
+            self.E=1./self.var
+            self.niw=self.im_axis.shape[0]
+            self.kernel=0.5*self.re_axis[None,:]*(
+                    np.exp(-self.re_axis[None,:]*self.im_axis[:,None])
+                    +np.exp(-self.re_axis[None,:]*(1.-self.im_axis[:,None])))/(
+                            1.-np.exp(-self.re_axis[None,:]))
+            self.kernel[:,0]=1. # analytically with de l'Hospital
         elif self.kernel_mode=='freq_fermionic':
             self.var=np.concatenate((stdev**2,stdev**2))
             self.E=1./self.var
