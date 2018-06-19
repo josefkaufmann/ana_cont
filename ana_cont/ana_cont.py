@@ -1,9 +1,7 @@
 import sys
 import numpy as np
-from src import precomp
-from src import pade
+from .src import pade
 import scipy.optimize as opt
-import matplotlib.pyplot as plt
 import os
 
 
@@ -30,8 +28,8 @@ class AnalyticContinuationProblem(object):
             elif np.allclose(im_axis.imag,0.): # if only the imaginary part is passed
                 self.im_data=im_data.real
             else:
-                print 'The data are neither purely real nor purely imaginary,'
-                print 'you cannot use a ph-symmetric kernel in this case.'
+                print('The data are neither purely real nor purely imaginary,')
+                print('you cannot use a ph-symmetric kernel in this case.')
                 sys.exit()
         elif self.kernel_mode=='time_fermionic' or self.kernel_mode=='time_fermionic_phsym':
             self.im_axis=im_axis/beta
@@ -156,20 +154,20 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             self.niw=self.im_axis.shape[0]
             self.kernel=np.exp(-self.im_axis[:,None]*self.re_axis[None,:])/(1.+np.exp(-self.re_axis[None,:]))
         elif self.kernel_mode=='freq_fermionic_phsym': # in this case, the data must be purely real (the imaginary part!)
-            print 'Warning: phsym kernels do not give good results in this implementation. '
+            print('Warning: phsym kernels do not give good results in this implementation. ')
             self.var=stdev**2
             self.E=1./self.var
             self.niw=self.im_axis.shape[0]
             self.kernel=-2.*self.im_axis[:,None]/((self.im_axis**2)[:,None]+(self.re_axis**2)[None,:])
         elif self.kernel_mode=='time_fermionic_phsym':
-            print 'Warning: phsym kernels do not give good results in this implementation. '
+            print('Warning: phsym kernels do not give good results in this implementation. ')
             self.var=stdev**2
             self.E=1./self.var
             self.niw=self.im_axis.shape[0]
             self.kernel=(np.cosh(self.im_axis[:,None]*self.re_axis[None,:]) 
                           +np.cosh((1.-self.im_axis[:,None])*self.re_axis[None,:])) / (1.+np.cosh(self.re_axis[None,:]))
         else:
-            print 'Unknown kernel'
+            print('Unknown kernel')
             sys.exit()
 
         U,S,Vt=np.linalg.svd(self.kernel,full_matrices=False)
@@ -180,12 +178,12 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         self.V_svd=np.array(Vt[:self.n_sv,:].T,dtype=np.float64,order='C') # numpy.svd returns V.T
         self.Xi_svd=S[:self.n_sv]
 
-        print 'spectral points:',self.nw
-        print 'data points on imaginary axis:',self.niw
-        print 'significant singular values:',self.n_sv
-        print 'U',self.U_svd.shape
-        print 'V',self.V_svd.shape
-        print 'Xi',self.Xi_svd.shape
+        print('spectral points:',self.nw)
+        print('data points on imaginary axis:',self.niw)
+        print('significant singular values:',self.n_sv)
+        print('U',self.U_svd.shape)
+        print('V',self.V_svd.shape)
+        print('Xi',self.Xi_svd.shape)
 
 
 
@@ -194,7 +192,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         # The precomputation of W2 is done in C, this saves a lot of time!
         # The other precomputations need less loop, can stay in python for the moment.
         #=============================================================================================
-        print  'Precomputation of coefficient matrices'
+        print('Precomputation of coefficient matrices')
 
         # allocate space
         self.W2=np.zeros((self.n_sv,self.nw),order='C',dtype=np.float64)
@@ -203,16 +201,14 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         self.Evi=np.zeros((self.n_sv))
 
         # precompute matrices W_ml (W2), W_mil (W3)
-        precomp.precompute_W2(self.W2,self.E,self.U_svd,self.Xi_svd,self.V_svd,self.dw,self.model)
+        self.W2 = np.einsum('k,km,m,kn,n,ln,l,l->ml',self.E, self.U_svd, self.Xi_svd, self.U_svd, self.Xi_svd, self.V_svd, self.dw, self.model)
         self.W3=self.W2[:,None,:]*(self.V_svd[None,:,:]).transpose((0,2,1))
 
         # precompute the evidence vector Evi_m
-        for m in xrange(self.n_sv):
-            for k in xrange(self.niw):
-                self.Evi[m]+=self.Xi_svd[m]*self.U_svd[k,m]*self.E[k]*self.im_data[k]
+        self.Evi = np.einsum('m,km,k,k->m',self.Xi_svd, self.U_svd, self.E, self.im_data)
 
         # precompute curvature of likelihood function
-        precomp.precompute_d2chi2(self.d2chi2,self.kernel,self.dw,self.E)
+        self.d2chi2 = np.einsum('i,j,ki,kj,k->ij',self.dw,self.dw,self.kernel, self.kernel, self.E)
 
         # some arrays that are used later...
         self.chi2arr=[]
@@ -292,7 +288,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         chisq=self.chi2(A_opt)
         ng,tr,conv=self.bayes_conv(A_opt,entr,alpha)
         norm=np.trapz(A_opt,self.re_axis)
-        print 'log10(alpha)={:6.4f}\tchi2={:5.4e}\tS={:5.4e}\ttr={:5.4f}\tconv={:1.3},\tnfev={},\tnorm={}'.format(np.log10(alpha),chisq,entr,tr,conv,sol.nfev,norm)
+        print('log10(alpha)={:6.4f}\tchi2={:5.4e}\tS={:5.4e}\ttr={:5.4f}\tconv={:1.3},\tnfev={},\tnorm={}'.format(np.log10(alpha),chisq,entr,tr,conv,sol.nfev,norm))
         result=OptimizationResult()
         result.u_opt=u_opt
         result.A_opt=A_opt
@@ -319,7 +315,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
     # Then we gradually decrease alpha, step by step moving away from the default model towards the evidence. 
     # Using u_opt as ustart for the next (smaller) alpha brings a great speedup into this procedure.
     def solve_classic(self): # classic maxent
-        print 'Solving...'
+        print('Solving...')
         optarr=[]
         alpha=10**5
         self.ustart=np.zeros((self.n_sv))
@@ -340,7 +336,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         # based on this we can predict the optimal alpha quite precisely.
         expOpt=np.log10(alpharr[-2])-np.log10(bayes_conv[-2])*(np.log10(alpharr[-1])-np.log10(alpharr[-2]))/(np.log10(bayes_conv[-1])-np.log10(bayes_conv[-2]))
         alphaOpt=10**expOpt
-        print 'prediction for optimal alpha:',alphaOpt,'log10(alphaOpt)=',np.log10(alphaOpt)
+        print('prediction for optimal alpha:',alphaOpt,'log10(alphaOpt)=',np.log10(alphaOpt))
 
 
         # Starting from the predicted value of alpha, and starting the optimization at the solution for the next-lowest alpha,
@@ -354,7 +350,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
 
         ustart=optarr[-2].u_opt
         alpha_opt=opt.newton(root_fun,alphaOpt,tol=1e-6,args=(ustart,))
-        print 'final optimal alpha:',alpha_opt,'log10(alpha_opt)=',np.log10(alpha_opt)
+        print('final optimal alpha:',alpha_opt,'log10(alpha_opt)=',np.log10(alpha_opt))
 
         sol=self.maxent_optimization(alpha_opt,ustart,iterfac=250000)
         self.alpha_opt=alpha_opt
@@ -365,7 +361,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
     # Bryan's maxent calculates an average of spectral functions, 
     # weighted by their Bayesian probability
     def solve_bryan(self,alphastart=500,alphadiv=1.1): 
-        print 'Solving...'
+        print('Solving...')
         optarr=[]
         alpha=alphastart
         self.ustart=np.zeros((self.n_sv))
@@ -436,13 +432,13 @@ class GreensFunction(object):
     def kkt(self):
         if self.kind=='fermionic_phsym' or self.kind=='symmetric':
             if self.wmin<0.:
-                print 'warning: wmin<0 not permitted for fermionic_phsym greens functions.'
+                print('warning: wmin<0 not permitted for fermionic_phsym greens functions.')
 
             m=2.*self.dw[:,None]*self.wgrid[:,None]*self.spectrum[:,None]/(self.wgrid[None,:]**2 - self.wgrid[:,None]**2)
 
         elif self.kind=='bosonic' or self.kind=='antisymmetric':
             if self.wmin<0.:
-                print 'warning: wmin<0 not permitted for bosonic (antisymmetric) spectrum.'
+                print('warning: wmin<0 not permitted for bosonic (antisymmetric) spectrum.')
             m=2.*self.dw[:,None]*self.wgrid[None,:]*self.spectrum[:,None]/(self.wgrid[None,:]**2 - self.wgrid[:,None]**2)
         
         elif self.kind=='fermionic' or self.kind=='general':

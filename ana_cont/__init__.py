@@ -1,1 +1,1 @@
-from ana_cont import AnalyticContinuationProblem
+import ana_cont.ana_cont as ana_cont

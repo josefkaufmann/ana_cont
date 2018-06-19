@@ -1,2 +1,0 @@
-import precomp
-import pade

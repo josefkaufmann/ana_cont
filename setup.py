@@ -1,8 +1,19 @@
+from Cython.Distutils import build_ext
 from distutils.core import setup, Extension
-from Cython.Build import cythonize
-import numpy
- 
-precomp_module = Extension('precomp', sources = ['ana_cont/src/precomp.c'], libraries=['m'],include_dirs=[numpy.get_include()])#{, extra_compile_args=['-std=c99', '-w'])
-setup(name = 'precomp', version = '1.0', description = 'Precomputation of Maxent matrices.', ext_modules = [precomp_module])
 
-setup(ext_modules = cythonize("ana_cont/src/pade.pyx"))
+ext_modules=[
+            Extension("ana_cont.src.pade",    # location of the resulting .so
+                             ["ana_cont/src/pade.pyx"],) ]
+
+
+setup(name='ana_cont',
+      version='1.0',
+      description='Analytic continuation package',
+      author='Josef Kaufmann',
+      url='https://github.com/josefkaufmann/ana_cont',
+      packages=['ana_cont'],
+      package_dir={'ana_cont':'ana_cont/'},
+      cmdclass = {'build_ext': build_ext},
+      ext_modules = ext_modules,
+      )
+
