@@ -1,6 +1,10 @@
+import sys
 import numpy as np
 import scipy.optimize as opt
-from . import pade
+if sys.version_info[0] > 2:
+    from . import pade
+else:
+    import pade
 
 class AnalyticContinuationSolver(object):
     pass
