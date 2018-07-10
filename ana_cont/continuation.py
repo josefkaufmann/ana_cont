@@ -53,7 +53,7 @@ class AnalyticContinuationProblem(object):
                 sol[0].A_opt *= self.beta
             elif self.kernel_mode == 'freq_fermionic':
                 bt = sol[0].backtransform
-                n = bt.shape[0] / 2
+                n = bt.shape[0] // 2
                 sol[0].backtransform = bt[:n] + 1j*bt[n:]
             elif self.kernel_mode == 'time_bosonic':
                 sol[0].A_opt *= self.beta

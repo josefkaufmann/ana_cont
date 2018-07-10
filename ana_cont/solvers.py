@@ -77,9 +77,9 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             self.E = 1. / self.var
             self.niw = 2 * self.im_axis.shape[0]
             self.kernel = np.zeros((self.niw, self.nw))  # fermionic Matsubara GF is complex
-            self.kernel[:self.niw / 2, :] = -self.re_axis[None, :] / (
+            self.kernel[:self.niw // 2, :] = -self.re_axis[None, :] / (
             (self.re_axis ** 2)[None, :] + (self.im_axis ** 2)[:, None])
-            self.kernel[self.niw / 2:, :] = -self.im_axis[:, None] / (
+            self.kernel[self.niw // 2:, :] = -self.im_axis[:, None] / (
             (self.re_axis ** 2)[None, :] + (self.im_axis ** 2)[:, None])
         elif self.kernel_mode == 'time_fermionic':
             self.var = stdev ** 2
