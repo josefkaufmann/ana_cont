@@ -46,7 +46,7 @@ class AnalyticContinuationProblem(object):
             self.solver = solvers.MaxentSolverSVD(
                 self.im_axis, self.re_axis, self.im_data,
                 kernel_mode = self.kernel_mode, model = kwargs['model'],
-                stdev = kwargs['stdev'])
+                stdev = kwargs['stdev'], offdiag=kwargs['offdiag'])
             sol = self.solver.solve(alpha_determination = kwargs['alpha_determination'])
             # TODO implement a postprocessing method, where the following should be done more carefully
             if self.kernel_mode == 'time_fermionic':
@@ -69,6 +69,27 @@ class AnalyticContinuationProblem(object):
 
     def error_propagation(self,obs,args):
         return self.solver.error_propagation(obs,args)
+
+    def partial_solution(self,method='',**kwargs):
+        if method=='maxent_svd':
+            self.solver=solvers.MaxentSolverSVD(
+                self.im_axis, self.re_axis, self.im_data,
+                kernel_mode=self.kernel_mode,
+                model=kwargs['model'], stdev=kwargs['stdev'], offdiag=kwargs['offdiag'])
+            ustart=kwargs['ustart'][:self.solver.n_sv]
+            sol = self.solver.maxent_optimization(kwargs['alpha'],ustart)
+            if self.kernel_mode == 'time_fermionic':
+                sol.A_opt *= self.beta
+            elif self.kernel_mode == 'freq_fermionic':
+                bt = sol.backtransform
+                n = bt.shape[0] // 2
+                sol.backtransform = bt[:n] + 1j*bt[n:]
+            elif self.kernel_mode == 'time_bosonic':
+                sol.A_opt *= self.beta
+                sol.backtransform /= self.beta
+            return sol
+        else:
+            return None
 
 
 # This class defines a GreensFunction object. The main use of this

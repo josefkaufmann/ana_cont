@@ -41,11 +41,13 @@ class PadeSolver(AnalyticContinuationSolver):
 class MaxentSolverSVD(AnalyticContinuationSolver):
     def __init__(self, im_axis, re_axis, im_data,
                  kernel_mode='', model=None, stdev=None,
-                 beta=None, **kwargs):
+                 beta=None, offdiag=False, **kwargs):
         self.kernel_mode = kernel_mode
         self.im_axis = im_axis
         self.re_axis = re_axis
         self.im_data = im_data
+        self.offdiag = offdiag
+
         self.nw = self.re_axis.shape[0]
         self.wmin = self.re_axis[0]
         self.wmax = self.re_axis[-1]
@@ -53,7 +55,13 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             np.concatenate(([self.wmin],
                             (self.re_axis[1:] + self.re_axis[:-1]) / 2.,
                             [self.wmax])))
-        self.model = model  # the model should be normalized by the user himself
+        if not self.offdiag:
+            self.model = model  # the model should be normalized by the user himself
+        else:
+            self.model_plus = model  # the model should be normalized by the user himself
+            self.model_minus = model  # the model should be normalized by the user himself
+
+
 
         if self.kernel_mode == 'freq_bosonic':
             self.var = stdev ** 2
@@ -75,12 +83,12 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         elif self.kernel_mode == 'freq_fermionic':
             self.var = np.concatenate((stdev ** 2, stdev ** 2))
             self.E = 1. / self.var
-            self.niw = 2 * self.im_axis.shape[0]
+            self.niw = 2 * self.im_axis.shape[-1]
             self.kernel = np.zeros((self.niw, self.nw))  # fermionic Matsubara GF is complex
             self.kernel[:self.niw // 2, :] = -self.re_axis[None, :] / (
-            (self.re_axis ** 2)[None, :] + (self.im_axis ** 2)[:, None])
+                (self.re_axis ** 2)[None, :] + (self.im_axis ** 2)[:, None])
             self.kernel[self.niw // 2:, :] = -self.im_axis[:, None] / (
-            (self.re_axis ** 2)[None, :] + (self.im_axis ** 2)[:, None])
+                (self.re_axis ** 2)[None, :] + (self.im_axis ** 2)[:, None])
         elif self.kernel_mode == 'time_fermionic':
             self.var = stdev ** 2
             self.E = 1. / self.var
@@ -101,7 +109,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             self.niw = self.im_axis.shape[0]
             self.kernel = (np.cosh(self.im_axis[:, None] * self.re_axis[None, :])
                            + np.cosh((1. - self.im_axis[:, None]) * self.re_axis[None, :])) / (
-                          1. + np.cosh(self.re_axis[None, :]))
+                              1. + np.cosh(self.re_axis[None, :]))
         else:
             print('Unknown kernel')
             sys.exit()
@@ -128,16 +136,16 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         # =============================================================================================
         print('Precomputation of coefficient matrices')
 
-        # allocate space
-        self.W2 = np.zeros((self.n_sv, self.nw), order='C', dtype=np.float64)
-        self.W3 = np.zeros((self.n_sv, self.n_sv, self.nw))
-        self.d2chi2 = np.zeros((self.nw, self.nw))
-        self.Evi = np.zeros((self.n_sv))
 
-        # precompute matrices W_ml (W2), W_mil (W3)
-        self.W2 = np.einsum('k,km,m,kn,n,ln,l,l->ml', self.E, self.U_svd, self.Xi_svd, self.U_svd, self.Xi_svd,
-                            self.V_svd, self.dw, self.model)
-        self.W3 = self.W2[:, None, :] * (self.V_svd[None, :, :]).transpose((0, 2, 1))
+        if not self.offdiag:# precompute matrices W_ml (W2), W_mil (W3)
+            self.W2 = np.einsum('k,km,m,kn,n,ln,l,l->ml', self.E, self.U_svd, self.Xi_svd, self.U_svd, self.Xi_svd,
+                                self.V_svd, self.dw, self.model)
+            self.W3 = self.W2[:, None, :] * (self.V_svd[None, :, :]).transpose((0, 2, 1))
+
+        else:# precompute matrices M_ml (M2), M_mil (M3)
+            self.M2 = np.einsum('k,km,m,kn,n,ln,l->ml', self.E, self.U_svd, self.Xi_svd, self.U_svd, self.Xi_svd,
+                                self.V_svd, self.dw)
+            self.M3 = self.M2[:, None, :] * (self.V_svd[None, :, :]).transpose((0, 2, 1))
 
         # precompute the evidence vector Evi_m
         self.Evi = np.einsum('m,km,k,k->m', self.Xi_svd, self.U_svd, self.E, self.im_data)
@@ -163,20 +171,40 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
     # define derivative f_m(u) = SVD(dQ/dA)_m [we search for zeros of f(u)]
     # and the Jacobian matrix of f, J_mi=df_m/du_i
     # TODO this is the main function call, it must be optimized as much as possible!
-    def compute_f_J(self, u, alpha):
+    def compute_f_J_diag(self, u, alpha):
         v = np.dot(self.V_svd, u)
         w = np.exp(v)
         f = alpha * u + np.dot(self.W2, w) - self.Evi
         J = alpha * np.eye(self.n_sv) + np.dot(self.W3, w)
         return f, J
 
+    def compute_f_J_offdiag(self, u, alpha):
+        v = np.dot(self.V_svd, u)
+        w = np.exp(v)
+        a_plus = self.model_plus * w
+        a_minus = self.model_minus / w
+        a1 = a_plus - a_minus
+        a2 = a_plus + a_minus
+        f = alpha * u + np.dot(self.M2, a1) - self.Evi
+        J = alpha * np.eye(self.n_sv) + np.dot(self.M3, a2)
+        return f, J
+
+
     # =============================================================================================
     # Some auxiliary functions
     # =============================================================================================
 
     # transform the singular space vector u into real space (spectral function)
-    def singular2realspace(self, u):
+    def singular_to_realspace_diag(self, u):
         return self.model * np.exp(np.dot(self.V_svd, u))
+
+    def singular_to_realspace_offdiag(self, u):
+        v = np.dot(self.V_svd, u)
+        w = np.exp(v)
+        return self.model_plus * w - self.model_minus / w
+
+
+
 
     # backtransformation from real to imaginary axis
     def backtransform(self, A):
@@ -186,8 +214,15 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
     def chi2(self, A):
         return np.sum(self.E * (self.im_data - np.dot(self.kernel, A * self.dw)) ** 2)
 
-    def entropy(self, A, u):
+    def entropy_pos(self, A, u):
         return np.trapz(A - self.model - A * np.dot(self.V_svd, u), self.re_axis)
+
+    def entropy_posneg(self, A, u):
+        root = np.sqrt(A**2 + 4. * self.model_plus * self.model_minus)
+        return np.trapz(root - self.model_plus - self.model_minus
+                        - A*np.log((root + A) / (2.*self.model_plus)),
+                        self.re_axis)
+
 
     # Bayesian convergence criterion for classic maxent (maximum of probablility distribution)
     def bayes_conv(self, A, entr, alpha):
@@ -207,7 +242,15 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         return np.exp(log_prob)
 
     # optimization of maxent functional for a given value of alpha
-    def maxent_optimization(self, alpha, ustart, iterfac=10000000):
+    def maxent_optimization(self, alpha, ustart, iterfac=10000000, ):
+        if not self.offdiag:
+            self.compute_f_J = self.compute_f_J_diag
+            self.singular_to_realspace = self.singular_to_realspace_diag
+            self.entropy = self.entropy_pos
+        else:
+            self.compute_f_J = self.compute_f_J_offdiag
+            self.singular_to_realspace = self.singular_to_realspace_offdiag
+            self.entropy = self.entropy_posneg
         sol = opt.root(self.compute_f_J,  # function returning function value f and jacobian J (we search root of f)
                        ustart,  # sensible starting point
                        method='lm',  # levenberg-marquart method
@@ -218,24 +261,32 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
                        # scale for values to find (assume that they decay exponentially)
                        args=(alpha))  # additional argument for self.compute_f_J
         u_opt = sol.x
-        A_opt = self.singular2realspace(sol.x)
+        A_opt = self.singular_to_realspace(sol.x)
         entr = self.entropy(A_opt, u_opt)
         chisq = self.chi2(A_opt)
-        ng, tr, conv = self.bayes_conv(A_opt, entr, alpha)
+        if not self.offdiag:
+            ng, tr, conv = self.bayes_conv(A_opt, entr, alpha)
         norm = np.trapz(A_opt, self.re_axis)
-        print('log10(alpha)={:6.4f}\tchi2={:5.4e}\tS={:5.4e}\ttr={:5.4f}\tconv={:1.3},\tnfev={},\tnorm={}'.format(
-            np.log10(alpha), chisq, entr, tr, conv, sol.nfev, norm))
+        if not self.offdiag:
+            print('log10(alpha)={:6.4f}\tchi2={:5.4e}\tS={:5.4e}\ttr={:5.4f}\tconv={:1.3},\tnfev={},\tnorm={}'.format(
+                np.log10(alpha), chisq, entr, tr, conv, sol.nfev, norm))
+        else:
+            print('log10(alpha)={:6.4f}\tchi2={:5.4e}\tS={:5.4e}\t,nfev={},\tnorm={}'.format(
+                np.log10(alpha), chisq, entr, sol.nfev, norm))
+
         result = OptimizationResult()
         result.u_opt = u_opt
         result.A_opt = A_opt
         result.alpha = alpha
         result.entropy = entr
         result.backtransform = self.backtransform(A_opt)
-        result.n_good = ng
-        result.trace = tr
-        result.convergence = conv
+        if not self.offdiag:
+            result.n_good = ng
+            result.trace = tr
+            result.convergence = conv
         result.norm = norm
-        result.probability = self.posterior_probability(A_opt, alpha, entr, chisq)
+        if not self.offdiag:
+            result.probability = self.posterior_probability(A_opt, alpha, entr, chisq)
         result.Q = alpha * entr - 0.5 * chisq
         return result
 
@@ -251,7 +302,15 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
     # Then we gradually decrease alpha, step by step moving away from the default model towards the evidence.
     # Using u_opt as ustart for the next (smaller) alpha brings a great speedup into this procedure.
     def solve_classic(self):  # classic maxent
-        print('Solving...')
+        if not self.offdiag:
+            self.compute_f_J = self.compute_f_J_diag
+            self.singular_to_realspace = self.singular_to_realspace_diag
+            self.entropy = self.entropy_pos
+        else:
+            self.compute_f_J = self.compute_f_J_offdiag
+            self.singular_to_realspace = self.singular_to_realspace_offdiag
+            self.entropy = self.entropy_posneg
+            print('Solving...')
         optarr = []
         alpha = 10 ** 5
         self.ustart = np.zeros((self.n_sv))
@@ -347,9 +406,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
 
     # switch for different types of alpha selection
     def solve(self, alpha_determination='classic'):
-
         if alpha_determination == 'classic':
             return self.solve_classic()
         elif alpha_determination == 'bryan':
             return self.solve_bryan()
-
