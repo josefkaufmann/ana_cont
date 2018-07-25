@@ -162,6 +162,9 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         self.uarr = []
         self.bayesConv = []
 
+        #PREBLUR
+        #self.blur = np.exp(-(np.linspace(-1.,1.,num=101, endpoint=True))**2 / (2.*0.1**2)) / (3. * np.sqrt(2.*np.pi))
+
     # =============================================================================================
     # Here, we define the main functions needed for the root finding problem
     # =============================================================================================
@@ -212,6 +215,8 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
 
     # compute the log-likelihood function of A
     def chi2(self, A):
+        #PREBLUR
+        #A = np.convolve(A, self.blur, mode='same')
         return np.sum(self.E * (self.im_data - np.dot(self.kernel, A * self.dw)) ** 2)
 
     def entropy_pos(self, A, u):
@@ -227,6 +232,15 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
     # Bayesian convergence criterion for classic maxent (maximum of probablility distribution)
     def bayes_conv(self, A, entr, alpha):
         LambdaMatrix = np.sqrt(A / self.dw)[:, None] * self.d2chi2 * np.sqrt(A / self.dw)[None, :]
+        lam = np.linalg.eigvalsh(LambdaMatrix)
+        ng = -2. * alpha * entr
+        tr = np.sum(lam / (alpha + lam))
+        conv = tr / ng
+        return ng, tr, conv
+
+    def bayes_conv_offdiag(self, A, entr, alpha):
+        A_sq = np.power((A**2 + 4. * self.model_plus * self.model_minus) / self.dw**2, 0.25)
+        LambdaMatrix = A_sq[:, None] * self.d2chi2 * A_sq[None, :]
         lam = np.linalg.eigvalsh(LambdaMatrix)
         ng = -2. * alpha * entr
         tr = np.sum(lam / (alpha + lam))
@@ -266,24 +280,23 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         chisq = self.chi2(A_opt)
         if not self.offdiag:
             ng, tr, conv = self.bayes_conv(A_opt, entr, alpha)
-        norm = np.trapz(A_opt, self.re_axis)
-        if not self.offdiag:
-            print('log10(alpha)={:6.4f}\tchi2={:5.4e}\tS={:5.4e}\ttr={:5.4f}\tconv={:1.3},\tnfev={},\tnorm={}'.format(
-                np.log10(alpha), chisq, entr, tr, conv, sol.nfev, norm))
         else:
-            print('log10(alpha)={:6.4f}\tchi2={:5.4e}\tS={:5.4e}\t,nfev={},\tnorm={}'.format(
-                np.log10(alpha), chisq, entr, sol.nfev, norm))
+            ng, tr, conv = self.bayes_conv_offdiag(A_opt, entr, alpha)
+        norm = np.trapz(A_opt, self.re_axis)
+        print('log10(alpha)={:6.4f}\tchi2={:5.4e}\tS={:5.4e}\ttr={:5.4f}\tconv={:1.3},\tnfev={},\tnorm={}'.format(
+                np.log10(alpha), chisq, entr, tr, conv, sol.nfev, norm))
 
         result = OptimizationResult()
         result.u_opt = u_opt
+        #PREBLUR
+        #result.A_opt = np.convolve(A_opt, self.blur, mode='same')
         result.A_opt = A_opt
         result.alpha = alpha
         result.entropy = entr
         result.backtransform = self.backtransform(A_opt)
-        if not self.offdiag:
-            result.n_good = ng
-            result.trace = tr
-            result.convergence = conv
+        result.n_good = ng
+        result.trace = tr
+        result.convergence = conv
         result.norm = norm
         if not self.offdiag:
             result.probability = self.posterior_probability(A_opt, alpha, entr, chisq)
@@ -310,7 +323,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             self.compute_f_J = self.compute_f_J_offdiag
             self.singular_to_realspace = self.singular_to_realspace_offdiag
             self.entropy = self.entropy_posneg
-            print('Solving...')
+        print('Solving...')
         optarr = []
         alpha = 10 ** 5
         self.ustart = np.zeros((self.n_sv))
