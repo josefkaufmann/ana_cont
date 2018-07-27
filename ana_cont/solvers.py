@@ -41,7 +41,8 @@ class PadeSolver(AnalyticContinuationSolver):
 class MaxentSolverSVD(AnalyticContinuationSolver):
     def __init__(self, im_axis, re_axis, im_data,
                  kernel_mode='', model=None, stdev=None,
-                 beta=None, offdiag=False, **kwargs):
+                 beta=None, offdiag=False, 
+                 preblur=False, blur_width=0., **kwargs):
         self.kernel_mode = kernel_mode
         self.im_axis = im_axis
         self.re_axis = re_axis
@@ -163,7 +164,11 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         self.bayesConv = []
 
         #PREBLUR
-        #self.blur = np.exp(-(np.linspace(-1.,1.,num=101, endpoint=True))**2 / (2.*0.1**2)) / (3. * np.sqrt(2.*np.pi))
+        self.preblur = preblur
+        if self.preblur:
+            self.blur_width = blur_width
+            self.blur_matrix = np.exp(-(self.re_axis[:,None] - self.re_axis[None,:])**2 / (2. * self.blur_width**2)) / (self.blur_width * np.sqrt(2.*np.pi))
+            self.blur_matrix = self.blur_matrix * self.dw[None,:]
 
     # =============================================================================================
     # Here, we define the main functions needed for the root finding problem
@@ -216,7 +221,8 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
     # compute the log-likelihood function of A
     def chi2(self, A):
         #PREBLUR
-        #A = np.convolve(A, self.blur, mode='same')
+        if self.preblur:
+            A = np.dot(self.blur_matrix, A)
         return np.sum(self.E * (self.im_data - np.dot(self.kernel, A * self.dw)) ** 2)
 
     def entropy_pos(self, A, u):
@@ -289,8 +295,10 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         result = OptimizationResult()
         result.u_opt = u_opt
         #PREBLUR
-        #result.A_opt = np.convolve(A_opt, self.blur, mode='same')
-        result.A_opt = A_opt
+        if self.preblur:
+            result.A_opt = np.dot(self.blur_matrix, A_opt)
+        else:
+            result.A_opt = A_opt
         result.alpha = alpha
         result.entropy = entr
         result.backtransform = self.backtransform(A_opt)
