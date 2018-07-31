@@ -333,7 +333,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             self.entropy = self.entropy_posneg
         print('Solving...')
         optarr = []
-        alpha = 10 ** 5
+        alpha = 10 ** 6
         self.ustart = np.zeros((self.n_sv))
         converged = False
         conv = 0.
@@ -344,6 +344,10 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             optarr.append(o)
             alpha /= 10.
             conv = o.convergence
+
+        if len(optarr) <= 1:
+            raise RuntimeError('Failed to get a prediction for optimal alpha. '
+                               + 'Decrease the error or increase alpha_start.')
 
         bayes_conv = [o.convergence for o in optarr]
         alpharr = [o.alpha for o in optarr]
