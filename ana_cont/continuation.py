@@ -105,11 +105,6 @@ def continue_maxent(im_data, stdev, kernel, beta, wmax,
     else:
         raise ValueError('Could not determine correct kernel mode from your input')
 
-    if isinstance(stdev, np.ndarray) or isinstance(stdev, list):
-        err = stdev
-    else:
-        err = np.ones_like(im_axis) * stdev
-
     if not isinstance(im_data, np.ndarray):
         raise TypeError('im_data has to be instance of np.ndarray')
 
@@ -126,6 +121,18 @@ def continue_maxent(im_data, stdev, kernel, beta, wmax,
     else:
         raise ValueError('im_data must have either shape (NIW,) or (NORB, NORB, NIW)')
 
+
+    if isinstance(stdev, np.ndarray):
+        if matrix_mode and stdev.ndim == 1:
+            err = stdev[None,None,:] * np.ones_like(im_data, dtype=np.float)
+        elif matrix_mode and stdev.ndim == 3:
+            err = stdev
+        elif not matrix_mode and stdev.ndim == 1:
+            err = stdev
+        else:
+            raise ValueError('Incorrectly formatted stdev.')
+    else:
+        err = np.ones_like(im_data) * stdev
 
     # generate a default model
     if isinstance(model, np.ndarray):
