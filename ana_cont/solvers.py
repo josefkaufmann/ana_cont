@@ -296,9 +296,8 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         result.u_opt = u_opt
         #PREBLUR
         if self.preblur:
-            result.A_opt = np.dot(self.blur_matrix, A_opt)
-        else:
-            result.A_opt = A_opt
+            A_opt = np.dot(self.blur_matrix, A_opt)
+        result.A_opt = A_opt
         result.alpha = alpha
         result.entropy = entr
         result.backtransform = self.backtransform(A_opt)
