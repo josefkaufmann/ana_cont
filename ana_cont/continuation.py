@@ -9,7 +9,7 @@ else:
 
 def continue_maxent(im_data, stdev, kernel, beta, wmax,
                     wmin=0, nw=501, grid='linear', im_axis=None, model=None,
-                    preblur=False, blur_width=0.):
+                    ):
     """
     Wrapper function that should simplify the analytic continuation.
     :param im_data: ndarray
@@ -17,7 +17,8 @@ def continue_maxent(im_data, stdev, kernel, beta, wmax,
         matrix-valued Green's functions, the last dimension corresponds to imaginary time/frequency.
     :param stdev: scalar/array
         Standard deviation of data. If stdev is a single number, a constant value is assumed at all
-        frequency/time points. If it is an array, it has to have the same shape as im_data.
+        frequency/time points. If it is a 1D array, it will be broadcasted to the same shape
+        as im_data.
     :param kernel: string
         Kernel for analytic continuation.
         One of {'freq_bosonic', 'freq_fermionic', 'time_bosonic', 'time_fermionic'}.
@@ -30,8 +31,9 @@ def continue_maxent(im_data, stdev, kernel, beta, wmax,
         Default WMIN=0.
     :param nw: integer, optional
         Number of grid points on real axis. Default NW=501
-    :param grid: string, optional
-        Grid type for real axis. One of {'linear', 'tangent'}. Default is 'linear'.
+    :param grid: optional
+        Can be a string or an array.
+        If it is a string, it has to be one of {'linear', 'tangent'}. Default is 'linear'.
         'linear' generates a grid with regular spacing.
         'tangent' generates grid points according to
         \omega_k = \omega_{max} * \mathrm{tan(k \pi /(2.5 n_{\omega}))} / \mathrm{tan}(\pi/2.5)
@@ -46,10 +48,7 @@ def continue_maxent(im_data, stdev, kernel, beta, wmax,
         model='gauss': zero-centered gaussian default model with width (wmax-wmin)/6
         model='exp': exponential decay with length parameter (wmax-wmin)/3
         If a one-dimensional instance of np.ndarray is passed, it will be normalized and taken as default model.
-    :param preblur, optional
-        If set to True, preblur is used.
-    :param blur_width, optional
-        If preblur is used, set the blur width via this parameter.
+        Note that the default model will be used only for diagonal elements of matrix-valued Green's functions.
     :return: maxent solution object
     """
 
@@ -139,7 +138,16 @@ def continue_maxent(im_data, stdev, kernel, beta, wmax,
     # generate a default model
     if isinstance(model, np.ndarray):
         print('user-specified default model')
-        model_arr = model
+        if matrix_mode:
+            model_arr = np.zeros((n_orb, nw))
+            if model.ndim == 1:
+                for i in range(n_orb):
+                    model_arr[i] = model
+            elif model.ndim ==2:
+                for i in range(n_orb):
+                    model_arr[i] = model[i]
+        else:
+            model_arr = model
     elif model is None or 'const' in model:
         print('generate constant default model')
         model_arr = np.ones_like(re_axis)
@@ -155,7 +163,11 @@ def continue_maxent(im_data, stdev, kernel, beta, wmax,
         raise ValueError('Default model specification not recognized.')
 
     # normalize the model
-    model_arr /= np.trapz(model_arr, re_axis)
+    if not matrix_mode:
+        model_arr /= np.trapz(model_arr, re_axis)
+    else:
+        for i in range(n_orb):
+            model_arr[i] /= np.trapz(model_arr[i], re_axis)
 
     if not matrix_mode:
         if kernel_mode == 'freq_bosonic':
@@ -170,7 +182,7 @@ def continue_maxent(im_data, stdev, kernel, beta, wmax,
                                             beta=beta)
         sol,_ = probl.solve(method='maxent_svd', alpha_determination='classic',
                             stdev = stdev/norm, model=model_arr,
-                            preblur=preblur, blur_width=blur_width)
+                            preblur=False)
 
         sol.A_opt *= norm
         sol.backtransform *= norm
@@ -186,10 +198,10 @@ def continue_maxent(im_data, stdev, kernel, beta, wmax,
                                                 im_data=im_data[i,i], kernel_mode=kernel_mode)
             sol_diag.append(
                 probl.solve(method='maxent_svd',
-                            model=model_arr,
+                            model=model_arr[i],
                             stdev=err[i,i],
                             alpha_determination='classic',
-                            offdiag=False, preblur=preblur, blur_width=blur_width)[0])
+                            offdiag=False, preblur=False)[0])
 
         sol_offd = []
         for i in range(n_orb):
@@ -206,7 +218,7 @@ def continue_maxent(im_data, stdev, kernel, beta, wmax,
                                     model=model_offd,
                                     stdev=err[i,j],
                                     alpha_determination='classic',
-                                    offdiag=True, preblur=preblur, blur_width=blur_width)[0])
+                                    offdiag=True, preblur=False)[0])
                 else:
                     sol_offd[i].append(None)
 
