@@ -185,7 +185,7 @@ def continue_maxent(im_data, stdev, kernel, beta, wmax,
             sol_diag.append(
                 probl.solve(method='maxent_svd',
                             model=model_arr,
-                            stdev=err,
+                            stdev=err[i,i],
                             alpha_determination='classic',
                             offdiag=False, preblur=preblur, blur_width=blur_width)[0])
 
@@ -202,7 +202,7 @@ def continue_maxent(im_data, stdev, kernel, beta, wmax,
                     sol_offd[i].append(
                         probl.solve(method='maxent_svd',
                                     model=model_offd,
-                                    stdev=err,
+                                    stdev=err[i,j],
                                     alpha_determination='classic',
                                     offdiag=True, preblur=preblur, blur_width=blur_width)[0])
                 else:
