@@ -65,8 +65,10 @@ def continue_maxent(im_data, stdev, kernel, beta, wmax,
             elif 'ferm' in kernel:
                 im_axis = np.pi / beta * (2. * np.arange(im_data.shape[-1]) + 1.)
 
+    if isinstance(grid, np.ndarray):
+        re_axis = grid
     # generate real grid
-    if 'bos' in kernel:
+    elif 'bos' in kernel:
         if wmin != 0.:
             print('Warning: wmin is always 0 for bosonic kernels. '
             + 'Ignoring input wmin={}'.format(wmin))
@@ -193,7 +195,7 @@ def continue_maxent(im_data, stdev, kernel, beta, wmax,
         for i in range(n_orb):
             sol_offd.append([])
             for j in range(n_orb):
-                print('Continuing component ({},{}) of {}'.format(i,j, n_orb))
+                print('Continuing component ({},{})'.format(i,j))
                 dat = im_data[i,j]
                 if np.any(np.abs(dat)>0.00001) and np.all(np.isfinite(dat)) and i != j:
                     model_offd = np.sqrt(sol_diag[i].A_opt * sol_diag[j].A_opt)
@@ -207,12 +209,9 @@ def continue_maxent(im_data, stdev, kernel, beta, wmax,
                                     offdiag=True, preblur=preblur, blur_width=blur_width)[0])
                 else:
                     sol_offd[i].append(None)
-                    print('component{}{} append None'.format(i,j))
 
         for i in range(n_orb):
-            print(i)
             sol_offd[i][i] = sol_diag[i]
-        print(sol_offd)
 
         return sol_offd
 
