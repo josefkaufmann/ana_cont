@@ -26,15 +26,27 @@ Package structure
 -----------------
 * **ana_cont** contains the main code files.
 * **doc** will contain a detailed description of the implemented formulas and code structure.
-* **scripts** contains some simple examples how the library may be used. (More sophisticated 
-   examples will be added later.) Also there are some scripts to generate test data.
-* *install.sh* is a simple installation script that compiles the modules that are written in
-   C and Cython, and it appends the directory to the PYTHONPATH environment variable. 
-   
+* **scripts** contains some simple examples how the library may be used.
+
 Requirements
 -------------
 
-* Python
+* Python 2 or 3
 * numpy
 * scipy
 * Cython (only for Pade)
+
+Installation
+--------------
+The package can be installed with pip by
+
+``pip install ana-cont``
+
+This installs the package with the Maxent, but without the Pade solver.
+To get also the Pade solver, use
+
+``git clone https://github.com/josefkaufmann/ana_cont``
+
+``python setup.py build_ext --inplace``
+
+``python setup.py install``
