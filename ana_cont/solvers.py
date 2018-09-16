@@ -2,9 +2,15 @@ import sys
 import numpy as np
 import scipy.optimize as opt
 if sys.version_info[0] > 2:
-    from . import pade
+    try:
+        from . import pade
+    except:
+        pass
 else:
-    import pade
+    try:
+        import pade
+    except:
+        pass
 
 class AnalyticContinuationSolver(object):
     pass
