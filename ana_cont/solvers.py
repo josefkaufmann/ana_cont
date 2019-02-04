@@ -46,13 +46,15 @@ class PadeSolver(AnalyticContinuationSolver):
 
 class MaxentSolverSVD(AnalyticContinuationSolver):
     def __init__(self, im_axis, re_axis, im_data,
-                 kernel_mode='', model=None, stdev=None,
+                 kernel_mode='', model=None, 
+                 stdev=None, cov=None,
                  beta=None, offdiag=False, 
                  preblur=False, blur_width=0., **kwargs):
         self.kernel_mode = kernel_mode
         self.im_axis = im_axis
         self.re_axis = re_axis
         self.im_data = im_data
+        print(self.im_data.shape)
         self.offdiag = offdiag
 
         self.nw = self.re_axis.shape[0]
@@ -68,58 +70,63 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             self.model_plus = model  # the model should be normalized by the user himself
             self.model_minus = model  # the model should be normalized by the user himself
 
-
-
-        if self.kernel_mode == 'freq_bosonic':
+        if cov is None and stdev is not None:
             self.var = stdev ** 2
-            self.E = 1. / self.var
-            self.niw = self.im_axis.shape[0]
+            self.cov = np.diag(self.var)
+            self.ucov = np.eye(self.im_axis.shape[0])
+        elif stdev is None and cov is not None:
+            self.cov = cov
+            self.var, self.ucov = np.linalg.eigh(self.cov) # go to eigenbasis of covariance matrix
+
+        self.im_data = np.dot(self.ucov.T.conj(), self.im_data)
+        self.E = 1. / self.var
+        self.niw = self.im_axis.shape[0]
+
+        # set the kernel
+        if self.kernel_mode == 'freq_bosonic':
             self.kernel = (self.re_axis ** 2)[None, :] \
                           / ((self.re_axis ** 2)[None, :]
                              + (self.im_axis ** 2)[:, None])
             self.kernel[0, 0] = 1.  # analytically with de l'Hospital
         elif self.kernel_mode == 'time_bosonic':
-            self.var = stdev ** 2
-            self.E = 1. / self.var
-            self.niw = self.im_axis.shape[0]
             self.kernel = 0.5 * self.re_axis[None, :] * (
                 np.exp(-self.re_axis[None, :] * self.im_axis[:, None])
                 + np.exp(-self.re_axis[None, :] * (1. - self.im_axis[:, None]))) / (
                               1. - np.exp(-self.re_axis[None, :]))
             self.kernel[:, 0] = 1.  # analytically with de l'Hospital
         elif self.kernel_mode == 'freq_fermionic':
-            self.var = np.concatenate((stdev ** 2, stdev ** 2))
-            self.E = 1. / self.var
-            self.niw = 2 * self.im_axis.shape[-1]
-            self.kernel = np.zeros((self.niw, self.nw))  # fermionic Matsubara GF is complex
-            self.kernel[:self.niw // 2, :] = -self.re_axis[None, :] / (
-                (self.re_axis ** 2)[None, :] + (self.im_axis ** 2)[:, None])
-            self.kernel[self.niw // 2:, :] = -self.im_axis[:, None] / (
-                (self.re_axis ** 2)[None, :] + (self.im_axis ** 2)[:, None])
+            self.kernel = 1./(1j * self.im_axis[:, None] - self.re_axis[None, :])
         elif self.kernel_mode == 'time_fermionic':
-            self.var = stdev ** 2
-            self.E = 1. / self.var
-            self.niw = self.im_axis.shape[0]
             self.kernel = np.exp(-self.im_axis[:, None] * self.re_axis[None, :]) \
                           / (1. + np.exp(-self.re_axis[None, :]))
         elif self.kernel_mode == 'freq_fermionic_phsym':  # in this case, the data must be purely real (the imaginary part!)
             print('Warning: phsym kernels do not give good results in this implementation. ')
-            self.var = stdev ** 2
-            self.E = 1. / self.var
-            self.niw = self.im_axis.shape[0]
             self.kernel = -2. * self.im_axis[:, None] \
                           / ((self.im_axis ** 2)[:, None] + (self.re_axis ** 2)[None, :])
         elif self.kernel_mode == 'time_fermionic_phsym':
             print('Warning: phsym kernels do not give good results in this implementation. ')
-            self.var = stdev ** 2
-            self.E = 1. / self.var
-            self.niw = self.im_axis.shape[0]
             self.kernel = (np.cosh(self.im_axis[:, None] * self.re_axis[None, :])
                            + np.cosh((1. - self.im_axis[:, None]) * self.re_axis[None, :])) / (
                               1. + np.cosh(self.re_axis[None, :]))
         else:
             print('Unknown kernel')
             sys.exit()
+
+        # rotate kernel to eigenbasis of covariance matrix
+        self.kernel = np.dot(self.ucov.T.conj(), self.kernel)
+
+        # special treatment for complex data of fermionic frequency kernel
+        if kernel_mode == 'freq_fermionic':
+            self.niw *= 2
+            self.im_data = np.concatenate((self.im_data.real, self.im_data.imag))
+            self.var = np.concatenate((self.var, self.var))
+            self.E = np.concatenate((self.E, self.E))
+            kernel_tmp = np.copy(self.kernel)
+            self.kernel = np.zeros((self.niw, self.nw))
+            self.kernel[:self.niw // 2, :] = kernel_tmp.real
+            self.kernel[self.niw // 2:, :] = kernel_tmp.imag
+            del kernel_tmp
+        
 
         U, S, Vt = np.linalg.svd(self.kernel, full_matrices=False)
 
@@ -129,19 +136,16 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         self.V_svd = np.array(Vt[:self.n_sv, :].T, dtype=np.float64, order='C')  # numpy.svd returns V.T
         self.Xi_svd = S[:self.n_sv]
 
-        print('spectral points:', self.nw)
-        print('data points on imaginary axis:', self.niw)
-        print('significant singular values:', self.n_sv)
-        print('U', self.U_svd.shape)
-        print('V', self.V_svd.shape)
-        print('Xi', self.Xi_svd.shape)
+        print('{} data points on real axis'.format(self.nw))
+        print('{} data points on imaginary axis'.format(self.niw))
+        print('{} significant singular values'.format(self.n_sv))
 
         # =============================================================================================
         # First, precompute as much as possible
         # The precomputation of W2 is done in C, this saves a lot of time!
         # The other precomputations need less loop, can stay in python for the moment.
         # =============================================================================================
-        print('Precomputation of coefficient matrices')
+        print('Precomputation of coefficient matrices...')
 
 
         if not self.offdiag:# precompute matrices W_ml (W2), W_mil (W3)
@@ -222,7 +226,18 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
 
     # backtransformation from real to imaginary axis
     def backtransform(self, A):
-        return np.dot(self.kernel, A * self.dw)
+        """ Backtransformation from real to imaginary axis.
+        G(iw) = \int dw K(iw, w) * A(w)
+        Also at this place we return from the 'diagonal-covariance space'
+        Note: this function is not a bottleneck. 
+        """
+        if self.kernel_mode == 'freq_fermionic':
+            kernel = self.kernel[:self.niw//2,:] + 1j * self.kernel[self.niw//2:, :]
+        else:
+            kernel = np.copy(self.kernel)
+        kernel = np.dot(self.ucov, kernel)
+        bt = np.dot(kernel, A*self.dw)
+        return bt
 
     # compute the log-likelihood function of A
     def chi2(self, A):

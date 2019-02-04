@@ -243,7 +243,8 @@ class AnalyticContinuationProblem(object):
             self.im_data = im_data*beta
             self.beta = beta
         elif self.kernel_mode == 'freq_fermionic':
-            self.im_data = np.concatenate((im_data.real, im_data.imag))
+            pass
+            #self.im_data = np.concatenate((im_data.real, im_data.imag))
         elif self.kernel_mode == 'freq_fermionic_phsym':
             # check if data are purely imaginary
             if np.allclose(im_axis.real, 0.):
@@ -274,10 +275,6 @@ class AnalyticContinuationProblem(object):
             # TODO implement a postprocessing method, where the following should be done more carefully
             if self.kernel_mode == 'time_fermionic':
                 sol[0].A_opt *= self.beta
-            elif self.kernel_mode == 'freq_fermionic':
-                bt = sol[0].backtransform
-                n = bt.shape[0] // 2
-                sol[0].backtransform = bt[:n] + 1j*bt[n:]
             elif self.kernel_mode == 'time_bosonic':
                 sol[0].A_opt *= self.beta
                 sol[0].backtransform /= self.beta
@@ -304,9 +301,10 @@ class AnalyticContinuationProblem(object):
             if self.kernel_mode == 'time_fermionic':
                 sol.A_opt *= self.beta
             elif self.kernel_mode == 'freq_fermionic':
-                bt = sol.backtransform
-                n = bt.shape[0] // 2
-                sol.backtransform = bt[:n] + 1j*bt[n:]
+                pass
+#                bt = sol.backtransform
+#                n = bt.shape[0] // 2
+#                sol.backtransform = bt[:n] + 1j*bt[n:]
             elif self.kernel_mode == 'time_bosonic':
                 sol.A_opt *= self.beta
                 sol.backtransform /= self.beta
