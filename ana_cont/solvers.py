@@ -112,8 +112,18 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             print('Unknown kernel')
             sys.exit()
 
+        #PREBLUR
+        self.preblur = preblur
+        if self.preblur:
+            self.blur_width = blur_width
+            self.blur_matrix = np.exp(-(self.re_axis[:,None] - self.re_axis[None,:])**2 / (2. * self.blur_width**2)) / (self.blur_width * np.sqrt(2.*np.pi))
+            #self.blur_matrix = self.blur_matrix * self.dw[None,:]
+        else:
+            self.blur_matrix = np.eye(self.re_axis.shape[0])
+
         # rotate kernel to eigenbasis of covariance matrix
         self.kernel = np.dot(self.ucov.T.conj(), self.kernel)
+
 
         # special treatment for complex data of fermionic frequency kernel
         if kernel_mode == 'freq_fermionic':
@@ -121,7 +131,10 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             self.im_data = np.concatenate((self.im_data.real, self.im_data.imag))
             self.var = np.concatenate((self.var, self.var))
             self.E = np.concatenate((self.E, self.E))
-            kernel_tmp = np.copy(self.kernel)
+            if self.preblur:
+                kernel_tmp = np.dot(self.kernel * self.dw[None,:], self.blur_matrix)
+            else:
+                kernel_tmp = np.copy(self.kernel)
             self.kernel = np.zeros((self.niw, self.nw))
             self.kernel[:self.niw // 2, :] = kernel_tmp.real
             self.kernel[self.niw // 2:, :] = kernel_tmp.imag
@@ -172,13 +185,6 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         self.alpharr = []
         self.uarr = []
         self.bayesConv = []
-
-        #PREBLUR
-        self.preblur = preblur
-        if self.preblur:
-            self.blur_width = blur_width
-            self.blur_matrix = np.exp(-(self.re_axis[:,None] - self.re_axis[None,:])**2 / (2. * self.blur_width**2)) / (self.blur_width * np.sqrt(2.*np.pi))
-            self.blur_matrix = self.blur_matrix * self.dw[None,:]
 
     # =============================================================================================
     # Here, we define the main functions needed for the root finding problem
@@ -241,9 +247,6 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
 
     # compute the log-likelihood function of A
     def chi2(self, A):
-        #PREBLUR
-        if self.preblur:
-            A = np.dot(self.blur_matrix, A)
         return np.sum(self.E * (self.im_data - np.dot(self.kernel, A * self.dw)) ** 2)
 
     def entropy_pos(self, A, u):
@@ -315,10 +318,10 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
 
         result = OptimizationResult()
         result.u_opt = u_opt
-        #PREBLUR
         if self.preblur:
-            A_opt = np.dot(self.blur_matrix, A_opt)
-        result.A_opt = A_opt
+            result.A_opt = np.dot(self.blur_matrix, A_opt*self.dw)
+        else:
+            result.A_opt = A_opt
         result.alpha = alpha
         result.entropy = entr
         result.backtransform = self.backtransform(A_opt)
