@@ -143,7 +143,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
 
         U, S, Vt = np.linalg.svd(self.kernel, full_matrices=False)
 
-        self.n_sv = np.arange(min(self.nw, self.niw))[S > 1e-10][-1]  # number of singular values larger than 1e-10
+        self.n_sv = np.arange(min(self.nw, self.niw))[S > 1e-14][-1]  # number of singular values larger than 1e-10
 
         self.U_svd = np.array(U[:, :self.n_sv], dtype=np.float64, order='C')
         self.V_svd = np.array(Vt[:self.n_sv, :].T, dtype=np.float64, order='C')  # numpy.svd returns V.T
@@ -295,15 +295,21 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             self.compute_f_J = self.compute_f_J_offdiag
             self.singular_to_realspace = self.singular_to_realspace_offdiag
             self.entropy = self.entropy_posneg
-        sol = opt.root(self.compute_f_J,  # function returning function value f and jacobian J (we search root of f)
-                       ustart,  # sensible starting point
-                       method='lm',  # levenberg-marquart method
-                       jac=True,  # already self.compute_f_J returns the jacobian (slightly more efficient in this case)
-                       options={'maxiter': iterfac * self.n_sv,  # max number of lm steps
-                                'factor': 100.,  # scale for initial stepwidth of lm (?)
-                                'diag': np.exp(np.arange(self.n_sv))},
-                       # scale for values to find (assume that they decay exponentially)
-                       args=(alpha))  # additional argument for self.compute_f_J
+
+
+        newton_solver = NewtonOptimizer(self.n_sv, initial_guess=ustart)
+        sol = newton_solver(self.compute_f_J, alpha)
+
+
+        #sol = opt.root(self.compute_f_J,  # function returning function value f and jacobian J (we search root of f)
+        #               ustart,  # sensible starting point
+        #               method='lm',  # levenberg-marquart method
+        #               jac=True,  # already self.compute_f_J returns the jacobian (slightly more efficient in this case)
+        #               options={'maxiter': iterfac * self.n_sv,  # max number of lm steps
+        #                        'factor': 100.,  # scale for initial stepwidth of lm (?)
+        #                        'diag': np.exp(np.arange(self.n_sv))},
+        #               # scale for values to find (assume that they decay exponentially)
+        #               args=(alpha))  # additional argument for self.compute_f_J
         u_opt = sol.x
         A_opt = self.singular_to_realspace(sol.x)
         entr = self.entropy(A_opt, u_opt)
@@ -458,3 +464,81 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             return self.solve_classic()
         elif alpha_determination == 'bryan':
             return self.solve_bryan()
+
+
+class OptimizationResult(object):
+    def __init__(self):
+        pass
+
+
+
+class NewtonOptimizer(object):
+    def __init__(self, opt_size, max_hist=1, initial_guess=None):
+
+        if initial_guess is None:
+            initial_guess = np.zeros((opt_size))
+
+        self.props = [initial_guess]
+        self.res = []
+        self.max_hist = max_hist
+        self.opt_size = opt_size
+        self.return_object = OptimizationResult()
+
+
+    def __call__(self, function_and_jacobian, alpha):
+
+        f, J = function_and_jacobian(self.props[0], alpha)
+        initial_result = self.iteration_function(self.props[0], f, J)
+        self.res.append(initial_result)
+
+
+        counter = 0
+        converged = False
+        while not converged:
+            prop = self.get_proposal()
+            f, J = function_and_jacobian(prop, alpha)
+            res = self.iteration_function(prop, f, J)
+            self.props.append(prop)
+            self.res.append(res)
+            counter += 1
+        #    print(res)
+            converged = (counter>200 or np.max(np.abs(res-prop))<1e-6)
+
+        print('{} iterations, solution {}'.format(counter, res))
+
+        self.return_object.x =  res
+        self.return_object.nfev = counter
+        return self.return_object
+
+
+    def iteration_function(self, proposal, function_vector, jacobian_matrix):
+        result = proposal - np.dot(np.linalg.inv(jacobian_matrix),
+                                    function_vector)
+        return result
+
+
+    def get_proposal(self, mixing=0.35):
+        """Propose a new solution by DIIS Pulay"""
+
+        n_iter = len(self.props)
+        history = min(self.max_hist, n_iter) - 1
+
+        new_proposal = self.props[-1]
+        f_i = self.res[-1] - self.props[-1]
+        update = mixing * f_i
+        if n_iter<2: # linear mixing
+            return new_proposal + update # this is still correct!
+
+        R = np.zeros((self.opt_size, history), dtype=np.float)
+        F = np.zeros((self.opt_size, history), dtype=np.float)
+        for k in range(history):
+            R[:, k] = self.props[n_iter-history+k] - self.props[n_iter-history+k-1]
+            F[:, k] = self.res[n_iter-history+k] - self.res[n_iter-history+k-1]
+        F -= R
+        to_invert = np.dot(F.transpose(), F)
+        inverse = np.linalg.inv(to_invert)
+        h_j = np.dot(F.transpose(), f_i)
+        fact1 = np.dot(R + mixing * F, inverse)
+        update -= np.dot(fact1, h_j)
+
+        return new_proposal + update
