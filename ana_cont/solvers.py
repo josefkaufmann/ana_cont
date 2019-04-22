@@ -1,6 +1,7 @@
 import sys
 import numpy as np
 import scipy.optimize as opt
+
 if sys.version_info[0] > 2:
     try:
         from . import pade
@@ -12,12 +13,15 @@ else:
     except:
         pass
 
+
 class AnalyticContinuationSolver(object):
     pass
+
 
 # class for return value of maxent_optimization
 class OptimizationResult:
     pass
+
 
 class PadeSolver(AnalyticContinuationSolver):
     def __init__(self, im_axis, re_axis, im_data):
@@ -26,29 +30,27 @@ class PadeSolver(AnalyticContinuationSolver):
         self.im_data = im_data
 
         # Compute the Pade coefficients
-        self.a = pade.compute_coefficients(1j*self.im_axis, self.im_data)
+        self.a = pade.compute_coefficients(1j * self.im_axis, self.im_data)
 
     def check(self, show_plot=False):
         # As a check, look if Pade approximant smoothly interpolates the original data
-        self.ivcheck = np.linspace(0, 2*np.max(self.im_axis), num=500)
-        self.check = pade.C(self.ivcheck*1j, 1j*self.im_axis,
+        self.ivcheck = np.linspace(0, 2 * np.max(self.im_axis), num=500)
+        self.check = pade.C(self.ivcheck * 1j, 1j * self.im_axis,
                             self.im_data, self.a)
 
-    def solve(self,show_plot=False):
+    def solve(self, show_plot=False):
         # Compute the Pade approximation on the real axis
-        self.result = pade.C(self.re_axis, 1j*self.im_axis,
+        self.result = pade.C(self.re_axis, 1j * self.im_axis,
                              self.im_data, self.a)
-
 
         return self.result
 
 
-
 class MaxentSolverSVD(AnalyticContinuationSolver):
     def __init__(self, im_axis, re_axis, im_data,
-                 kernel_mode='', model=None, 
+                 kernel_mode='', model=None,
                  stdev=None, cov=None,
-                 beta=None, offdiag=False, 
+                 beta=None, offdiag=False,
                  preblur=False, blur_width=0., **kwargs):
         self.kernel_mode = kernel_mode
         self.im_axis = im_axis
@@ -76,7 +78,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             self.ucov = np.eye(self.im_axis.shape[0])
         elif stdev is None and cov is not None:
             self.cov = cov
-            self.var, self.ucov = np.linalg.eigh(self.cov) # go to eigenbasis of covariance matrix
+            self.var, self.ucov = np.linalg.eigh(self.cov)  # go to eigenbasis of covariance matrix
 
         self.im_data = np.dot(self.ucov.T.conj(), self.im_data)
         self.E = 1. / self.var
@@ -95,7 +97,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
                               1. - np.exp(-self.re_axis[None, :]))
             self.kernel[:, 0] = 1.  # analytically with de l'Hospital
         elif self.kernel_mode == 'freq_fermionic':
-            self.kernel = 1./(1j * self.im_axis[:, None] - self.re_axis[None, :])
+            self.kernel = 1. / (1j * self.im_axis[:, None] - self.re_axis[None, :])
         elif self.kernel_mode == 'time_fermionic':
             self.kernel = np.exp(-self.im_axis[:, None] * self.re_axis[None, :]) \
                           / (1. + np.exp(-self.re_axis[None, :]))
@@ -112,18 +114,19 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             print('Unknown kernel')
             sys.exit()
 
-        #PREBLUR
+        # PREBLUR
         self.preblur = preblur
         if self.preblur:
             self.blur_width = blur_width
-            self.blur_matrix = np.exp(-(self.re_axis[:,None] - self.re_axis[None,:])**2 / (2. * self.blur_width**2)) / (self.blur_width * np.sqrt(2.*np.pi))
-            #self.blur_matrix = self.blur_matrix * self.dw[None,:]
+            self.blur_matrix = np.exp(
+                -(self.re_axis[:, None] - self.re_axis[None, :]) ** 2 / (2. * self.blur_width ** 2)) / (
+                               self.blur_width * np.sqrt(2. * np.pi))
+            # self.blur_matrix = self.blur_matrix * self.dw[None,:]
         else:
             self.blur_matrix = np.eye(self.re_axis.shape[0])
 
         # rotate kernel to eigenbasis of covariance matrix
         self.kernel = np.dot(self.ucov.T.conj(), self.kernel)
-
 
         # special treatment for complex data of fermionic frequency kernel
         if kernel_mode == 'freq_fermionic':
@@ -132,14 +135,13 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             self.var = np.concatenate((self.var, self.var))
             self.E = np.concatenate((self.E, self.E))
             if self.preblur:
-                kernel_tmp = np.dot(self.kernel * self.dw[None,:], self.blur_matrix)
+                kernel_tmp = np.dot(self.kernel * self.dw[None, :], self.blur_matrix)
             else:
                 kernel_tmp = np.copy(self.kernel)
             self.kernel = np.zeros((self.niw, self.nw))
             self.kernel[:self.niw // 2, :] = kernel_tmp.real
             self.kernel[self.niw // 2:, :] = kernel_tmp.imag
             del kernel_tmp
-        
 
         U, S, Vt = np.linalg.svd(self.kernel, full_matrices=False)
 
@@ -160,13 +162,12 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         # =============================================================================================
         print('Precomputation of coefficient matrices...')
 
-
-        if not self.offdiag:# precompute matrices W_ml (W2), W_mil (W3)
+        if not self.offdiag:  # precompute matrices W_ml (W2), W_mil (W3)
             self.W2 = np.einsum('k,km,m,kn,n,ln,l,l->ml', self.E, self.U_svd, self.Xi_svd, self.U_svd, self.Xi_svd,
                                 self.V_svd, self.dw, self.model)
             self.W3 = self.W2[:, None, :] * (self.V_svd[None, :, :]).transpose((0, 2, 1))
 
-        else:# precompute matrices M_ml (M2), M_mil (M3)
+        else:  # precompute matrices M_ml (M2), M_mil (M3)
             self.M2 = np.einsum('k,km,m,kn,n,ln,l->ml', self.E, self.U_svd, self.Xi_svd, self.U_svd, self.Xi_svd,
                                 self.V_svd, self.dw)
             self.M3 = self.M2[:, None, :] * (self.V_svd[None, :, :]).transpose((0, 2, 1))
@@ -213,7 +214,6 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         J = alpha * np.eye(self.n_sv) + np.dot(self.M3, a2)
         return f, J
 
-
     # =============================================================================================
     # Some auxiliary functions
     # =============================================================================================
@@ -227,9 +227,6 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         w = np.exp(v)
         return self.model_plus * w - self.model_minus / w
 
-
-
-
     # backtransformation from real to imaginary axis
     def backtransform(self, A):
         """ Backtransformation from real to imaginary axis.
@@ -238,11 +235,11 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         Note: this function is not a bottleneck. 
         """
         if self.kernel_mode == 'freq_fermionic':
-            kernel = self.kernel[:self.niw//2,:] + 1j * self.kernel[self.niw//2:, :]
+            kernel = self.kernel[:self.niw // 2, :] + 1j * self.kernel[self.niw // 2:, :]
         else:
             kernel = np.copy(self.kernel)
         kernel = np.dot(self.ucov, kernel)
-        bt = np.dot(kernel, A*self.dw)
+        bt = np.dot(kernel, A * self.dw)
         return bt
 
     # compute the log-likelihood function of A
@@ -253,11 +250,10 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         return np.trapz(A - self.model - A * np.dot(self.V_svd, u), self.re_axis)
 
     def entropy_posneg(self, A, u):
-        root = np.sqrt(A**2 + 4. * self.model_plus * self.model_minus)
+        root = np.sqrt(A ** 2 + 4. * self.model_plus * self.model_minus)
         return np.trapz(root - self.model_plus - self.model_minus
-                        - A*np.log((root + A) / (2.*self.model_plus)),
+                        - A * np.log((root + A) / (2. * self.model_plus)),
                         self.re_axis)
-
 
     # Bayesian convergence criterion for classic maxent (maximum of probablility distribution)
     def bayes_conv(self, A, entr, alpha):
@@ -269,7 +265,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         return ng, tr, conv
 
     def bayes_conv_offdiag(self, A, entr, alpha):
-        A_sq = np.power((A**2 + 4. * self.model_plus * self.model_minus) / self.dw**2, 0.25)
+        A_sq = np.power((A ** 2 + 4. * self.model_plus * self.model_minus) / self.dw ** 2, 0.25)
         LambdaMatrix = A_sq[:, None] * self.d2chi2 * A_sq[None, :]
         lam = np.linalg.eigvalsh(LambdaMatrix)
         ng = -2. * alpha * entr
@@ -296,12 +292,10 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             self.singular_to_realspace = self.singular_to_realspace_offdiag
             self.entropy = self.entropy_posneg
 
-
         newton_solver = NewtonOptimizer(self.n_sv, initial_guess=ustart)
         sol = newton_solver(self.compute_f_J, alpha)
 
-
-        #sol = opt.root(self.compute_f_J,  # function returning function value f and jacobian J (we search root of f)
+        # sol = opt.root(self.compute_f_J,  # function returning function value f and jacobian J (we search root of f)
         #               ustart,  # sensible starting point
         #               method='lm',  # levenberg-marquart method
         #               jac=True,  # already self.compute_f_J returns the jacobian (slightly more efficient in this case)
@@ -320,12 +314,12 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             ng, tr, conv = self.bayes_conv_offdiag(A_opt, entr, alpha)
         norm = np.trapz(A_opt, self.re_axis)
         print('log10(alpha)={:6.4f}\tchi2={:5.4e}\tS={:5.4e}\ttr={:5.4f}\tconv={:1.3},\tnfev={},\tnorm={}'.format(
-                np.log10(alpha), chisq, entr, tr, conv, sol.nfev, norm))
+            np.log10(alpha), chisq, entr, tr, conv, sol.nfev, norm))
 
         result = OptimizationResult()
         result.u_opt = u_opt
         if self.preblur:
-            result.A_opt = np.dot(self.blur_matrix, A_opt*self.dw)
+            result.A_opt = np.dot(self.blur_matrix, A_opt * self.dw)
         else:
             result.A_opt = A_opt
         result.alpha = alpha
@@ -471,9 +465,8 @@ class OptimizationResult(object):
         pass
 
 
-
 class NewtonOptimizer(object):
-    def __init__(self, opt_size, max_hist=1, initial_guess=None):
+    def __init__(self, opt_size, max_hist=1, max_iter=3000, initial_guess=None):
 
         if initial_guess is None:
             initial_guess = np.zeros((opt_size))
@@ -481,9 +474,14 @@ class NewtonOptimizer(object):
         self.props = [initial_guess]
         self.res = []
         self.max_hist = max_hist
+        self.max_iter = max_iter
         self.opt_size = opt_size
         self.return_object = OptimizationResult()
 
+    def iteration_function(self, proposal, function_vector, jacobian_matrix):
+        result = proposal - np.dot(np.linalg.inv(jacobian_matrix),
+                                   function_vector)
+        return result
 
     def __call__(self, function_and_jacobian, alpha):
 
@@ -491,31 +489,24 @@ class NewtonOptimizer(object):
         initial_result = self.iteration_function(self.props[0], f, J)
         self.res.append(initial_result)
 
-
         counter = 0
         converged = False
         while not converged:
             prop = self.get_proposal()
             f, J = function_and_jacobian(prop, alpha)
-            res = self.iteration_function(prop, f, J)
+            result = self.iteration_function(prop, f, J)
             self.props.append(prop)
-            self.res.append(res)
+            self.res.append(result)
+            converged = (counter > self.max_iter or np.max(np.abs((result - prop)/result)) < 1e-6)
             counter += 1
-        #    print(res)
-            converged = (counter>200 or np.max(np.abs(res-prop))<1e-6)
 
-        print('{} iterations, solution {}'.format(counter, res))
+        print('{} iterations, solution {}'.format(counter, result))
 
-        self.return_object.x =  res
+        self.return_object.x = result
         self.return_object.nfev = counter
+        np.save('props', self.props)
+        np.save('res', self.res)
         return self.return_object
-
-
-    def iteration_function(self, proposal, function_vector, jacobian_matrix):
-        result = proposal - np.dot(np.linalg.inv(jacobian_matrix),
-                                    function_vector)
-        return result
-
 
     def get_proposal(self, mixing=0.35):
         """Propose a new solution by DIIS Pulay"""
@@ -523,22 +514,21 @@ class NewtonOptimizer(object):
         n_iter = len(self.props)
         history = min(self.max_hist, n_iter) - 1
 
-        new_proposal = self.props[-1]
-        f_i = self.res[-1] - self.props[-1]
+        new_proposal = self.props[n_iter - 1]
+        f_i = self.res[n_iter - 1] - self.props[n_iter - 1]
         update = mixing * f_i
-        if n_iter<2: # linear mixing
-            return new_proposal + update # this is still correct!
+        if n_iter < 10 or history==0:# or n_iter%4!=0:  # linear mixing
+            return new_proposal + update  # this is still correct!
 
         R = np.zeros((self.opt_size, history), dtype=np.float)
-        F = np.zeros((self.opt_size, history), dtype=np.float)
+        G = np.zeros((self.opt_size, history), dtype=np.float)
         for k in range(history):
-            R[:, k] = self.props[n_iter-history+k] - self.props[n_iter-history+k-1]
-            F[:, k] = self.res[n_iter-history+k] - self.res[n_iter-history+k-1]
-        F -= R
-        to_invert = np.dot(F.transpose(), F)
-        inverse = np.linalg.inv(to_invert)
+            R[:, k] = self.props[n_iter - history + k] - self.props[n_iter - history + k - 1]
+            G[:, k] = self.res[n_iter - history + k] - self.res[n_iter - history + k - 1]
+        F = G - R
+        inverse = np.linalg.inv(np.dot(F.transpose(), F))
         h_j = np.dot(F.transpose(), f_i)
         fact1 = np.dot(R + mixing * F, inverse)
-        update -= np.dot(fact1, h_j)
+        update = mixing * f_i - np.dot(fact1, h_j)
 
         return new_proposal + update
