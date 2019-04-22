@@ -295,7 +295,8 @@ class AnalyticContinuationProblem(object):
             self.solver=solvers.MaxentSolverSVD(
                 self.im_axis, self.re_axis, self.im_data,
                 kernel_mode=self.kernel_mode,
-                model=kwargs['model'], stdev=kwargs['stdev'], offdiag=kwargs['offdiag'])
+#                model=kwargs['model'], stdev=kwargs['stdev'], offdiag=kwargs['offdiag'])
+                **kwargs)
             ustart=kwargs['ustart'][:self.solver.n_sv]
             sol = self.solver.maxent_optimization(kwargs['alpha'],ustart)
             if self.kernel_mode == 'time_fermionic':

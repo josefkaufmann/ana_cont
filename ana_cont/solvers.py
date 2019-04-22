@@ -324,6 +324,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             result.A_opt = A_opt
         result.alpha = alpha
         result.entropy = entr
+        result.chi2 = chisq
         result.backtransform = self.backtransform(A_opt)
         result.n_good = ng
         result.trace = tr
