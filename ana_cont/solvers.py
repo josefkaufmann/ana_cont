@@ -51,13 +51,15 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
                  kernel_mode='', model=None,
                  stdev=None, cov=None,
                  beta=None, offdiag=False,
-                 preblur=False, blur_width=0., **kwargs):
+                 preblur=False, blur_width=0.,
+                 optimizer='scipy_lm', **kwargs):
         self.kernel_mode = kernel_mode
         self.im_axis = im_axis
         self.re_axis = re_axis
         self.im_data = im_data
         print(self.im_data.shape)
         self.offdiag = offdiag
+        self.optimizer = optimizer
 
         self.nw = self.re_axis.shape[0]
         self.wmin = self.re_axis[0]
@@ -292,18 +294,20 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             self.singular_to_realspace = self.singular_to_realspace_offdiag
             self.entropy = self.entropy_posneg
 
-        newton_solver = NewtonOptimizer(self.n_sv, initial_guess=ustart)
-        sol = newton_solver(self.compute_f_J, alpha)
+        if self.optimizer == 'newton':
+            newton_solver = NewtonOptimizer(self.n_sv, initial_guess=ustart)
+            sol = newton_solver(self.compute_f_J, alpha)
+        elif self.optimizer == 'scipy_lm':
+            sol = opt.root(self.compute_f_J,  # function returning function value f and jacobian J (we search root of f)
+                          ustart,  # sensible starting point
+                          method='lm',  # levenberg-marquart method
+                          jac=True,  # already self.compute_f_J returns the jacobian (slightly more efficient in this case)
+                          options={'maxiter': iterfac * self.n_sv,  # max number of lm steps
+                                   'factor': 100.,  # scale for initial stepwidth of lm (?)
+                                   'diag': np.exp(np.arange(self.n_sv))},
+                          # scale for values to find (assume that they decay exponentially)
+                          args=(alpha))  # additional argument for self.compute_f_J
 
-        # sol = opt.root(self.compute_f_J,  # function returning function value f and jacobian J (we search root of f)
-        #               ustart,  # sensible starting point
-        #               method='lm',  # levenberg-marquart method
-        #               jac=True,  # already self.compute_f_J returns the jacobian (slightly more efficient in this case)
-        #               options={'maxiter': iterfac * self.n_sv,  # max number of lm steps
-        #                        'factor': 100.,  # scale for initial stepwidth of lm (?)
-        #                        'diag': np.exp(np.arange(self.n_sv))},
-        #               # scale for values to find (assume that they decay exponentially)
-        #               args=(alpha))  # additional argument for self.compute_f_J
         u_opt = sol.x
         A_opt = self.singular_to_realspace(sol.x)
         entr = self.entropy(A_opt, u_opt)
@@ -467,7 +471,7 @@ class OptimizationResult(object):
 
 
 class NewtonOptimizer(object):
-    def __init__(self, opt_size, max_hist=1, max_iter=3000, initial_guess=None):
+    def __init__(self, opt_size, max_hist=1, max_iter=30000, initial_guess=None):
 
         if initial_guess is None:
             initial_guess = np.zeros((opt_size))
@@ -518,6 +522,9 @@ class NewtonOptimizer(object):
         new_proposal = self.props[n_iter - 1]
         f_i = self.res[n_iter - 1] - self.props[n_iter - 1]
         update = mixing * f_i
+        return new_proposal + update
+
+        # For the singular-space algorithm, DIIS seems to fail...
         if n_iter < 10 or history==0:# or n_iter%4!=0:  # linear mixing
             return new_proposal + update  # this is still correct!
 
