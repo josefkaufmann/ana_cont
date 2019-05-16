@@ -505,7 +505,7 @@ class NewtonOptimizer(object):
             converged = (counter > self.max_iter or np.max(np.abs((result - prop)/result)) < 1e-6)
             counter += 1
 
-        print('{} iterations, solution {}'.format(counter, result))
+        #print('{} iterations, solution {}'.format(counter, result))
 
         self.return_object.x = result
         self.return_object.nfev = counter
