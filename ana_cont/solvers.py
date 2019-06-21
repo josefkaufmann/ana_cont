@@ -1,6 +1,7 @@
 import sys
 import numpy as np
 import scipy.optimize as opt
+import scipy.interpolate as interp
 
 if sys.version_info[0] > 2:
     try:
@@ -444,6 +445,68 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         sol.backtransform = self.backtransform(A_opt)
         return sol, optarr
 
+    def solve_chi2kink(self, alpha_start=1000, alpha_div=2., interactive=False):
+        """Determine optimal alpha by searching for the kink in log(chi2) (log(alpha))"""
+        if interactive:
+            import matplotlib.pyplot as plt
+
+        alpha = alpha_start
+        chi = []
+        alphas = []
+        optarr = []
+        ustart=np.zeros((self.n_sv))
+        while True:
+            o = self.maxent_optimization(alpha=alpha, ustart=ustart)
+            optarr.append(o)
+            ustart = o.u_opt
+            chi.append(o.chi2)
+            alphas.append(alpha)
+            alpha = alpha / alpha_div
+            if alpha < 0.1:
+                break
+
+        alphas = np.asarray(alphas)
+        chis = np.asarray(chi)
+
+        def fitfun(x, k1, d1, k2, d2):
+            temp = 100.
+            a = (d2 - d1) / (k1 - k2)
+            part1 = (k1 * x + d1) / (1. + np.exp(temp * (x - a)))
+            part2 = (k2 * x + d2) / (1. + np.exp(-temp * (x - a)))
+            return part1 + part2
+
+        popt, pcov = opt.curve_fit(fitfun, np.log10(alphas), np.log10(chis), p0=(0., 1., 5., -1.))
+
+        k1, d1, k2, d2 = popt
+        a_kink = (d2 - d1) / (k1 - k2)
+        chi2_interp = interp.UnivariateSpline(np.log10(alphas)[::-1], np.log10(chis)[::-1], k=3, s=0)
+
+        def rootfun(x):
+            return chi2_interp(x) - fitfun(a_kink, *popt)
+            # return chi2_interp(x) - d1 - k1 * x
+
+        def derifun(x):
+            return chi2_interp.derivative()(x)# - k1
+
+        a_intersect = opt.newton(rootfun, a_kink, fprime=derifun)
+        a_opt = a_intersect  # 0.5 * (a_intersect + a_kink)
+        alpha_opt = 10. ** a_opt
+        print('Optimal log alpha {}'.format(a_opt))
+
+        if interactive:
+            plt.plot(np.log10(alphas), np.log10(chis), label='chi2')
+            plt.plot(np.log10(alphas), fitfun(np.log10(alphas), *popt), label='fit2lin')
+            plt.plot(np.log10(alphas), chi2_interp(np.log10(alphas)), label='chi2 fit')
+            plt.plot(a_kink, chi2_interp(a_kink), marker='.', color='brown', label='kink')
+            plt.plot(a_intersect, chi2_interp(a_intersect), marker='.', color='red', label='intersect')
+            plt.legend()
+            plt.show()
+
+        sol = self.maxent_optimization(alpha_opt, ustart)
+
+        return sol, optarr
+
+
     # calculate the deviation for a callable function obs
     # this feature is still experimental
     def error_propagation(self, obs, args):
@@ -463,6 +526,10 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             return self.solve_classic()
         elif alpha_determination == 'bryan':
             return self.solve_bryan()
+        elif alpha_determination == 'chi2kink':
+            return self.solve_chi2kink()
+        else:
+            raise ValueError('Unknown alpha determination mode')
 
 
 class OptimizationResult(object):
