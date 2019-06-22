@@ -455,11 +455,14 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         optarr = []
         ustart=np.zeros((self.n_sv))
         while True:
-            o = self.maxent_optimization(alpha=alpha, ustart=ustart)
-            optarr.append(o)
-            ustart = o.u_opt
-            chi.append(o.chi2)
-            alphas.append(alpha)
+            try:
+                o = self.maxent_optimization(alpha=alpha, ustart=ustart)
+                optarr.append(o)
+                ustart = o.u_opt
+                chi.append(o.chi2)
+                alphas.append(alpha)
+            except:
+                print('Optimization at alpha={} failed.'.format(alpha))
             alpha = alpha / alpha_div
             if alpha < 1e-3:
                 break
@@ -530,7 +533,7 @@ class OptimizationResult(object):
 
 
 class NewtonOptimizer(object):
-    def __init__(self, opt_size, max_hist=1, max_iter=30000, initial_guess=None):
+    def __init__(self, opt_size, max_hist=1, max_iter=1000, initial_guess=None):
 
         if initial_guess is None:
             initial_guess = np.zeros((opt_size))
@@ -563,7 +566,8 @@ class NewtonOptimizer(object):
             self.res.append(result)
             converged = (counter > self.max_iter or np.max(np.abs((result - prop)/result)) < 1e-6)
             counter += 1
-
+        if counter > self.max_iter:
+            raise RuntimeWarning('Failed to get optimization result in {} iterations'.format(self.max_iter))
         #print('{} iterations, solution {}'.format(counter, result))
 
         self.return_object.x = result
