@@ -58,7 +58,6 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         self.im_axis = im_axis
         self.re_axis = re_axis
         self.im_data = im_data
-        print(self.im_data.shape)
         self.offdiag = offdiag
         self.optimizer = optimizer
 
@@ -445,7 +444,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         sol.backtransform = self.backtransform(A_opt)
         return sol, optarr
 
-    def solve_chi2kink(self, alpha_start=1000, alpha_div=2., interactive=False):
+    def solve_chi2kink(self, alpha_start=1e9, alpha_div=10., interactive=False, **kwargs):
         """Determine optimal alpha by searching for the kink in log(chi2) (log(alpha))"""
         if interactive:
             import matplotlib.pyplot as plt
@@ -462,34 +461,24 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             chi.append(o.chi2)
             alphas.append(alpha)
             alpha = alpha / alpha_div
-            if alpha < 0.1:
+            if alpha < 1e-3:
                 break
 
         alphas = np.asarray(alphas)
         chis = np.asarray(chi)
 
-        def fitfun(x, k1, d1, k2, d2):
-            temp = 100.
-            a = (d2 - d1) / (k1 - k2)
-            part1 = (k1 * x + d1) / (1. + np.exp(temp * (x - a)))
-            part2 = (k2 * x + d2) / (1. + np.exp(-temp * (x - a)))
-            return part1 + part2
+        def fitfun(x, a, b, c, d):
+            return a + b / (1. + np.exp(-d * (x - c)))
 
-        popt, pcov = opt.curve_fit(fitfun, np.log10(alphas), np.log10(chis), p0=(0., 1., 5., -1.))
+        popt, pcov = opt.curve_fit(fitfun, np.log10(alphas), np.log10(chis), p0=(0., 5., 2., 0.))
 
-        k1, d1, k2, d2 = popt
-        a_kink = (d2 - d1) / (k1 - k2)
-        chi2_interp = interp.UnivariateSpline(np.log10(alphas)[::-1], np.log10(chis)[::-1], k=3, s=0)
+        a, b, c, d = popt
+        if interactive:
+            print('Fit parameters {}'.format(popt))
+        if d < 0.:
+            raise RuntimeError('Fermi fit temperature negative.')
 
-        def rootfun(x):
-            return chi2_interp(x) - fitfun(a_kink, *popt)
-            # return chi2_interp(x) - d1 - k1 * x
-
-        def derifun(x):
-            return chi2_interp.derivative()(x)# - k1
-
-        a_intersect = opt.newton(rootfun, a_kink, fprime=derifun)
-        a_opt = a_intersect  # 0.5 * (a_intersect + a_kink)
+        a_opt = c - 2.5 / d
         alpha_opt = 10. ** a_opt
         print('Optimal log alpha {}'.format(a_opt))
 
@@ -497,12 +486,13 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             plt.plot(np.log10(alphas), np.log10(chis), label='chi2')
             plt.plot(np.log10(alphas), fitfun(np.log10(alphas), *popt), label='fit2lin')
             plt.plot(np.log10(alphas), chi2_interp(np.log10(alphas)), label='chi2 fit')
-            plt.plot(a_kink, chi2_interp(a_kink), marker='.', color='brown', label='kink')
-            plt.plot(a_intersect, chi2_interp(a_intersect), marker='.', color='red', label='intersect')
-            plt.legend()
-            plt.show()
 
         sol = self.maxent_optimization(alpha_opt, ustart)
+
+        if interactive:
+            plt.plot(a_opt, np.log10(sol.chi2), marker='s', color='red', label='opt')
+            plt.legend()
+            plt.show()
 
         return sol, optarr
 
@@ -521,13 +511,15 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         return deviation
 
     # switch for different types of alpha selection
-    def solve(self, alpha_determination='classic'):
+    def solve(self, **kwargs):
+        print('alpha_determination', kwargs['alpha_determination'])
+        alpha_determination = kwargs['alpha_determination']
         if alpha_determination == 'classic':
             return self.solve_classic()
         elif alpha_determination == 'bryan':
             return self.solve_bryan()
         elif alpha_determination == 'chi2kink':
-            return self.solve_chi2kink()
+            return self.solve_chi2kink(**kwargs)
         else:
             raise ValueError('Unknown alpha determination mode')
 

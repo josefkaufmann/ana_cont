@@ -269,9 +269,7 @@ class AnalyticContinuationProblem(object):
                 self.im_axis, self.re_axis, self.im_data,
                 kernel_mode = self.kernel_mode, 
                 **kwargs)
-                #model = kwargs['model'],
-                #stdev = kwargs['stdev'], offdiag=kwargs['offdiag'], preblur=kwargs['preblur'], blur_width=kwargs['blur_width'])
-            sol = self.solver.solve(alpha_determination = kwargs['alpha_determination'])
+            sol = self.solver.solve(**kwargs)
             # TODO implement a postprocessing method, where the following should be done more carefully
             if self.kernel_mode == 'time_fermionic':
                 sol[0].A_opt *= self.beta
