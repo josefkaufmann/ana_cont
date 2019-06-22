@@ -515,7 +515,6 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
 
     # switch for different types of alpha selection
     def solve(self, **kwargs):
-        print('alpha_determination', kwargs['alpha_determination'])
         alpha_determination = kwargs['alpha_determination']
         if alpha_determination == 'classic':
             return self.solve_classic()
