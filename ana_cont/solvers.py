@@ -48,12 +48,22 @@ class PadeSolver(AnalyticContinuationSolver):
 
 
 class MaxentSolverSVD(AnalyticContinuationSolver):
+
+
+    def log(self, msg):
+        if self.verbose: print(msg)
+
+
     def __init__(self, im_axis, re_axis, im_data,
                  kernel_mode='', model=None,
                  stdev=None, cov=None,
                  beta=None, offdiag=False,
                  preblur=False, blur_width=0.,
-                 optimizer='scipy_lm', **kwargs):
+                 optimizer='scipy_lm', 
+                 verbose=True, **kwargs):
+
+        self.verbose = verbose
+
         self.kernel_mode = kernel_mode
         self.im_axis = im_axis
         self.re_axis = re_axis
@@ -153,16 +163,16 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         self.V_svd = np.array(Vt[:self.n_sv, :].T, dtype=np.float64, order='C')  # numpy.svd returns V.T
         self.Xi_svd = S[:self.n_sv]
 
-        print('{} data points on real axis'.format(self.nw))
-        print('{} data points on imaginary axis'.format(self.niw))
-        print('{} significant singular values'.format(self.n_sv))
+        self.log('{} data points on real axis'.format(self.nw))
+        self.log('{} data points on imaginary axis'.format(self.niw))
+        self.log('{} significant singular values'.format(self.n_sv))
 
         # =============================================================================================
         # First, precompute as much as possible
         # The precomputation of W2 is done in C, this saves a lot of time!
         # The other precomputations need less loop, can stay in python for the moment.
         # =============================================================================================
-        print('Precomputation of coefficient matrices...')
+        self.log('Precomputation of coefficient matrices...')
 
         if not self.offdiag:  # precompute matrices W_ml (W2), W_mil (W3)
             self.W2 = np.einsum('k,km,m,kn,n,ln,l,l->ml', self.E, self.U_svd, self.Xi_svd, self.U_svd, self.Xi_svd,
@@ -317,7 +327,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         else:
             ng, tr, conv = self.bayes_conv_offdiag(A_opt, entr, alpha)
         norm = np.trapz(A_opt, self.re_axis)
-        print('log10(alpha)={:6.4f}\tchi2={:5.4e}\tS={:5.4e}\ttr={:5.4f}\tconv={:1.3},\tnfev={},\tnorm={}'.format(
+        self.log('log10(alpha)={:6.4f}\tchi2={:5.4e}\tS={:5.4e}\ttr={:5.4f}\tconv={:1.3},\tnfev={},\tnorm={}'.format(
             np.log10(alpha), chisq, entr, tr, conv, sol.nfev, norm))
 
         result = OptimizationResult()
@@ -359,7 +369,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             self.compute_f_J = self.compute_f_J_offdiag
             self.singular_to_realspace = self.singular_to_realspace_offdiag
             self.entropy = self.entropy_posneg
-        print('Solving...')
+        self.log('Solving...')
         optarr = []
         alpha = 10 ** 6
         self.ustart = np.zeros((self.n_sv))
@@ -387,7 +397,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
                                                - np.log10(alpharr[-2])) \
                    / (np.log10(bayes_conv[-1]) - np.log10(bayes_conv[-2]))
         alphaOpt = 10 ** expOpt
-        print('prediction for optimal alpha:', alphaOpt, 'log10(alphaOpt)=', np.log10(alphaOpt))
+        self.log('prediction for optimal alpha:', alphaOpt, 'log10(alphaOpt)=', np.log10(alphaOpt))
 
         # Starting from the predicted value of alpha, and starting the optimization at the solution for the next-lowest alpha,
         # we find the optimal alpha by newton's root finding method.
@@ -400,7 +410,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
 
         ustart = optarr[-2].u_opt
         alpha_opt = opt.newton(root_fun, alphaOpt, tol=1e-6, args=(ustart,))
-        print('final optimal alpha:', alpha_opt, 'log10(alpha_opt)=', np.log10(alpha_opt))
+        self.log('final optimal alpha:', alpha_opt, 'log10(alpha_opt)=', np.log10(alpha_opt))
 
         sol = self.maxent_optimization(alpha_opt, ustart, iterfac=250000)
         self.alpha_opt = alpha_opt
@@ -410,7 +420,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
     # Bryan's maxent calculates an average of spectral functions,
     # weighted by their Bayesian probability
     def solve_bryan(self, alphastart=500, alphadiv=1.1):
-        print('Solving...')
+        self.log('Solving...')
         optarr = []
         alpha = alphastart
         self.ustart = np.zeros((self.n_sv))
@@ -483,7 +493,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
 
         a_opt = c - 2.5 / d
         alpha_opt = 10. ** a_opt
-        print('Optimal log alpha {}'.format(a_opt))
+        self.log('Optimal log alpha {}'.format(a_opt))
 
         if interactive:
             plt.plot(np.log10(alphas), np.log10(chis), label='chi2')
@@ -532,7 +542,7 @@ class OptimizationResult(object):
 
 
 class NewtonOptimizer(object):
-    def __init__(self, opt_size, max_hist=1, max_iter=1000, initial_guess=None):
+    def __init__(self, opt_size, max_hist=1, max_iter=200, initial_guess=None):
 
         if initial_guess is None:
             initial_guess = np.zeros((opt_size))
@@ -563,7 +573,7 @@ class NewtonOptimizer(object):
             result = self.iteration_function(prop, f, J)
             self.props.append(prop)
             self.res.append(result)
-            converged = (counter > self.max_iter or np.max(np.abs((result - prop)/result)) < 1e-6)
+            converged = (counter > self.max_iter or np.max(np.abs(result - prop)) < 1e-6)
             counter += 1
         if counter > self.max_iter:
             raise RuntimeWarning('Failed to get optimization result in {} iterations'.format(self.max_iter))
@@ -571,8 +581,6 @@ class NewtonOptimizer(object):
 
         self.return_object.x = result
         self.return_object.nfev = counter
-        np.save('props', self.props)
-        np.save('res', self.res)
         return self.return_object
 
     def get_proposal(self, mixing=0.35):
