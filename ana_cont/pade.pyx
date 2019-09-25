@@ -14,8 +14,8 @@ def compute_coefficients(zi,ui):
   n=len(zi)
   g=np.zeros((n,n),dtype=np.complex)
   g[:,0]=ui
-  for i in xrange(n):
-    for j in xrange(1,i+1):
+  for i in range(n):
+    for j in range(1,i+1):
       g[i,j]=(g[j-1,j-1]-g[i,j-1])/((zi[i]-zi[j-1])*g[i,j-1])
   return np.diag(g)
 
@@ -24,7 +24,7 @@ def a(zi,ui):
   cdef int n
   n=len(zi)
   alist=np.zeros((n-1),dtype=np.double)
-  for i in xrange(1,n):
+  for i in range(1,n):
     alist[i-1]=g(i,i,zi,ui)
   return alist
 
