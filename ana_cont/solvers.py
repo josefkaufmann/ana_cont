@@ -392,12 +392,12 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
 
         # log(conv) is approximately a linear function from log(alpha),
         # based on this we can predict the optimal alpha quite precisely.
-        expOpt = np.log10(alpharr[-2]) \
+        exp_opt = np.log10(alpharr[-2]) \
                  - np.log10(bayes_conv[-2]) * (np.log10(alpharr[-1])
                                                - np.log10(alpharr[-2])) \
                    / (np.log10(bayes_conv[-1]) - np.log10(bayes_conv[-2]))
-        alphaOpt = 10 ** expOpt
-        self.log('prediction for optimal alpha:', alphaOpt, 'log10(alphaOpt)=', np.log10(alphaOpt))
+        alpha_opt = 10 ** exp_opt
+        self.log('prediction for optimal alpha: {}, log10(alpha_opt) = {}'.format(alpha_opt, np.log10(alpha_opt)))
 
         # Starting from the predicted value of alpha, and starting the optimization at the solution for the next-lowest alpha,
         # we find the optimal alpha by newton's root finding method.
@@ -409,8 +409,8 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             return res.convergence - 1.
 
         ustart = optarr[-2].u_opt
-        alpha_opt = opt.newton(root_fun, alphaOpt, tol=1e-6, args=(ustart,))
-        self.log('final optimal alpha:', alpha_opt, 'log10(alpha_opt)=', np.log10(alpha_opt))
+        alpha_opt = opt.newton(root_fun, alpha_opt, tol=1e-6, args=(ustart,))
+        self.log('final optimal alpha: {}, log10(alpha_opt) = '.format(alpha_opt, np.log10(alpha_opt)))
 
         sol = self.maxent_optimization(alpha_opt, ustart, iterfac=250000)
         self.alpha_opt = alpha_opt
@@ -573,7 +573,7 @@ class NewtonOptimizer(object):
             result = self.iteration_function(prop, f, J)
             self.props.append(prop)
             self.res.append(result)
-            converged = (counter > self.max_iter or np.max(np.abs(result - prop)) < 1e-6)
+            converged = (counter > self.max_iter or np.max(np.abs(result - prop)) < 1e-4)
             counter += 1
         if counter > self.max_iter:
             raise RuntimeWarning('Failed to get optimization result in {} iterations'.format(self.max_iter))
