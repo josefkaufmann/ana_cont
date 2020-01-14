@@ -211,8 +211,10 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
     def compute_f_J_diag(self, u, alpha):
         v = np.dot(self.V_svd, u)
         w = np.exp(v)
-        f = alpha * u + np.dot(self.W2, w) - self.Evi
-        J = alpha * np.eye(self.n_sv) + np.dot(self.W3, w)
+        term_1 = np.dot(self.W2, w)
+        term_2 = np.dot(self.W3, w)
+        f = alpha * u + term_1 - self.Evi
+        J = alpha * np.eye(self.n_sv) + term_2
         return f, J
 
     def compute_f_J_offdiag(self, u, alpha):
@@ -498,7 +500,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         if interactive:
             plt.plot(np.log10(alphas), np.log10(chis), label='chi2')
             plt.plot(np.log10(alphas), fitfun(np.log10(alphas), *popt), label='fit2lin')
-            plt.plot(np.log10(alphas), chi2_interp(np.log10(alphas)), label='chi2 fit')
+            #plt.plot(np.log10(alphas), chi2_interp(np.log10(alphas)), label='chi2 fit')
 
         sol = self.maxent_optimization(alpha_opt, ustart)
 
@@ -542,7 +544,7 @@ class OptimizationResult(object):
 
 
 class NewtonOptimizer(object):
-    def __init__(self, opt_size, max_hist=1, max_iter=200, initial_guess=None):
+    def __init__(self, opt_size, max_hist=1, max_iter=300, initial_guess=None):
 
         if initial_guess is None:
             initial_guess = np.zeros((opt_size))
@@ -555,7 +557,7 @@ class NewtonOptimizer(object):
         self.return_object = OptimizationResult()
 
     def iteration_function(self, proposal, function_vector, jacobian_matrix):
-        result = proposal - np.dot(np.linalg.inv(jacobian_matrix),
+        result = proposal - np.dot(np.linalg.pinv(jacobian_matrix),
                                    function_vector)
         return result
 
@@ -573,8 +575,10 @@ class NewtonOptimizer(object):
             result = self.iteration_function(prop, f, J)
             self.props.append(prop)
             self.res.append(result)
-            converged = (counter > self.max_iter or np.max(np.abs(result - prop)) < 1e-4)
+            converged = (counter > self.max_iter or np.max(np.abs(result - prop)) < 1e-6)
             counter += 1
+            if np.any(np.isnan(result)):
+                raise RuntimeWarning('Function returned NaN.')
         if counter > self.max_iter:
             raise RuntimeWarning('Failed to get optimization result in {} iterations'.format(self.max_iter))
         #print('{} iterations, solution {}'.format(counter, result))
