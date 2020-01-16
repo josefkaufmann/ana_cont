@@ -91,6 +91,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         elif stdev is None and cov is not None:
             self.cov = cov
             self.var, self.ucov = np.linalg.eigh(self.cov)  # go to eigenbasis of covariance matrix
+            self.var = np.abs(self.var)  # numerically, var can be zero below machine precision
 
         self.im_data = np.dot(self.ucov.T.conj(), self.im_data)
         self.E = 1. / self.var
@@ -157,7 +158,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
 
         U, S, Vt = np.linalg.svd(self.kernel, full_matrices=False)
 
-        self.n_sv = np.arange(min(self.nw, self.niw))[S > 1e-14][-1]  # number of singular values larger than 1e-10
+        self.n_sv = np.arange(min(self.nw, self.niw))[S > 1e-10][-1]  # number of singular values larger than 1e-10
 
         self.U_svd = np.array(U[:, :self.n_sv], dtype=np.float64, order='C')
         self.V_svd = np.array(Vt[:self.n_sv, :].T, dtype=np.float64, order='C')  # numpy.svd returns V.T
@@ -456,7 +457,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         sol.backtransform = self.backtransform(A_opt)
         return sol, optarr
 
-    def solve_chi2kink(self, alpha_start=1e9, alpha_div=10., interactive=False, **kwargs):
+    def solve_chi2kink(self, alpha_start=1e9, alpha_end=1e-3, alpha_div=10., fit_position=2.5, interactive=False, **kwargs):
         """Determine optimal alpha by searching for the kink in log(chi2) (log(alpha))"""
         if interactive:
             import matplotlib.pyplot as plt
@@ -476,7 +477,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             except:
                 print('Optimization at alpha={} failed.'.format(alpha))
             alpha = alpha / alpha_div
-            if alpha < 1e-3:
+            if alpha < alpha_end:
                 break
 
         alphas = np.asarray(alphas)
@@ -485,7 +486,18 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         def fitfun(x, a, b, c, d):
             return a + b / (1. + np.exp(-d * (x - c)))
 
-        popt, pcov = opt.curve_fit(fitfun, np.log10(alphas), np.log10(chis), p0=(0., 5., 2., 0.))
+        try:
+            popt, pcov = opt.curve_fit(fitfun, np.log10(alphas), np.log10(chis), p0=(0., 5., 2., 0.))
+        except ValueError:
+            print('Fermi fit failed.')
+            if interactive:
+                plt.plot(np.log10(alphas), np.log10(chis), marker='s')
+                plt.show()
+                for o in optarr:
+                    plt.plot(o.backtransform)
+                plt.plot(self.im_data)
+                plt.show()
+            return (optarr[-1], optarr)
 
         a, b, c, d = popt
         if interactive:
@@ -493,12 +505,12 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         if d < 0.:
             raise RuntimeError('Fermi fit temperature negative.')
 
-        a_opt = c - 2.5 / d
+        a_opt = c - fit_position / d
         alpha_opt = 10. ** a_opt
         self.log('Optimal log alpha {}'.format(a_opt))
 
         if interactive:
-            plt.plot(np.log10(alphas), np.log10(chis), label='chi2')
+            plt.plot(np.log10(alphas), np.log10(chis), marker='s', label='chi2')
             plt.plot(np.log10(alphas), fitfun(np.log10(alphas), *popt), label='fit2lin')
             #plt.plot(np.log10(alphas), chi2_interp(np.log10(alphas)), label='chi2 fit')
 
@@ -544,7 +556,7 @@ class OptimizationResult(object):
 
 
 class NewtonOptimizer(object):
-    def __init__(self, opt_size, max_hist=1, max_iter=300, initial_guess=None):
+    def __init__(self, opt_size, max_hist=1, max_iter=20000, initial_guess=None):
 
         if initial_guess is None:
             initial_guess = np.zeros((opt_size))
@@ -557,8 +569,15 @@ class NewtonOptimizer(object):
         self.return_object = OptimizationResult()
 
     def iteration_function(self, proposal, function_vector, jacobian_matrix):
-        result = proposal - np.dot(np.linalg.pinv(jacobian_matrix),
-                                   function_vector)
+        increment = -np.dot(np.linalg.pinv(jacobian_matrix), function_vector)
+        step_reduction = 1.
+        significance_limit = 1e-6
+        if np.any(np.abs(proposal) > significance_limit):
+            ratio = np.abs(increment / proposal)
+            max_ratio = np.amax(ratio[np.abs(proposal) > significance_limit])
+            if max_ratio > 1.:
+                step_reduction = 1. / max_ratio
+        result = proposal + step_reduction * increment
         return result
 
     def __call__(self, function_and_jacobian, alpha):
