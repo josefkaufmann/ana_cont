@@ -38,13 +38,48 @@ class PadeSolver(AnalyticContinuationSolver):
         self.ivcheck = np.linspace(0, 2 * np.max(self.im_axis), num=500)
         self.check = pade.C(self.ivcheck * 1j, 1j * self.im_axis,
                             self.im_data, self.a)
+        return self.check
 
     def solve(self, show_plot=False):
         # Compute the Pade approximation on the real axis
-        self.result = pade.C(self.re_axis, 1j * self.im_axis,
-                             self.im_data, self.a)
 
-        return self.result
+        def numerator_function(z):
+            return pade.A(z, self.im_axis.shape[0],
+                           1j * self.im_axis, self.im_data, self.a)
+        # numerator_function = np.vectorize(numerator_function)
+        #
+        def denominator_function(z):
+            return pade.B(z, self.im_axis.shape[0],
+                           1j * self.im_axis, self.im_data, self.a)
+        # denominator_function = np.vectorize(denominator_function)
+        #
+        # numerator = np.array([numerator_function(x) for x in self.re_axis])
+        # denominator = np.array([denominator_function(x) for x in self.re_axis])
+        numerator = pade.A(self.re_axis, self.im_axis.shape[0],
+                           1j * self.im_axis, self.im_data, self.a)
+        denominator = pade.B(self.re_axis, self.im_axis.shape[0],
+                           1j * self.im_axis, self.im_data, self.a)
+        # numerator = pade.A(self.re_axis, self.im_axis.shape[0],
+        #                    1j * self.im_axis, self.im_data, self.a)
+        # denominator = pade.B(self.re_axis, self.im_axis.shape[0],
+        #                    1j * self.im_axis, self.im_data, self.a)
+
+        # self.result = pade.C(self.re_axis, 1j * self.im_axis,
+        #                      self.im_data, self.a)
+
+        self.result = numerator / denominator
+
+        sol = OptimizationResult()
+        sol.numerator = numerator
+        sol.denominator = denominator
+        sol.numerator_function = numerator_function
+        sol.denominator_function = denominator_function
+        sol.check = self.check()
+        sol.ivcheck = self.ivcheck
+        sol.A_opt = -self.result.imag / np.pi
+        sol.g_ret = numerator / denominator
+
+        return sol
 
 
 class MaxentSolverSVD(AnalyticContinuationSolver):
