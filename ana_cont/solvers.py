@@ -182,14 +182,10 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             self.im_data = np.concatenate((self.im_data.real, self.im_data.imag))
             self.var = np.concatenate((self.var, self.var))
             self.E = np.concatenate((self.E, self.E))
+            self.kernel = np.concatenate((self.kernel.real, self.kernel.imag))
             if self.preblur:
                 kernel_tmp = np.dot(self.kernel * self.dw[None, :], self.blur_matrix)
-            else:
-                kernel_tmp = np.copy(self.kernel)
-            self.kernel = np.zeros((self.niw, self.nw))
-            self.kernel[:self.niw // 2, :] = kernel_tmp.real
-            self.kernel[self.niw // 2:, :] = kernel_tmp.imag
-            del kernel_tmp
+                self.kernel = kernel_tmp[:]
 
         U, S, Vt = np.linalg.svd(self.kernel, full_matrices=False)
 
@@ -297,6 +293,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         return np.sum(self.E * (self.im_data - np.dot(self.kernel, A * self.dw)) ** 2)
 
     def entropy_pos(self, A, u):
+        # return np.trapz(A - self.model - A * (np.log(A) - np.log(self.model)), self.re_axis)
         return np.trapz(A - self.model - A * np.dot(self.V_svd, u), self.re_axis)
 
     def entropy_posneg(self, A, u):
@@ -312,6 +309,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         ng = -2. * alpha * entr
         tr = np.sum(lam / (alpha + lam))
         conv = tr / ng
+        # print('entropy={}, trace={}, -2 alpha S / trace = {}'.format(entr, tr, ng / tr))
         return ng, tr, conv
 
     def bayes_conv_offdiag(self, A, entr, alpha):
@@ -327,7 +325,10 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
     def posterior_probability(self, A, alpha, entr, chisq):
         lambda_matrix = np.sqrt(A / self.dw)[:, None] * self.d2chi2 * np.sqrt(A / self.dw)[None, :]
         lam = np.linalg.eigvalsh(lambda_matrix)
-        eig_sum = np.sum(np.log(alpha / (alpha + lam)))
+        try:
+            eig_sum = np.sum(np.log(alpha / (alpha + lam)))
+        except RuntimeWarning:
+            print(lam)
         log_prob = alpha * entr - 0.5 * chisq + np.log(alpha) + 0.5 * eig_sum
         return np.exp(log_prob)
 
@@ -390,6 +391,51 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
     # =============================================================================================
     # Now actually solve the problem!
     # =============================================================================================
+
+    def solve_historic(self):
+        """ Historic Maxent: choose alpha in a way that chi^2 \approx N """
+
+        if not self.offdiag:
+            self.compute_f_J = self.compute_f_J_diag
+            self.singular_to_realspace = self.singular_to_realspace_diag
+            self.entropy = self.entropy_pos
+        else:
+            self.compute_f_J = self.compute_f_J_offdiag
+            self.singular_to_realspace = self.singular_to_realspace_offdiag
+            self.entropy = self.entropy_posneg
+        self.log('Solving...')
+        optarr = []
+        alpha = 10 ** 6
+        self.ustart = np.zeros((self.n_sv))
+        converged = False
+        conv = 0.
+        while conv < 1:
+            o = self.maxent_optimization(alpha, self.ustart)
+            optarr.append(o)
+            alpha /= 10.
+            conv = self.niw / o.chi2
+
+        if len(optarr) <= 1:
+            raise RuntimeError('Failed to get a prediction for optimal alpha. '
+                               + 'Decrease the error or increase alpha_start.')
+
+        def root_fun(alpha, u0):  # this function is just for the newton root-finding
+            res = self.maxent_optimization(alpha, u0, iterfac=100000)
+            optarr.append(res)
+            u0[:] = res.u_opt
+            return self.niw / res.chi2 - 1.
+
+        ustart = optarr[-2].u_opt
+        alpha_opt = opt.newton(root_fun, optarr[-1].alpha, tol=1e-6, args=(ustart,))
+        self.log('final optimal alpha: {}, log10(alpha_opt) = '.format(alpha_opt, np.log10(alpha_opt)))
+
+        sol = self.maxent_optimization(alpha_opt, ustart, iterfac=250000)
+        self.alpha_opt = alpha_opt
+        self.A_opt = sol.A_opt
+        return sol, optarr
+
+
+
 
 
     # classic maxent uses Bayes statistics to approximately determine
@@ -457,7 +503,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
 
     # Bryan's maxent calculates an average of spectral functions,
     # weighted by their Bayesian probability
-    def solve_bryan(self, alphastart=500, alphadiv=1.1):
+    def solve_bryan(self, alphastart=500, alphadiv=1.1, interactive=False):
         self.log('Solving...')
         optarr = []
         alpha = alphastart
@@ -479,9 +525,10 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         probarr = np.array([o.probability for o in optarr])
         specarr = np.array([o.A_opt for o in optarr])
         probarr /= -np.trapz(probarr, alpharr)  # normalize the probability distribution
-        fig = plt.figure()
-        plt.plot(np.log10(alpharr), probarr)
-        fig.show()
+        if interactive:
+            fig = plt.figure()
+            plt.plot(np.log10(alpharr), probarr)
+            fig.show()
 
         # calculate the weighted average spectrum
         A_opt = -np.trapz(specarr * probarr[:, None], alpharr,
@@ -575,7 +622,9 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
     # switch for different types of alpha selection
     def solve(self, **kwargs):
         alpha_determination = kwargs['alpha_determination']
-        if alpha_determination == 'classic':
+        if alpha_determination == 'historic':
+            return self.solve_historic()
+        elif alpha_determination == 'classic':
             return self.solve_classic()
         elif alpha_determination == 'bryan':
             return self.solve_bryan()
@@ -606,7 +655,7 @@ class NewtonOptimizer(object):
     def iteration_function(self, proposal, function_vector, jacobian_matrix):
         increment = -np.dot(np.linalg.pinv(jacobian_matrix), function_vector)
         step_reduction = 1.
-        significance_limit = 1e-6
+        significance_limit = 1e-4
         if np.any(np.abs(proposal) > significance_limit):
             ratio = np.abs(increment / proposal)
             max_ratio = np.amax(ratio[np.abs(proposal) > significance_limit])
@@ -629,7 +678,7 @@ class NewtonOptimizer(object):
             result = self.iteration_function(prop, f, J)
             self.props.append(prop)
             self.res.append(result)
-            converged = (counter > self.max_iter or np.max(np.abs(result - prop)) < 1e-6)
+            converged = (counter > self.max_iter or np.max(np.abs(result - prop)) < 1e-4)
             counter += 1
             if np.any(np.isnan(result)):
                 raise RuntimeWarning('Function returned NaN.')
