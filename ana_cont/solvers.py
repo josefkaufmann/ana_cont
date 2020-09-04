@@ -164,14 +164,27 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
 
         # PREBLUR
         self.preblur = preblur
-        if self.preblur:
-            self.blur_width = blur_width
-            self.blur_matrix = np.exp(
-                -(self.re_axis[:, None] - self.re_axis[None, :]) ** 2 / (2. * self.blur_width ** 2)) / (
-                               self.blur_width * np.sqrt(2. * np.pi))
-            # self.blur_matrix = self.blur_matrix * self.dw[None,:]
-        else:
-            self.blur_matrix = np.eye(self.re_axis.shape[0])
+        if kernel_mode == 'freq_fermionic':
+            if self.preblur:
+                self.blur_width = blur_width
+                self.blur_matrix = np.exp(
+                    -(self.re_axis[:, None] - self.re_axis[None, :]) ** 2 / (2. * self.blur_width ** 2)) / (
+                                   self.blur_width * np.sqrt(2. * np.pi))
+                # self.blur_matrix = self.blur_matrix * self.dw[None,:]
+            else:
+                self.blur_matrix = np.eye(self.re_axis.shape[0])
+        elif kernel_mode == 'freq_bosonic':
+            if self.preblur:
+                self.blur_width = blur_width
+                self.blur_matrix = 0.5 * (np.exp(-(self.re_axis[:, None] - self.re_axis[None, :]) ** 2
+                                                 / (2. * self.blur_width ** 2))
+                                          / (self.blur_width * np.sqrt(2. * np.pi))
+                                          + np.exp(-(self.re_axis[:, None] + self.re_axis[None, :]) ** 2
+                                                   / (2. * self.blur_width ** 2))
+                                          / (self.blur_width * np.sqrt(2. * np.pi)))
+            else:
+                self.blur_matrix = 0.5 * (np.eye(self.re_axis.shape[0])
+                                          + np.eye(self.re_axis.shape[0])[::-1])  # is the second term necessary?
 
         # rotate kernel to eigenbasis of covariance matrix
         self.kernel = np.dot(self.ucov.T.conj(), self.kernel)
@@ -186,6 +199,9 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             if self.preblur:
                 kernel_tmp = np.dot(self.kernel * self.dw[None, :], self.blur_matrix)
                 self.kernel = kernel_tmp[:]
+        elif kernel_mode == 'freq_bosonic' and self.preblur:
+            kernel_tmp = np.dot(self.kernel * self.dw[None, :], self.blur_matrix)
+            self.kernel = kernel_tmp[:]
 
         U, S, Vt = np.linalg.svd(self.kernel, full_matrices=False)
 
