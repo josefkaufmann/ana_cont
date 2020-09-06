@@ -2,6 +2,7 @@ import sys
 import numpy as np
 import scipy.optimize as opt
 import scipy.interpolate as interp
+from . import kernels
 
 if sys.version_info[0] > 2:
     try:
@@ -92,7 +93,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
     def __init__(self, im_axis, re_axis, im_data,
                  kernel_mode='', model=None,
                  stdev=None, cov=None,
-                 beta=None, offdiag=False,
+                 offdiag=False,
                  preblur=False, blur_width=0.,
                  optimizer='scipy_lm', 
                  verbose=True, **kwargs):
@@ -133,61 +134,17 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         self.niw = self.im_axis.shape[0]
 
         # set the kernel
-        if self.kernel_mode == 'freq_bosonic':
-            self.kernel = (self.re_axis ** 2)[None, :] \
-                          / ((self.re_axis ** 2)[None, :]
-                             + (self.im_axis ** 2)[:, None])
-            self.kernel[0, 0] = 1.  # analytically with de l'Hospital
-        elif self.kernel_mode == 'time_bosonic':
-            self.kernel = 0.5 * self.re_axis[None, :] * (
-                np.exp(-self.re_axis[None, :] * self.im_axis[:, None])
-                + np.exp(-self.re_axis[None, :] * (1. - self.im_axis[:, None]))) / (
-                              1. - np.exp(-self.re_axis[None, :]))
-            self.kernel[:, 0] = 1.  # analytically with de l'Hospital
-        elif self.kernel_mode == 'freq_fermionic':
-            self.kernel = 1. / (1j * self.im_axis[:, None] - self.re_axis[None, :])
-        elif self.kernel_mode == 'time_fermionic':
-            self.kernel = np.exp(-self.im_axis[:, None] * self.re_axis[None, :]) \
-                          / (1. + np.exp(-self.re_axis[None, :]))
-        elif self.kernel_mode == 'freq_fermionic_phsym':  # in this case, the data must be purely real (the imaginary part!)
-            print('Warning: phsym kernels do not give good results in this implementation. ')
-            self.kernel = -2. * self.im_axis[:, None] \
-                          / ((self.im_axis ** 2)[:, None] + (self.re_axis ** 2)[None, :])
-        elif self.kernel_mode == 'time_fermionic_phsym':
-            print('Warning: phsym kernels do not give good results in this implementation. ')
-            self.kernel = (np.cosh(self.im_axis[:, None] * self.re_axis[None, :])
-                           + np.cosh((1. - self.im_axis[:, None]) * self.re_axis[None, :])) / (
-                              1. + np.cosh(self.re_axis[None, :]))
-        else:
-            print('Unknown kernel')
-            sys.exit()
+        self.kernel = kernels.Kernel(kind=kernel_mode,
+                                     im_axis=self.im_axis,
+                                     re_axis=self.re_axis)
 
         # PREBLUR
         self.preblur = preblur
-        if kernel_mode == 'freq_fermionic':
-            if self.preblur:
-                self.blur_width = blur_width
-                self.blur_matrix = np.exp(
-                    -(self.re_axis[:, None] - self.re_axis[None, :]) ** 2 / (2. * self.blur_width ** 2)) / (
-                                   self.blur_width * np.sqrt(2. * np.pi))
-                # self.blur_matrix = self.blur_matrix * self.dw[None,:]
-            else:
-                self.blur_matrix = np.eye(self.re_axis.shape[0])
-        elif kernel_mode == 'freq_bosonic':
-            if self.preblur:
-                self.blur_width = blur_width
-                self.blur_matrix = 0.5 * (np.exp(-(self.re_axis[:, None] - self.re_axis[None, :]) ** 2
-                                                 / (2. * self.blur_width ** 2))
-                                          / (self.blur_width * np.sqrt(2. * np.pi))
-                                          + np.exp(-(self.re_axis[:, None] + self.re_axis[None, :]) ** 2
-                                                   / (2. * self.blur_width ** 2))
-                                          / (self.blur_width * np.sqrt(2. * np.pi)))
-            else:
-                self.blur_matrix = 0.5 * (np.eye(self.re_axis.shape[0])
-                                          + np.eye(self.re_axis.shape[0])[::-1])  # is the second term necessary?
+        if self.preblur:
+            self.kernel.preblur(blur_width=blur_width)
 
         # rotate kernel to eigenbasis of covariance matrix
-        self.kernel = np.dot(self.ucov.T.conj(), self.kernel)
+        self.kernel.rotate_to_cov_eb(ucov=self.ucov)
 
         # special treatment for complex data of fermionic frequency kernel
         if kernel_mode == 'freq_fermionic':
@@ -195,15 +152,8 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             self.im_data = np.concatenate((self.im_data.real, self.im_data.imag))
             self.var = np.concatenate((self.var, self.var))
             self.E = np.concatenate((self.E, self.E))
-            self.kernel = np.concatenate((self.kernel.real, self.kernel.imag))
-            if self.preblur:
-                kernel_tmp = np.dot(self.kernel * self.dw[None, :], self.blur_matrix)
-                self.kernel = kernel_tmp[:]
-        elif kernel_mode == 'freq_bosonic' and self.preblur:
-            kernel_tmp = np.dot(self.kernel * self.dw[None, :], self.blur_matrix)
-            self.kernel = kernel_tmp[:]
 
-        U, S, Vt = np.linalg.svd(self.kernel, full_matrices=False)
+        U, S, Vt = np.linalg.svd(self.kernel.real_matrix(), full_matrices=False)
 
         self.n_sv = np.arange(min(self.nw, self.niw))[S > 1e-10][-1]  # number of singular values larger than 1e-10
 
@@ -236,7 +186,9 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         self.Evi = np.einsum('m,km,k,k->m', self.Xi_svd, self.U_svd, self.E, self.im_data)
 
         # precompute curvature of likelihood function
-        self.d2chi2 = np.einsum('i,j,ki,kj,k->ij', self.dw, self.dw, self.kernel, self.kernel, self.E)
+        self.d2chi2 = np.einsum('i,j,ki,kj,k->ij', self.dw, self.dw,
+                                self.kernel.real_matrix(), self.kernel.real_matrix(),
+                                self.E)
 
         # some arrays that are used later...
         self.chi2arr = []
@@ -296,17 +248,13 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         Also at this place we return from the 'diagonal-covariance space'
         Note: this function is not a bottleneck. 
         """
-        if self.kernel_mode == 'freq_fermionic':
-            kernel = self.kernel[:self.niw // 2, :] + 1j * self.kernel[self.niw // 2:, :]
-        else:
-            kernel = np.copy(self.kernel)
-        kernel = np.dot(self.ucov, kernel)
-        bt = np.dot(kernel, A * self.dw)
-        return bt
+        return np.trapz(np.dot(self.ucov, self.kernel.matrix) * A[None, :],
+                        self.re_axis, axis=-1)
 
     # compute the log-likelihood function of A
     def chi2(self, A):
-        return np.sum(self.E * (self.im_data - np.dot(self.kernel, A * self.dw)) ** 2)
+        return np.sum(
+            self.E * (self.im_data - np.trapz(self.kernel.real_matrix() * A[None, :], self.re_axis, axis=-1)) ** 2)
 
     def entropy_pos(self, A, u):
         # return np.trapz(A - self.model - A * (np.log(A) - np.log(self.model)), self.re_axis)
@@ -388,7 +336,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         result = OptimizationResult()
         result.u_opt = u_opt
         if self.preblur:
-            result.A_opt = np.dot(self.blur_matrix, A_opt * self.dw)
+            result.A_opt = self.kernel.blur(A_opt)
         else:
             result.A_opt = A_opt
         result.alpha = alpha
