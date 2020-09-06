@@ -337,8 +337,10 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         result.u_opt = u_opt
         if self.preblur:
             result.A_opt = self.kernel.blur(A_opt)
+            result.blur_width = self.kernel.blur_width
         else:
             result.A_opt = A_opt
+            result.blur_width = 0.
         result.alpha = alpha
         result.entropy = entr
         result.chi2 = chisq
