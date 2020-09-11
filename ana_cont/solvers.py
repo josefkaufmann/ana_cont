@@ -83,6 +83,148 @@ class PadeSolver(AnalyticContinuationSolver):
         return sol
 
 
+class MaxentSolverPlain(AnalyticContinuationSolver):
+    def log(self, msg):
+        if self.verbose: print(msg)
+
+    def __init__(self, im_axis, re_axis, im_data,
+                 kernel_mode='', model=None,
+                 stdev=None, cov=None,
+                 offdiag=False,
+                 preblur=False, blur_width=0.,
+                 optimizer='newton',
+                 verbose=True, **kwargs):
+
+        import cupy as cp
+        self.cp = cp
+
+        self.verbose = verbose
+
+        self.kernel_mode = kernel_mode
+        self.im_axis = im_axis
+        self.re_axis = re_axis
+        self.im_data = im_data
+        self.offdiag = offdiag
+        self.optimizer = optimizer
+
+        self.nw = self.re_axis.shape[0]
+        self.wmin = self.re_axis[0]
+        self.wmax = self.re_axis[-1]
+        self.dw = np.diff(
+            np.concatenate(([self.wmin],
+                            (self.re_axis[1:] + self.re_axis[:-1]) / 2.,
+                            [self.wmax])))
+        if not self.offdiag:
+            self.model = model  # the model should be normalized by the user himself
+        else:
+            self.model_plus = model  # the model should be normalized by the user himself
+            self.model_minus = model  # the model should be normalized by the user himself
+
+        if cov is None and stdev is not None:
+            self.var = stdev ** 2
+            self.cov = np.diag(self.var)
+            self.ucov = np.eye(self.im_axis.shape[0])
+        elif stdev is None and cov is not None:
+            self.cov = cov
+            self.var, self.ucov = np.linalg.eigh(self.cov)  # go to eigenbasis of covariance matrix
+            self.var = np.abs(self.var)  # numerically, var can be zero below machine precision
+
+        self.im_data = np.dot(self.ucov.T.conj(), self.im_data)
+        self.E = 1. / self.var
+        self.niw = self.im_axis.shape[0]
+
+        # set the kernel
+        self.kernel = kernels.Kernel(kind=kernel_mode,
+                                     im_axis=self.im_axis,
+                                     re_axis=self.re_axis)
+
+        # PREBLUR
+        self.preblur = preblur
+        if self.preblur:
+            self.kernel.preblur(blur_width=blur_width)
+
+        # rotate kernel to eigenbasis of covariance matrix
+        self.kernel.rotate_to_cov_eb(ucov=self.ucov)
+
+        # special treatment for complex data of fermionic frequency kernel
+        if kernel_mode == 'freq_fermionic':
+            self.niw *= 2
+            self.im_data = np.concatenate((self.im_data.real, self.im_data.imag))
+            self.var = np.concatenate((self.var, self.var))
+            self.E = np.concatenate((self.E, self.E))
+
+        self.d2chi2 = np.einsum('i,j,ki,kj,k->ij', self.dw, self.dw,
+                            self.kernel.real_matrix(), self.kernel.real_matrix(),
+                            self.E)
+        self.B = self.kernel.real_matrix() * self.dw[None, :] * self.E[:, None]
+
+    def compute_f_J_diag(self, A, alpha):
+        bt = self.backtransform(A)
+        bt = np.concatenate((bt.real, bt.imag))
+        f = (-np.sum(self.B * (self.im_data - bt)[:, None])
+             + alpha * self.dw * (np.log(np.abs(A)) - np.log(self.model)))
+        J = self.d2chi2 + alpha * np.diag(self.dw / A)
+        return f, J
+
+    def backtransform(self, A):
+        """ Backtransformation from real to imaginary axis.
+        G(iw) = \int dw K(iw, w) * A(w)
+        Also at this place we return from the 'diagonal-covariance space'
+        Note: this function is not a bottleneck.
+        """
+        ucov = self.cp.asarray(self.ucov)
+        km = self.cp.asarray(self.kernel.matrix)
+        a = self.cp.asarray(A * self.dw)
+        return self.cp.dot(self.cp.dot(ucov, km), a)
+        return np.trapz(np.dot(self.ucov, self.kernel.matrix) * A[None, :],
+                        self.re_axis, axis=-1)
+
+    def entropy_pos(self, A):
+        return np.trapz(A - self.model - A * np.log(A / self.model), self.re_axis)
+
+    def chi2(self, A):
+        bt = self.backtransform(A)
+        bt = np.concatenate((bt.real, bt.imag))
+        return np.sum(np.abs(self.im_data - bt)**2 * self.E)
+
+
+    def maxent_optimization(self, alpha, A_start, **kwargs):
+        if not self.offdiag:
+            self.compute_f_J = self.compute_f_J_diag
+            self.entropy = self.entropy_pos
+        else:
+            self.compute_f_J = self.compute_f_J_offdiag
+            self.entropy = self.entropy_posneg
+
+        if self.optimizer == 'newton':
+            max_hist = kwargs['max_hist']
+            newton_solver = NewtonOptimizer(self.nw, initial_guess=A_start, max_hist=max_hist)
+            sol = newton_solver(self.compute_f_J, alpha)
+        else:
+            raise NotImplementedError('Only newton optimizer currently available')
+
+        A_opt = sol.x
+        entr = self.entropy(A_opt)
+        chisq = self.chi2(A_opt)
+        norm = np.trapz(A_opt, self.re_axis)
+        self.log('log10(alpha)={:6.4f}\tchi2={:5.4e}\tS={:5.4e}\tnfev={},\tnorm={}'.format(
+            np.log10(alpha), chisq, entr, sol.nfev, norm))
+
+        result = OptimizationResult()
+        if self.preblur:
+            result.A_opt = self.kernel.blur(A_opt)
+            result.blur_width = self.kernel.blur_width
+        else:
+            result.A_opt = A_opt
+            result.blur_width = 0.
+        result.alpha = alpha
+        result.entropy = entr
+        result.chi2 = chisq
+        result.backtransform = self.backtransform(A_opt)
+        result.norm = norm
+        result.Q = alpha * entr - 0.5 * chisq
+        return result
+
 class MaxentSolverSVD(AnalyticContinuationSolver):
 
 
@@ -656,7 +798,7 @@ class NewtonOptimizer(object):
         self.return_object.nfev = counter
         return self.return_object
 
-    def get_proposal(self, mixing=0.35):
+    def get_proposal(self, mixing=0.05):
         """Propose a new solution by DIIS Pulay"""
 
         n_iter = len(self.props)
@@ -665,7 +807,7 @@ class NewtonOptimizer(object):
         new_proposal = self.props[n_iter - 1]
         f_i = self.res[n_iter - 1] - self.props[n_iter - 1]
         update = mixing * f_i
-        return new_proposal + update
+        # return new_proposal + update
 
         # For the singular-space algorithm, DIIS seems to fail...
         if n_iter < 10 or history==0:# or n_iter%4!=0:  # linear mixing

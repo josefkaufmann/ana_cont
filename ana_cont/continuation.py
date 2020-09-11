@@ -297,7 +297,7 @@ class AnalyticContinuationProblem(object):
 #                model=kwargs['model'], stdev=kwargs['stdev'], offdiag=kwargs['offdiag'])
                 **kwargs)
             ustart=kwargs['ustart'][:self.solver.n_sv]
-            sol = self.solver.maxent_optimization(kwargs['alpha'],ustart)
+            sol = self.solver.maxent_optimization(kwargs['alpha'],ustart, **kwargs)
             if self.kernel_mode == 'time_fermionic':
                 sol.A_opt *= self.beta
             elif self.kernel_mode == 'freq_fermionic':
@@ -308,6 +308,14 @@ class AnalyticContinuationProblem(object):
             elif self.kernel_mode == 'time_bosonic':
                 sol.A_opt *= self.beta
                 sol.backtransform /= self.beta
+            return sol
+        elif method=='maxent_plain':
+            self.solver = solvers.MaxentSolverPlain(self.im_axis,
+                                                    self.re_axis,
+                                                    self.im_data,
+                                                    kernel_mode=self.kernel_mode,
+                                                    **kwargs)
+            sol = self.solver.maxent_optimization(A_start=kwargs['model'], **kwargs)
             return sol
         else:
             return None
