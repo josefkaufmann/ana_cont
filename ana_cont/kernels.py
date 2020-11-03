@@ -32,6 +32,10 @@ class Kernel(object):
                     + np.exp(-self.re_axis[None, :] * (1. - self.im_axis[:, None]))) / (
                                   1. - np.exp(-self.re_axis[None, :]))
             kernel[:, 0] = 1.  # analytically with de l'Hospital
+        elif self.kind == 'freq_bosonic_xyz':
+            kernel = -self.im_axis[:, None] / ((self.re_axis**2)[None, :] + (self.im_axis**2)[:, None])
+            if self.im_axis[0] == 0.:
+                kernel[0] = 0.
         elif self.kind == 'freq_fermionic':
             kernel = 1. / (1j * self.im_axis[:, None] - self.re_axis[None, :])
         elif self.kind == 'time_fermionic':
