@@ -289,15 +289,17 @@ class AnalyticContinuationProblem(object):
     def error_propagation(self,obs,args):
         return self.solver.error_propagation(obs,args)
 
-    def partial_solution(self,method='',**kwargs):
+    def partial_solution(self, method='', **kwargs):
         if method=='maxent_svd':
             self.solver=solvers.MaxentSolverSVD(
                 self.im_axis, self.re_axis, self.im_data,
                 kernel_mode=self.kernel_mode,
 #                model=kwargs['model'], stdev=kwargs['stdev'], offdiag=kwargs['offdiag'])
                 **kwargs)
-            ustart=kwargs['ustart'][:self.solver.n_sv]
-            sol = self.solver.maxent_optimization(kwargs['alpha'],ustart, **kwargs)
+
+            kwargs['ustart'] = kwargs['ustart'][:self.solver.n_sv]
+            # sol = self.solver.maxent_optimization(kwargs['alpha'], ustart, **kwargs)
+            sol = self.solver.maxent_optimization(**kwargs)
             if self.kernel_mode == 'time_fermionic':
                 sol.A_opt *= self.beta
             elif self.kernel_mode == 'freq_fermionic':
