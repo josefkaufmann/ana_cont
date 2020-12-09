@@ -439,7 +439,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         return np.exp(log_prob)
 
     # optimization of maxent functional for a given value of alpha
-    def maxent_optimization(self, alpha, ustart, iterfac=10000000, ):
+    def maxent_optimization(self, alpha, ustart, iterfac=10000000, **kwargs):
         if not self.offdiag:
             self.compute_f_J = self.compute_f_J_diag
             self.singular_to_realspace = self.singular_to_realspace_diag
@@ -472,8 +472,10 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         else:
             ng, tr, conv = self.bayes_conv_offdiag(A_opt, entr, alpha)
         norm = np.trapz(A_opt, self.re_axis)
-        self.log('log10(alpha)={:6.4f}\tchi2={:5.4e}\tS={:5.4e}\ttr={:5.4f}\tconv={:1.3},\tnfev={},\tnorm={}'.format(
-            np.log10(alpha), chisq, entr, tr, conv, sol.nfev, norm))
+        # self.log('log10(alpha)={:6.4f}\tchi2={:5.4e}\tS={:5.4e}\ttr={:5.4f}\tconv={:1.3},\tnfev={},\tnorm={}'.format(
+        #     np.log10(alpha), chisq, entr, tr, conv, sol.nfev, norm))
+        self.log('log10(alpha) = {:3.2f},\tchi2 = {:4.3e},   S = {:4.3e},   nfev = {},   norm = {:4.3f}'.format(
+            np.log10(alpha), chisq, entr, sol.nfev, norm))
 
         result = OptimizationResult()
         result.u_opt = u_opt
@@ -798,7 +800,7 @@ class NewtonOptimizer(object):
         self.return_object.nfev = counter
         return self.return_object
 
-    def get_proposal(self, mixing=0.05):
+    def get_proposal(self, mixing=0.35):
         """Propose a new solution by DIIS Pulay"""
 
         n_iter = len(self.props)
