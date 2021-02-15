@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>773</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QFrame" name="real_freq_frame">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>171</width>
+      <height>141</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>configure real-frequency grid</string>
+    </property>
+    <property name="whatsThis">
+     <string>real-frequency grid</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>141</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Real-frequency grid</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>70</y>
+       <width>31</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>max</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_4">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>110</y>
+       <width>21</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>n</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="grid_type_combo">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>40</y>
+       <width>141</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>equispaced or centered grid (denser around Fermi energy)</string>
+     </property>
+     <item>
+      <property name="text">
+       <string>equispaced grid</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>centered grid</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QLineEdit" name="max_real_freq">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>70</y>
+       <width>41</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>upper border of real-frequency grid. (lower border is set symmetrically)</string>
+     </property>
+     <property name="text">
+      <string>10</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="num_real_freq">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>110</y>
+       <width>41</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>number frequencies on real axis; should be an odd number</string>
+     </property>
+     <property name="text">
+      <string>401</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="gen_real_grid_button">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>110</y>
+       <width>71</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Generate</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QFrame" name="input_data_frame">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>10</y>
+      <width>561</width>
+      <height>141</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>161</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Load w2dynamics data</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="inp_data_type">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>10</y>
+       <width>121</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <item>
+      <property name="text">
+       <string>Self-energy</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Green's function</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QLabel" name="label_5">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>40</y>
+       <width>67</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>file name</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="inp_file_name">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>40</y>
+       <width>461</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>file path and name of a w2dynamics output file</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_6">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>70</y>
+       <width>67</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>iteration</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="iteration_type_combo">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>70</y>
+       <width>86</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <item>
+      <property name="text">
+       <string>DMFT</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>STAT</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>WORM</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QLineEdit" name="iteration_number">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>70</y>
+       <width>31</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>integer; leave empty for last iteration</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_7">
+     <property name="geometry">
+      <rect>
+       <x>230</x>
+       <y>70</y>
+       <width>41</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Atom</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="atom_number">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>70</y>
+       <width>21</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>choose inequivalent atom (one-based integer)</string>
+     </property>
+     <property name="text">
+      <string>1</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_8">
+     <property name="geometry">
+      <rect>
+       <x>320</x>
+       <y>70</y>
+       <width>51</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Orbital</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="orbital_number">
+     <property name="geometry">
+      <rect>
+       <x>380</x>
+       <y>70</y>
+       <width>21</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>choose orbital (one-based integer)</string>
+     </property>
+     <property name="text">
+      <string>1</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_9">
+     <property name="geometry">
+      <rect>
+       <x>420</x>
+       <y>70</y>
+       <width>31</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Spin</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="spin_type_combo">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>70</y>
+       <width>81</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>choose spin up/down; average for paramagnetic system</string>
+     </property>
+     <item>
+      <property name="text">
+       <string>average</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>up</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>down</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QPushButton" name="load_data_button">
+     <property name="geometry">
+      <rect>
+       <x>450</x>
+       <y>110</y>
+       <width>89</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Load data</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_10">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>110</y>
+       <width>241</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Number of Matsubara frequencies</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="num_mats_freq">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>110</y>
+       <width>41</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>How many Matsubara frequencies do you want to use for the continuation?</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QFrame" name="continuation_frame">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>170</y>
+      <width>751</width>
+      <height>381</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QPushButton" name="doit_button">
+     <property name="geometry">
+      <rect>
+       <x>650</x>
+       <y>350</y>
+       <width>89</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Do it!</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="preblur_button">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>71</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Preblur</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="blur_width">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>40</y>
+       <width>113</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>0.1</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_11">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>40</y>
+       <width>51</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Width</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>773</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
