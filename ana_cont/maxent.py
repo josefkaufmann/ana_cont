@@ -4,7 +4,8 @@ import h5py
 import matplotlib.pyplot as plt
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-# import continuation as cont
+sys.path.insert(0, '/home/josef/ana_cont_gui')
+import ana_cont.continuation as cont
 from maxent_ui import Ui_MainWindow
 
 def test_function(some_text):
@@ -30,11 +31,12 @@ class RealFrequencyGrid(object):
         return 'real-frequency grid (wmax: {}, nw: {}, type: {})'.format(self.wmax, self.nw, self.type)
 
     def create_grid(self):
-        if self.type == 'linear':
+        if self.type == 'equispaced grid':
             self.grid = np.linspace(-self.wmax, self.wmax, num=self.nw, endpoint=True)
-        elif self.type == 'centered':
+        elif self.type == 'centered grid':
             self.grid = self.wmax * np.tan(np.linspace(-np.pi / 2.1, np.pi / 2.1, num=self.nw)) / np.tan(np.pi / 2.1)
         print(self)
+        print(self.grid)
 
 class InputData(object):
     def __init__(self, fname=None, iter_type=None, iter_num=None, data_type=None,
@@ -49,14 +51,14 @@ class InputData(object):
             print('could not set atom')
 
         try:
-            self.orbital = orbital
+            self.orbital = int(orbital)
         except ValueError:
             print('could not set orbital')
 
         self.spin = spin
 
         try:
-            self.num_mats = num_mats
+            self.num_mats = int(num_mats)
         except ValueError:
             print('could not set num mats')
 
@@ -88,45 +90,81 @@ class InputData(object):
 
     def update_data_type(self, data_type):
         self.data_type = data_type
+        if self.data_type == "Self-energy":
+            pass
+        elif self.data_type == "Green's function":
+            pass
+        else:
+            raise ValueError('Unknown data type to read. Must be \'Self-energy\' or \'Green\'s function\'')
 
     def update_atom(self, atom):
         self.atom = int(atom)
 
     def update_orbital(self, orbital):
-        self.orbital = orbital
+        self.orbital = int(orbital)
 
     def update_spin(self, spin):
         self.spin = spin
 
     def update_num_mats(self, num_mats):
-        self.num_mats = num_mats
+        self.num_mats = int(num_mats)
 
     def load_data(self):
+        print(self.data_type)
         print(self.iteration)
-        path_to_group = '{}/ineq-{:03}/siw-full/'.format(self.iteration, self.atom)
+        path_to_atom = '{}/ineq-{:03}/'.format(self.iteration, self.atom)
+        field = 'siw' if self.data_type == "Self-energy" else 'giw'
+        path_to_group = '{}/{}-full/'.format(path_to_atom, field)
         path_to_value = path_to_group + 'value'
         path_to_error = path_to_group + 'error'
+        path_to_smom = path_to_atom + 'smom-full/value'
+
         print(path_to_group)
         f = h5py.File(self.fname, 'r')
         beta = f['.config'].attrs['general.beta']
+        smom = None
+
         if self.spin == 'up':
-            data = f[path_to_value][self.orbital, 0, self.orbital, 0]
+            data = f[path_to_value][self.orbital-1, 0, self.orbital-1, 0]
             try:
-                err = f[path_to_error][self.orbital, 0, self.orbital, 0]
+                err = f[path_to_error][self.orbital-1, 0, self.orbital-1, 0]
             except:
+                err = None
                 print('could not read error')
+            if self.data_type == 'Self-energy':
+                smom = f[path_to_smom][self.orbital-1, 0, self.orbital-1, 0, 0]
         elif self.spin == 'down':
-            data = f[path_to_value][self.orbital, 1, self.orbital, 1]
-            err = f[path_to_error][self.orbital, 1, self.orbital, 1]
+            data = f[path_to_value][self.orbital-1, 1, self.orbital-1, 1]
+            try:
+                err = f[path_to_error][self.orbital-1, 1, self.orbital-1, 1]
+            except:
+                err = None
+                print('could not read error')
+            if self.data_type == 'Self-energy':
+                smom = f[path_to_smom][self.orbital-1, 1, self.orbital-1, 1, 0]
         elif self.spin == 'average':
-            data = 0.5 * (f[path_to_value][self.orbital, 0, self.orbital, 0]
-                          + f[path_to_value][self.orbital, 1, self.orbital, 1])
-            err = 0.5 * (f[path_to_error][self.orbital, 0, self.orbital, 0]
-                          + f[path_to_error][self.orbital, 1, self.orbital, 1])
+            data = 0.5 * (f[path_to_value][self.orbital-1, 0, self.orbital-1, 0]
+                          + f[path_to_value][self.orbital-1, 1, self.orbital-1, 1])
+            try:
+                err = 1. / np.sqrt(2.) * (f[path_to_error][self.orbital-1, 0, self.orbital-1, 0]
+                              + f[path_to_error][self.orbital-1, 1, self.orbital-1, 1])
+            except:
+                err = None
+                print('could not read error')
+            if self.data_type == 'Self-energy':
+                smom = 0.5 * (f[path_to_smom][self.orbital-1, 0, self.orbital-1, 0, 0]
+                              + f[path_to_smom][self.orbital-1, 1, self.orbital-1, 1, 0])
         f.close()
         niw = data.shape[0] // 2
         self.value = data[niw:niw + self.num_mats]
-        self.error = err[niw:niw + self.num_mats]
+        self.hartree = smom
+        if self.data_type == 'Self-energy':
+            self.value -= self.hartree
+
+        if err is not None:
+            self.error = err[niw:niw + self.num_mats]
+        else:
+            self.error = np.ones_like(self.value) * 0.001
         self.mats = np.pi / beta * (2. * np.arange(self.num_mats) + 1.)
         plt.plot(self.mats, self.value.real)
         plt.plot(self.mats, self.value.imag)
@@ -143,8 +181,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                           type=str(self.grid_type_combo.currentText()))
 
         self.connect_realgrid_button()
-        self.connect_input_button()
-        self.connect_doit_button()
+
         self.connect_wmax()
         self.connect_nw()
         self.connect_grid_type()
@@ -167,6 +204,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.connect_num_mats()
         self.connect_load_button()
 
+        self.connect_doit_button()
     def connect_realgrid_button(self):
         self.gen_real_grid_button.clicked.connect(lambda: self.realgrid.create_grid())
 
@@ -230,6 +268,28 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.load_data_button.clicked.connect(
             lambda: self.input_data.load_data()
         )
+        # self.ana_cont_probl = cont.AnalyticContinuationProblem(im_axis=self.input_data.mats,
+        #                                                        im_data=self.input_data.value,
+        #                                                        re_axis=self.realgrid.grid,
+        #                                                        kernel_mode='freq_fermionic')
+
+    def main_function(self):
+        self.ana_cont_probl = cont.AnalyticContinuationProblem(im_axis=self.input_data.mats,
+                                                               im_data=self.input_data.value,
+                                                               re_axis=self.realgrid.grid,
+                                                               kernel_mode='freq_fermionic')
+        model = np.ones_like(self.realgrid.grid)
+        model /= np.trapz(model, self.realgrid.grid)
+
+        self.ana_cont_probl.solve(method='maxent_svd',
+                                  optimizer='newton',
+                                  alpha_determination='chi2kink',
+                                  model=model,
+                                  stdev=self.input_data.error,
+                                  interactive=True, alpha_start=1e6, alpha_end=1e-8)
+
+    def connect_doit_button(self):
+        self.doit_button.clicked.connect(lambda: self.main_function())
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
