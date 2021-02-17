@@ -8,6 +8,10 @@ there might still be some minor issues.
 Any questions, suggestions and bug reports will be received gratefully. 
 (Mail to: josef *dot* kaufmann *at* tuwien *dot* ac *dot* at)
 
+If you used this package to generate results for a publication, please cite 
+`this paper <https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.122.127601>`_,
+where some implementation details are described in the Supplementary Material.
+
 Short description
 -----------------
 Analytic continuation of Matsubara Green's functions is a difficult task,
@@ -18,14 +22,14 @@ is able to do many different tasks, but instead a small Python library
 containing the necessary classes and functions. Based on this, the user
 is encouraged to write their own scripts, fitting their needs.
 
-Currently, the Pade approximation and the Maximum Entropy method (classic and Bryan)
+Currently, the Pade approximation and the Maximum Entropy method
 are implemented. 
 
 
 Package structure
 -----------------
 * **ana_cont** contains the main code files.
-* **doc** will contain a detailed description of the implemented formulas and code structure.
+* **doc** contains some learning resources.
 * **scripts** contains some simple examples how the library may be used.
 
 Requirements
