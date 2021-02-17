@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import scipy.interpolate as interp
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-sys.path.insert(0, '/home/josef/ana_cont_gui')
+sys.path.insert(0, '/home/josef/Programs/ana_cont_gui')
 import ana_cont.continuation as cont
 from maxent_ui import Ui_MainWindow
 
@@ -260,6 +260,62 @@ class InputData(object):
         self.hartree = None
         self.error = err[niw:niw + self.num_mats]
 
+class TextInputData(object):
+    def __init__(self, fname=None, data_type=None,
+                 num_mats=None, n_skip=None):
+        self.fname = fname
+        self.data_type = data_type
+        try:
+            self.num_mats = int(num_mats)
+        except ValueError:
+            print('inferring number of Matsubaras from data')
+            self.num_mats = None
+        try:
+            self.n_skip = int(n_skip)
+        except ValueError:
+            print('will not skip any lines')
+            self.n_skip = 0
+
+        self.atom = ''
+        self.orbital = ''
+        self.spin = ''
+
+    def update_fname(self, fname):
+        self.fname = fname
+
+    def update_data_type(self, data_type):
+        self.data_type = data_type
+
+    def update_n_skip(self, n_skip):
+        self.n_skip = n_skip
+
+    def read_data(self):
+        mats, val_re, val_im, err = np.loadtxt(self.fname, skiprows=self.n_skip, unpack=True)
+        n_mats_data = mats.shape[0]
+        if self.num_mats is None:
+            self.num_mats = n_mats_data
+        self.mats = mats[:self.num_mats]
+        self.value = (val_re + 1j * val_im)[:self.num_mats]
+        self.error = err[:self.num_mats]
+        self.hartree = 0.
+
+    def plot(self):
+        fig, ax = plt.subplots(ncols=1, nrows=1)
+        ax.plot(self.mats, self.value.real, label='real part')
+        ax.plot(self.mats, self.value.imag, label='imaginary part')
+        ax.set_title('Input data')
+        ax.set_xlabel('Matsubara frequency')
+        ax.set_ylabel('{}'.format(self.data_type))
+        ymin, ymax = ax.get_ylim()
+        xmin, xmax = ax.get_xlim()
+
+        if self.data_type == "Self-energy":
+            plt.text(xmin + 0.1 * (xmax - xmin), ymin + 0.9 * (ymax - ymin),
+                     'Hartree energy = {:5.4f}'.format(self.hartree))
+        plt.legend()
+        plt.show()
+
+
 class OutputData(object):
     def __init__(self):
         pass
@@ -325,24 +381,27 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                     orbital=str(self.orbital_number.text()),
                                     spin=str(self.spin_type_combo.currentText()),
                                     num_mats=str(self.num_mats_freq.text()))
-        self.connect_fname_input()
+        # self.connect_fname_input()
         self.connect_select_button()
-        self.connect_data_type()
-        self.connect_iteration_type()
-        self.connect_iteration_number()
-        self.connect_atom()
-        self.connect_orbital()
-        self.connect_spin()
-        self.connect_num_mats()
+        # self.connect_data_type()
+        # self.connect_iteration_type()
+        # self.connect_iteration_number()
+        # self.connect_atom()
+        # self.connect_orbital()
+        # self.connect_spin()
+        # self.connect_num_mats()
         self.connect_load_button()
         self.connect_show_button()
+        self.connect_load_button_text()
+        self.connect_show_button_2()
+        self.connect_select_button_2()
 
         self.text_output.setReadOnly(True)
         self.connect_doit_button()
 
         self.output_data = OutputData()
         self.connect_select_output_button()
-        self.connect_fname_output()
+        # self.connect_fname_output()
         self.connect_save_button()
 
     def connect_realgrid_button(self):
@@ -374,10 +433,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def get_fname(self):
         self.inp_file_name.setText(
             QtWidgets.QFileDialog.getOpenFileName(self,
-                    'Open file', os.path.expanduser("~"), "HDF5 files (*.hdf5)")[0])
+                    'Open file', os.getcwd(), "HDF5 files (*.hdf5)")[0])
 
     def connect_select_button(self):
         self.select_file_button.clicked.connect(self.get_fname)
+
+    def get_fname_text(self):
+        self.inp_file_name_2.setText(
+            QtWidgets.QFileDialog.getOpenFileName(self,
+                    'Open file', os.getcwd(), "text files (*.dat *.txt)")[0])
+
+    def connect_select_button_2(self):
+        self.select_file_button_2.clicked.connect(self.get_fname_text)
 
     def connect_data_type(self):
         self.inp_data_type.activated.connect(
@@ -413,10 +480,34 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             lambda: self.input_data.plot()
         )
 
-    def connect_load_button(self):
-        self.load_data_button.clicked.connect(
-            lambda: self.input_data.load_data()
+    def connect_show_button_2(self):
+        self.show_data_button_2.clicked.connect(
+            lambda: self.input_data.plot()
         )
+
+    def load_w2dynamics_data(self):
+        self.input_data = InputData(fname=str(self.inp_file_name.text()),
+                                    iter_type=str(self.iteration_type_combo.currentText()),
+                                    iter_num=str(self.iteration_number.text()),
+                                    data_type=str(self.inp_data_type.currentText()),
+                                    atom=str(self.atom_number.text()),
+                                    orbital=str(self.orbital_number.text()),
+                                    spin=str(self.spin_type_combo.currentText()),
+                                    num_mats=str(self.num_mats_freq.text()))
+        self.input_data.load_data()
+
+    def connect_load_button(self):
+        self.load_data_button.clicked.connect(self.load_w2dynamics_data)
+
+    def load_text_data(self):
+        self.input_data = TextInputData(fname=str(self.inp_file_name_2.text()),
+                                        data_type=str(self.inp_data_type_text.currentText()),
+                                        n_skip=str(self.n_skip.text()),
+                                        num_mats=str(self.num_mats_freq_text.text()))
+        self.input_data.read_data()
+
+    def connect_load_button_text(self):
+        self.load_data_button_2.clicked.connect(self.load_text_data)
 
     def main_function(self):
         self.ana_cont_probl = cont.AnalyticContinuationProblem(im_axis=self.input_data.mats,
@@ -494,7 +585,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             lambda: self.output_data.update_fname(str(self.out_file_name.text())))
 
     def get_fname_output(self):
-        fname_out = QtWidgets.QFileDialog.getSaveFileName(self,
+        fname_out = QtWidgets.QFileDialog.getOpenFileName(self,
                     'Save as', '/'.join(self.input_data.fname.split('/')[:-1]), "DAT files (*.dat)")[0]
         self.out_file_name.setText(fname_out)
         self.output_data.update_fname(fname_out)
@@ -502,10 +593,21 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def connect_select_output_button(self):
         self.output_directory_button.clicked.connect(self.get_fname_output)
 
+    def save_output(self):
+        fname_out = str(self.out_file_name.text())
+        if fname_out == '':
+            print('Error in saving: First you have to specify the output file name.')
+            return 1
+
+        self.output_data.update_fname(fname_out)
+        try:
+            self.output_data.save(interpolate=self.interpolate_button.isChecked(),
+                                 n_reg=int(self.n_interpolation.text()))
+        except AttributeError:
+            print('Error in saving: First you have to specify the output file name.')
+
     def connect_save_button(self):
-        self.save_button.clicked.connect(
-            lambda: self.output_data.save(interpolate=self.interpolate_button.isChecked(),
-                                          n_reg=int(self.n_interpolation.text())))
+        self.save_button.clicked.connect(lambda: self.save_output())
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
