@@ -586,7 +586,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             lambda: self.output_data.update_fname(str(self.out_file_name.text())))
 
     def get_fname_output(self):
-        fname_out = QtWidgets.QFileDialog.getOpenFileName(self,
+        fname_out = QtWidgets.QFileDialog.getSaveFileName(self,
                     'Save as', '/'.join(self.input_data.fname.split('/')[:-1]), "DAT files (*.dat)")[0]
         self.out_file_name.setText(fname_out)
         self.output_data.update_fname(fname_out)
