@@ -518,8 +518,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         model = np.ones_like(self.realgrid.grid)
         model /= np.trapz(model, self.realgrid.grid)
 
-        preblur = self.preblur_button.isChecked()
-        bw = float(self.blur_width.text()) if preblur else 0.
+        bw_text = str(self.blur_width.text())
+        if bw_text == '':
+            bw = 0.
+        else:
+            bw = float(bw_text)
+        preblur = self.preblur_button.isChecked() and bw > 0.
 
         sol = self.ana_cont_probl.solve(method='maxent_svd',
                                         optimizer='newton',
@@ -609,3 +613,4 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def connect_save_button(self):
         self.save_button.clicked.connect(lambda: self.save_output())
+
