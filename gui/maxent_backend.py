@@ -3,14 +3,15 @@ import numpy as np
 import h5py
 import matplotlib.pyplot as plt
 import scipy.interpolate as interp
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtWidgets
 
-sys.path.insert(0, '/home/josef/Programs/ana_cont_gui')
+file_dir = os.path.dirname(os.path.abspath(__file__))
+package_dir = '/'.join(file_dir.split('/')[:-1])
+sys.path.insert(0, package_dir)
+
 import ana_cont.continuation as cont
-from maxent_ui import Ui_MainWindow
+from gui.maxent_ui import Ui_MainWindow
 
-def test_function(some_text):
-    print('you clicked the button {}'.format(some_text))
 
 class RealFrequencyGrid(object):
     def __init__(self, wmax=None, nw=None, type=None):
@@ -608,9 +609,3 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def connect_save_button(self):
         self.save_button.clicked.connect(lambda: self.save_output())
-
-if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec_())
