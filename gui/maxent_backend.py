@@ -402,6 +402,8 @@ class TextInputData(object):
 
 
 class OutputData(object):
+    """Output data of the analytic continuation."""
+
     def __init__(self):
         pass
 
@@ -410,11 +412,28 @@ class OutputData(object):
         print('Update output file name to: {}'.format(self.fname))
 
     def update(self, w, spec, input_data):
+        """Update the output data with the latest input and results."""
         self.w = w
         self.spec = spec
         self.input_data = input_data
 
     def save(self, interpolate=False, n_reg=None):
+        """Save output data to text file.
+
+        Here we have to distinguish several different cases.
+        * For a self-energy, we first do a Kramers-Kronig transformation
+            to get also the real part.
+            Then the Hartree term is added. Remember: when reading input data from a text file,
+            the Hartree term has to be handeled manually, the program treats it as zero.
+            The whole function, i.e. real and imaginary part of the self-energy, is saved.
+        * In case of a Green's function, we save the spectral function,
+            i.e. -Im[G(omega)] / pi. The real part is not computed.
+        * If desired, an interpolation to a regular-spaced grid is done.
+
+        Output format: text file.
+        For spectral function: two colums: frequency, spectrum
+        For self-energy: three columns: frequency, real part, imaginary part.
+        """
         if self.input_data.data_type == "Self-energy":
             self.self_energy = cont.GreensFunction(spectrum=self.spec, wgrid=self.w, kind='fermionic').kkt()
             if interpolate:
@@ -436,6 +455,7 @@ class OutputData(object):
                 np.savetxt(self.fname, np.vstack((self.w, self.spec)).T)
 
     def interpolate(self, original_grid, original_function, n_reg):
+        """Spline interpolation of real-frequency data."""
         self.w_reg = np.linspace(np.amin(self.w), np.amax(self.w), num=n_reg, endpoint=True)
         interp_function = interp.InterpolatedUnivariateSpline(original_grid, original_function)(self.w_reg)
         return interp_function
