@@ -205,6 +205,7 @@ class InputData(object):
         In the first implementation, the self-energy with jackknife error
         was written in the group 'siw-full-jkerr', where the frequency
         axis is the first, followed by orbital and spin: (freq, orb, spin, orb, spin)
+        The Hartree term is subtracted automatically.
         """
         path_to_atom = '{}/ineq-{:03}/'.format(self.iteration, self.atom)
         path_to_group = '{}/siw-full-jkerr/'.format(path_to_atom)
@@ -239,6 +240,7 @@ class InputData(object):
         In newer versions, the self-energy with jackknife error is stored
         in siw-full, in standard format (orb, spin, orb, spin, freq).
         If the QMC error is not present, it is set to a constant value err_const.
+        The Hartree term is subtracted automatically.
         """
         path_to_atom = '{}/ineq-{:03}/'.format(self.iteration, self.atom)
         path_to_group = '{}/siw-full/'.format(path_to_atom)
@@ -323,8 +325,27 @@ class InputData(object):
         self.error = err[niw:niw + self.num_mats]
 
 class TextInputData(object):
+    """Input data for analytic continuation, from a generic text file."""
+
     def __init__(self, fname=None, data_type=None,
                  num_mats=None, n_skip=None):
+        """Initialize the text file input.
+
+        fname -- file name of the text file
+        data_type -- either "Green's function" or "Self-energy"
+        num_mats -- number of Matsubara frequencies
+        n_skip -- number of lines to skip at the beginning of the text file.
+
+        Note the following points:
+        * The Hartree term has to be subtracted beforehand,
+            i.e. both the real and imaginary part of the data in the input file
+            have to approach zero in the high-frequency limit,
+        * The input file must contain only data on the positive half of the Matsubara axis,
+        * data_type will not have any impact on the analytic continuation itself,
+            but if it is a self-energy, the real part is calculated by Kramers-Kronig
+            after the continuation, and the full self-energy is stored.
+        * The Hartree term has to be handeled completely manually in pre- and postprocessing.
+        """
         self.fname = fname
         self.data_type = data_type
         try:
@@ -352,6 +373,7 @@ class TextInputData(object):
         self.n_skip = n_skip
 
     def read_data(self):
+        """Read the text file by np.loadtxt."""
         mats, val_re, val_im, err = np.loadtxt(self.fname, skiprows=self.n_skip, unpack=True)
         n_mats_data = mats.shape[0]
         if self.num_mats is None:
@@ -362,6 +384,7 @@ class TextInputData(object):
         self.hartree = 0.
 
     def plot(self):
+        """Create a very simple plot of the input data."""
         fig, ax = plt.subplots(ncols=1, nrows=1)
         ax.plot(self.mats, self.value.real, label='real part')
         ax.plot(self.mats, self.value.imag, label='imaginary part')
