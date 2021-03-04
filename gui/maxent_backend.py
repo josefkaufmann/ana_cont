@@ -729,3 +729,4 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def connect_save_button(self):
         self.save_button.clicked.connect(lambda: self.save_output())
+
