@@ -174,22 +174,6 @@
       <string>Do it!</string>
      </property>
     </widget>
-    <widget class="QRadioButton" name="preblur_button">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>10</y>
-       <width>71</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="toolTip">
-      <string>check this if you want to use preblur</string>
-     </property>
-     <property name="text">
-      <string>Preblur</string>
-     </property>
-    </widget>
     <widget class="QLineEdit" name="blur_width">
      <property name="geometry">
       <rect>
@@ -290,19 +274,6 @@
       <string>Output file:</string>
      </property>
     </widget>
-    <widget class="QRadioButton" name="interpolate_button">
-     <property name="geometry">
-      <rect>
-       <x>30</x>
-       <y>320</y>
-       <width>171</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Interpolate output to</string>
-     </property>
-    </widget>
     <widget class="QLineEdit" name="n_interpolation">
      <property name="geometry">
       <rect>
@@ -330,6 +301,38 @@
      </property>
      <property name="text">
       <string>regularly spaced grid points</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="preblur_checkbox">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>10</y>
+       <width>92</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>check this if you want to use preblur</string>
+     </property>
+     <property name="text">
+      <string>Preblur</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="interpolate_checkbox">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>320</y>
+       <width>171</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>check this for interpolating output to regular grid</string>
+     </property>
+     <property name="text">
+      <string>Interpolate output to</string>
      </property>
     </widget>
    </widget>

@@ -510,6 +510,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def connect_load_button_text(self):
         self.load_data_button_2.clicked.connect(self.load_text_data)
 
+    def get_preblur(self):
+        preblur_checked = self.preblur_checkbox.isChecked()
+        try:
+            bw = float(self.blur_width.text()) if preblur_checked else 0.
+        except ValueError:
+            print('Invalid input for blur width, setting to 0.')
+            bw = 0.
+        preblur = preblur_checked and bw > 0.
+        return preblur, bw
+
     def main_function(self):
         self.ana_cont_probl = cont.AnalyticContinuationProblem(im_axis=self.input_data.mats,
                                                                im_data=self.input_data.value,
@@ -518,8 +528,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         model = np.ones_like(self.realgrid.grid)
         model /= np.trapz(model, self.realgrid.grid)
 
-        preblur = self.preblur_button.isChecked()
-        bw = float(self.blur_width.text()) if preblur else 0.
+        preblur, bw = self.get_preblur()
 
         sol = self.ana_cont_probl.solve(method='maxent_svd',
                                         optimizer='newton',
@@ -602,7 +611,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.output_data.update_fname(fname_out)
         try:
-            self.output_data.save(interpolate=self.interpolate_button.isChecked(),
+            self.output_data.save(interpolate=self.interpolate_checkbox.isChecked(),
                                  n_reg=int(self.n_interpolation.text()))
         except AttributeError:
             print('Error in saving: First you have to specify the output file name.')
