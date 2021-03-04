@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import scipy.interpolate as interp
 from PyQt5 import QtWidgets
 
+# TODO proper relative import, this is a HACK.
 file_dir = os.path.dirname(os.path.abspath(__file__))
 package_dir = '/'.join(file_dir.split('/')[:-1])
 sys.path.insert(0, package_dir)
@@ -14,7 +15,23 @@ from gui.maxent_ui import Ui_MainWindow
 
 
 class RealFrequencyGrid(object):
+    """Class for real-frequency grids.
+
+    Our real-frequency grids are always symmetric around 0.
+    Thus they cover an interval [-wmax, wmax], where the endpoint is included.
+    If the number of grid-points nw is an odd number, zero is included.
+    We can create two types of grids: equispaced or non-equispaced (centered).
+    The  latter is more dense in the low-frequency region, and more
+    sparse in the high-frequency region.
+    """
+
     def __init__(self, wmax=None, nw=None, type=None):
+        """Initialize the real-frequency grid.
+
+        wmax -- border of the real-frequency interval [-wmax, wmax]
+        nw -- total number of real frequency grid points
+        type -- grid type: 'equispaced grid' or 'centered grid'
+        """
         self.wmax = wmax
         self.nw = nw
         self.type = type
@@ -33,14 +50,22 @@ class RealFrequencyGrid(object):
         return 'real-frequency grid (wmax: {}, nw: {}, type: {})'.format(self.wmax, self.nw, self.type)
 
     def create_grid(self):
+        """Create the real-frequency grid.
+
+        An 'equispaced grid' is simply a linspace, containing also the endpoint.
+        The 'centered grid' is created by a tangent function.
+        """
         if self.type == 'equispaced grid':
             self.grid = np.linspace(-self.wmax, self.wmax, num=self.nw, endpoint=True)
         elif self.type == 'centered grid':
             self.grid = self.wmax * np.tan(np.linspace(-np.pi / 2.1, np.pi / 2.1, num=self.nw)) / np.tan(np.pi / 2.1)
-        print(self)
         print(self.grid)
 
 class InputData(object):
+    """This object holds all the input data for the analytic continuation.
+
+
+    """
     def __init__(self, fname=None, iter_type=None, iter_num=None, data_type=None,
                  atom=None, orbital=None, spin=None, num_mats=None):
         self.fname = fname
@@ -382,15 +407,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                     orbital=str(self.orbital_number.text()),
                                     spin=str(self.spin_type_combo.currentText()),
                                     num_mats=str(self.num_mats_freq.text()))
-        # self.connect_fname_input()
+
         self.connect_select_button()
-        # self.connect_data_type()
-        # self.connect_iteration_type()
-        # self.connect_iteration_number()
-        # self.connect_atom()
-        # self.connect_orbital()
-        # self.connect_spin()
-        # self.connect_num_mats()
+
         self.connect_load_button()
         self.connect_show_button()
         self.connect_load_button_text()
