@@ -62,12 +62,22 @@ class RealFrequencyGrid(object):
         print(self.grid)
 
 class InputData(object):
-    """This object holds all the input data for the analytic continuation.
+    """Input data for the analytic continuation of a w2dynamics result."""
 
-
-    """
     def __init__(self, fname=None, iter_type=None, iter_num=None, data_type=None,
                  atom=None, orbital=None, spin=None, num_mats=None):
+        """Initialize the input data object.
+
+        fname -- Name (str) of a valid w2dynamics DMFT output file.
+            A w2dynamics version from 2020 or newer should be used.
+        iter_type -- iteration type: 'dmft' or 'stat'
+        iter_num -- iteration number: integer or 'last' (-1 also points to last)
+        data_type -- "Green's function" or "Self-energy"
+        atom -- which inequivalent atom (one-based integer), e.g. 1 leads to 'ineq-001'
+        orbital -- which orbital component to load (one-based integer)
+        spin -- which spin projection to load: 'up', 'down', 'average'
+        num_mats -- number of Matsubara frequencies for continuation (integer)
+        """
         self.fname = fname
         self.iter_type = iter_type
         self.iter_num = iter_num
@@ -112,6 +122,7 @@ class InputData(object):
         self.get_iteration()
 
     def get_iteration(self):
+        """Compose the whole iteration string, e.g. 'dmft-003'."""
         self.iteration = '{}-{}'.format(self.iter_type.lower(), self.iter_num)
         print('Iteration: {}'.format(self.iteration))
 
@@ -137,6 +148,12 @@ class InputData(object):
         self.num_mats = int(num_mats)
 
     def load_data(self):
+        """Load Matsubara-frequency data.
+
+        Load w2dynamics data on Matsubara frequency axis.
+        This is either a self-energy, or a Green's function.
+        For the self-energy, there are two different possible formats.
+        """
         self.generate_mats_freq()
 
         if self.data_type == "Self-energy":
@@ -159,6 +176,7 @@ class InputData(object):
                 'Unknown data type (Must be either \'Self-energy\' or \'Green\'s function\')')
 
     def plot(self):
+        """Generate a very simple plot of the Matsubara data."""
         fig, ax = plt.subplots(ncols=1, nrows=1)
         ax.plot(self.mats, self.value.real, label='real part')
         ax.plot(self.mats, self.value.imag, label='imaginary part')
@@ -175,12 +193,19 @@ class InputData(object):
         plt.show()
 
     def generate_mats_freq(self):
+        """Generate the Matsubara frequency grid."""
         f = h5py.File(self.fname, 'r')
         beta = f['.config'].attrs['general.beta']
         f.close()
         self.mats = np.pi / beta * (2. * np.arange(self.num_mats) + 1.)
 
     def load_siw_1(self):
+        """Load self-energy with jackknife error, type 1.
+
+        In the first implementation, the self-energy with jackknife error
+        was written in the group 'siw-full-jkerr', where the frequency
+        axis is the first, followed by orbital and spin: (freq, orb, spin, orb, spin)
+        """
         path_to_atom = '{}/ineq-{:03}/'.format(self.iteration, self.atom)
         path_to_group = '{}/siw-full-jkerr/'.format(path_to_atom)
         path_to_value = path_to_group + 'value'
@@ -209,6 +234,12 @@ class InputData(object):
         self.error = err[niw:niw + self.num_mats]
 
     def load_siw_2(self):
+        """Load self-energy with jackknife error, type 2.
+
+        In newer versions, the self-energy with jackknife error is stored
+        in siw-full, in standard format (orb, spin, orb, spin, freq).
+        If the QMC error is not present, it is set to a constant value err_const.
+        """
         path_to_atom = '{}/ineq-{:03}/'.format(self.iteration, self.atom)
         path_to_group = '{}/siw-full/'.format(path_to_atom)
         path_to_value = path_to_group + 'value'
@@ -250,6 +281,11 @@ class InputData(object):
         self.error = err[niw:niw + self.num_mats]
 
     def load_giw(self):
+        """Load Matsubara Green's function data.
+
+        Here we have only one possible format, i.e. (orb, spin, orb, spin, freq).
+        If no QMC error is present, we set it to a constant value err_const.
+        """
         path_to_atom = '{}/ineq-{:03}/'.format(self.iteration, self.atom)
         path_to_group = '{}/giw-full/'.format(path_to_atom)
         path_to_value = path_to_group + 'value'
