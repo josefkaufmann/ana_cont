@@ -450,7 +450,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             self.entropy = self.entropy_posneg
 
         if self.optimizer == 'newton':
-            newton_solver = NewtonOptimizer(self.n_sv, initial_guess=ustart)
+            newton_solver = NewtonOptimizer(self.n_sv, initial_guess=ustart, max_hist=1)
             sol = newton_solver(self.compute_f_J, alpha)
         elif self.optimizer == 'scipy_lm':
             sol = opt.root(self.compute_f_J,  # function returning function value f and jacobian J (we search root of f)
@@ -800,7 +800,7 @@ class NewtonOptimizer(object):
         self.return_object.nfev = counter
         return self.return_object
 
-    def get_proposal(self, mixing=0.35):
+    def get_proposal(self, mixing=0.5):
         """Propose a new solution by DIIS Pulay"""
 
         n_iter = len(self.props)
@@ -821,7 +821,7 @@ class NewtonOptimizer(object):
             R[:, k] = self.props[n_iter - history + k] - self.props[n_iter - history + k - 1]
             G[:, k] = self.res[n_iter - history + k] - self.res[n_iter - history + k - 1]
         F = G - R
-        inverse = np.linalg.inv(np.dot(F.transpose(), F))
+        inverse = np.linalg.pinv(np.dot(F.transpose(), F))
         h_j = np.dot(F.transpose(), f_i)
         fact1 = np.dot(R + mixing * F, inverse)
         update = mixing * f_i - np.dot(fact1, h_j)
