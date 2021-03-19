@@ -5,11 +5,6 @@ import matplotlib.pyplot as plt
 import scipy.interpolate as interp
 from PyQt5 import QtWidgets
 
-# TODO proper relative import, this is a HACK.
-file_dir = os.path.dirname(os.path.abspath(__file__))
-package_dir = '/'.join(file_dir.split('/')[:-1])
-sys.path.insert(0, package_dir)
-
 import ana_cont.continuation as cont
 from gui.maxent_ui import Ui_MainWindow
 
