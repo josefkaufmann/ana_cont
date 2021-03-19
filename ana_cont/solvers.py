@@ -34,12 +34,15 @@ class PadeSolver(AnalyticContinuationSolver):
         # Compute the Pade coefficients
         self.a = pade.compute_coefficients(1j * self.im_axis, self.im_data)
 
-    def check(self, show_plot=False):
+    def check(self, show_plot=False, im_axis_fine=None):
         # As a check, look if Pade approximant smoothly interpolates the original data
-        self.ivcheck = np.linspace(0, 2 * np.max(self.im_axis), num=500)
-        self.check = pade.C(self.ivcheck * 1j, 1j * self.im_axis,
+        if im_axis_fine is None:
+            self.ivcheck = np.linspace(0, 2 * np.max(self.im_axis), num=500)
+        else:
+            self.ivcheck = im_axis_fine
+        check = pade.C(self.ivcheck * 1j, 1j * self.im_axis,
                             self.im_data, self.a)
-        return self.check
+        return check
 
     def solve(self, show_plot=False):
         # Compute the Pade approximation on the real axis
