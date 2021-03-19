@@ -388,7 +388,11 @@ class TextInputData(object):
 
     def read_data(self):
         """Read the text file by np.loadtxt."""
-        mats, val_re, val_im, err = np.loadtxt(self.fname, skiprows=self.n_skip, unpack=True)
+        if self.data_type == 'bosonic':
+            mats, val_re, err = np.loadtxt(self.fname, skiprows=self.n_skip, unpack=True)
+            val_im = np.zeros_like(val_re)
+        else:
+            mats, val_re, val_im, err = np.loadtxt(self.fname, skiprows=self.n_skip, unpack=True)
         n_mats_data = mats.shape[0]
         if self.num_mats is None:
             self.num_mats = n_mats_data
@@ -461,12 +465,16 @@ class OutputData(object):
                                                   self.self_energy.real + self.input_data.hartree,
                                                   self.self_energy.imag)).T)
 
-        elif self.input_data.data_type == "Green's function":
+        elif (self.input_data.data_type == "Green's function"
+              or self.input_data.data_type == "bosonic"):
             if interpolate:
                 spec_interp = self.interpolate(self.w, self.spec, n_reg)
                 np.savetxt(self.fname, np.vstack((self.w_reg, spec_interp)).T)
             else:
                 np.savetxt(self.fname, np.vstack((self.w, self.spec)).T)
+        else:
+            print("Unknown data type {}, don't know how to save.".format(self.input_data.data_type))
+
 
     def interpolate(self, original_grid, original_function, n_reg):
         """Spline interpolation of real-frequency data."""
