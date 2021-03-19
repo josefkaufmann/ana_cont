@@ -5,7 +5,7 @@ from PyQt5 import QtWidgets
 file_dir = os.path.dirname(os.path.abspath(__file__))
 package_dir = '/'.join(file_dir.split('/')[:-1])
 sys.path.insert(0, package_dir)
-from gui.pade_backend import MainWindow
+from gui.pade_frontend import MainWindow
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

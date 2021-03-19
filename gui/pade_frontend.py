@@ -5,7 +5,7 @@ from PyQt5 import QtWidgets
 
 import ana_cont.continuation as cont
 from gui.pade_ui import Ui_MainWindow
-from gui.maxent_backend import RealFrequencyGrid, InputData, TextInputData, OutputData
+from gui.gui_backend import RealFrequencyGrid, InputData, TextInputData, OutputData
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -160,8 +160,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         sol = self.ana_cont_probl.solve(method='pade')
         check_axis = np.linspace(0., 1.25 * self.input_data.mats[mats_ind[-1]], num=500)
         check = self.ana_cont_probl.solver.check(im_axis_fine=check_axis)
-
-
 
         self.output_data.update(self.realgrid.grid, sol.A_opt, self.input_data)
 
