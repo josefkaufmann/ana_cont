@@ -55,17 +55,22 @@ class RealFrequencyGrid(object):
         An 'equispaced grid' is simply a linspace, containing also the endpoint.
         The 'centered grid' is created by a tangent function.
         """
-        if self.type == 'equispaced grid':
+        if self.type == 'equispaced grid' or self.type == 'symmetric':
             self.grid = np.linspace(-self.wmax, self.wmax, num=self.nw, endpoint=True)
         elif self.type == 'centered grid':
             self.grid = self.wmax * np.tan(np.linspace(-np.pi / 2.1, np.pi / 2.1, num=self.nw)) / np.tan(np.pi / 2.1)
+        elif self.type == 'only positive':
+            self.grid = np.linspace(0., self.wmax, num=self.nw, endpoint=True)
+        else:
+            raise ValueError('Unknown real-frequency grid type.')
         print(self.grid)
 
 class InputData(object):
     """Input data for the analytic continuation of a w2dynamics result."""
 
     def __init__(self, fname=None, iter_type=None, iter_num=None, data_type=None,
-                 atom=None, orbital=None, spin=None, num_mats=None):
+                 atom=None, orbital=None, spin=None, num_mats=None,
+                 ignore_real_part=False):
         """Initialize the input data object.
 
         fname -- Name (str) of a valid w2dynamics DMFT output file.
@@ -77,6 +82,7 @@ class InputData(object):
         orbital -- which orbital component to load (one-based integer)
         spin -- which spin projection to load: 'up', 'down', 'average'
         num_mats -- number of Matsubara frequencies for continuation (integer)
+        ignore_real_part -- if True, the real part is set to zero.
         """
         self.fname = fname
         self.iter_type = iter_type
@@ -104,6 +110,7 @@ class InputData(object):
         if self.iter_num is None or self.iter_num == '':
             self.iter_num = 'last'
         self.get_iteration()
+        self.ignore_real_part = ignore_real_part
 
     def update_fname(self, fname):
         self.fname = fname
@@ -174,6 +181,9 @@ class InputData(object):
         else:
             raise ValueError(
                 'Unknown data type (Must be either \'Self-energy\' or \'Green\'s function\')')
+
+        if self.ignore_real_part:
+            self.value = 1j * self.value.imag
 
     def plot(self):
         """Generate a very simple plot of the Matsubara data."""
