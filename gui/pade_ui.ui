@@ -88,12 +88,12 @@
      </property>
      <item>
       <property name="text">
-       <string>symmetric</string>
+       <string>equispaced symmetric</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>only positive</string>
+       <string>equispaced positive</string>
       </property>
      </item>
     </widget>

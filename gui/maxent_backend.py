@@ -47,15 +47,27 @@ class RealFrequencyGrid(object):
     def create_grid(self):
         """Create the real-frequency grid.
 
-        An 'equispaced grid' is simply a linspace, containing also the endpoint.
-        The 'centered grid' is created by a tangent function.
+        There are four possible types of real-frequency grids.
+        In each case, the endpoint is included in the grid.
+
+        * An 'equispaced symmetric' grid is simply a linspace, containing also the endpoint.
+        * The 'centered symmetric' grid is created by a tangent function,
+          such that the grid points are denser around zero.
+        * 'equispaced positive' is a simple linspace, starting from zero
+          and containing only positive values.
+        * 'centered positive' also starts from zero and contains only positive
+          values, but close to zero they are lying denser.
         """
-        if self.type == 'equispaced grid' or self.type == 'symmetric':
+        if self.type == 'equispaced symmetric':
             self.grid = np.linspace(-self.wmax, self.wmax, num=self.nw, endpoint=True)
-        elif self.type == 'centered grid':
-            self.grid = self.wmax * np.tan(np.linspace(-np.pi / 2.1, np.pi / 2.1, num=self.nw)) / np.tan(np.pi / 2.1)
-        elif self.type == 'only positive':
+        elif self.type == 'centered symmetric':
+            self.grid = self.wmax * np.tan(
+                np.linspace(-np.pi / 2.1, np.pi / 2.1, num=self.nw, endpoint=True)) / np.tan(np.pi / 2.1)
+        elif self.type == 'equispaced positive':
             self.grid = np.linspace(0., self.wmax, num=self.nw, endpoint=True)
+        elif self.type == 'centered positive':
+            self.grid = self.wmax * np.tan(
+                np.linspace(0., np.pi / 2.1, num=self.nw, endpoint=True)) / np.tan(np.pi / 2.1)
         else:
             raise ValueError('Unknown real-frequency grid type.')
         print(self.grid)
