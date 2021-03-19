@@ -609,7 +609,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                     atom=str(self.atom_number.text()),
                                     orbital=str(self.orbital_number.text()),
                                     spin=str(self.spin_type_combo.currentText()),
-                                    num_mats=str(self.num_mats_freq.text()))
+                                    num_mats=str(self.num_mats_freq.text()),
+                                    ignore_real_part=self.ignore_checkbox.isChecked())
         self.input_data.load_data()
 
     def connect_load_button(self):

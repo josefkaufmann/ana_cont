@@ -155,6 +155,9 @@ class Ui_MainWindow(object):
         self.select_file_button = QtWidgets.QToolButton(self.input_data_frame)
         self.select_file_button.setGeometry(QtCore.QRect(510, 40, 26, 24))
         self.select_file_button.setObjectName("select_file_button")
+        self.ignore_checkbox = QtWidgets.QCheckBox(self.input_data_frame)
+        self.ignore_checkbox.setGeometry(QtCore.QRect(350, 10, 131, 23))
+        self.ignore_checkbox.setObjectName("ignore_checkbox")
         self.input_data_tabs.addTab(self.w2dyn_tab, "")
         self.text_tab = QtWidgets.QWidget()
         self.text_tab.setObjectName("text_tab")
@@ -216,7 +219,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuMaxEnt.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.input_data_tabs.setCurrentIndex(1)
+        self.input_data_tabs.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -282,6 +285,7 @@ class Ui_MainWindow(object):
         self.show_data_button.setText(_translate("MainWindow", "Show data"))
         self.select_file_button.setToolTip(_translate("MainWindow", "choose an input file"))
         self.select_file_button.setText(_translate("MainWindow", "..."))
+        self.ignore_checkbox.setText(_translate("MainWindow", "Ignore real part"))
         self.input_data_tabs.setTabText(self.input_data_tabs.indexOf(self.w2dyn_tab), _translate("MainWindow", " w2dynamics file"))
         self.inp_data_type_text.setItemText(0, _translate("MainWindow", "Self-energy"))
         self.inp_data_type_text.setItemText(1, _translate("MainWindow", "Green\'s function"))
