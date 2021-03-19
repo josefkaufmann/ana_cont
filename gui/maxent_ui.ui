@@ -346,7 +346,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="w2dyn_tab">
      <attribute name="title">
@@ -645,6 +645,19 @@
        </property>
        <property name="text">
         <string>...</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="ignore_checkbox">
+       <property name="geometry">
+        <rect>
+         <x>350</x>
+         <y>10</y>
+         <width>131</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Ignore real part</string>
        </property>
       </widget>
      </widget>
