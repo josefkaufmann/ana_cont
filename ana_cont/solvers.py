@@ -298,6 +298,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             self.var = np.concatenate((self.var, self.var))
             self.E = np.concatenate((self.E, self.E))
 
+        # singular value decomposition of the kernel
         U, S, Vt = np.linalg.svd(self.kernel.real_matrix(), full_matrices=False)
 
         self.n_sv = np.arange(min(self.nw, self.niw))[S > 1e-10][-1]  # number of singular values larger than 1e-10
@@ -348,12 +349,17 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
     # Here, we define the main functions needed for the root finding problem
     # =============================================================================================
 
-
-
-    # define derivative f_m(u) = SVD(dQ/dA)_m [we search for zeros of f(u)]
-    # and the Jacobian matrix of f, J_mi=df_m/du_i
-    # TODO this is the main function call, it must be optimized as much as possible!
     def compute_f_J_diag(self, u, alpha):
+        """This function evaluates the function whose root we want to find.
+
+        The function f_m(u) is defined as the singular value decomposition
+        of the derivative dQ[A]/dA_m. Since we want to minimize Q[A],
+        we have to find the root of the vector-valued function f, i.e.
+        f_m(u) = SVD(dQ/dA)_m = 0.
+        For more efficient root finding, we also need the Jacobian J.
+        It is directly computed in singular space, J_mi=df_m/du_i.
+        """
+
         v = np.dot(self.V_svd, u)
         w = np.exp(v)
         term_1 = np.dot(self.W2, w)
@@ -363,6 +369,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         return f, J
 
     def compute_f_J_offdiag(self, u, alpha):
+        """The analogue to compute_f_J_diag for offdiagonal elements."""
         v = np.dot(self.V_svd, u)
         w = np.exp(v)
         a_plus = self.model_plus * w
@@ -377,16 +384,17 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
     # Some auxiliary functions
     # =============================================================================================
 
-    # transform the singular space vector u into real space (spectral function)
     def singular_to_realspace_diag(self, u):
+        """transform the singular space vector u into real-frequency space (spectral function)"""
         return self.model * np.exp(np.dot(self.V_svd, u))
 
     def singular_to_realspace_offdiag(self, u):
+        """transform the singular space vector u into real-frequency
+        space in the case of an offdiagonal element."""
         v = np.dot(self.V_svd, u)
         w = np.exp(v)
         return self.model_plus * w - self.model_minus / w
 
-    # backtransformation from real to imaginary axis
     def backtransform(self, A):
         """ Backtransformation from real to imaginary axis.
         G(iw) = \int dw K(iw, w) * A(w)
@@ -396,23 +404,25 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         return np.trapz(np.dot(self.ucov, self.kernel.matrix) * A[None, :],
                         self.re_axis, axis=-1)
 
-    # compute the log-likelihood function of A
     def chi2(self, A):
+        """compute the log-likelihood function of A"""
         return np.sum(
             self.E * (self.im_data - np.trapz(self.kernel.real_matrix() * A[None, :], self.re_axis, axis=-1)) ** 2)
 
     def entropy_pos(self, A, u):
+        """Compute entropy for positive definite spectral function."""
         # return np.trapz(A - self.model - A * (np.log(A) - np.log(self.model)), self.re_axis)
         return np.trapz(A - self.model - A * np.dot(self.V_svd, u), self.re_axis)
 
     def entropy_posneg(self, A, u):
+        """Compute "positive-negative entropy" for spectral function with norm 0."""
         root = np.sqrt(A ** 2 + 4. * self.model_plus * self.model_minus)
         return np.trapz(root - self.model_plus - self.model_minus
                         - A * np.log((root + A) / (2. * self.model_plus)),
                         self.re_axis)
 
-    # Bayesian convergence criterion for classic maxent (maximum of probablility distribution)
     def bayes_conv(self, A, entr, alpha):
+        """Bayesian convergence criterion for classic maxent (maximum of probablility distribution)"""
         LambdaMatrix = np.sqrt(A / self.dw)[:, None] * self.d2chi2 * np.sqrt(A / self.dw)[None, :]
         lam = np.linalg.eigvalsh(LambdaMatrix)
         ng = -2. * alpha * entr
@@ -422,6 +432,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         return ng, tr, conv
 
     def bayes_conv_offdiag(self, A, entr, alpha):
+        """Bayesian convergence criterion for classic maxent, offdiagonal version"""
         A_sq = np.power((A ** 2 + 4. * self.model_plus * self.model_minus) / self.dw ** 2, 0.25)
         LambdaMatrix = A_sq[:, None] * self.d2chi2 * A_sq[None, :]
         lam = np.linalg.eigvalsh(LambdaMatrix)
@@ -430,8 +441,8 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         conv = tr / ng
         return ng, tr, conv
 
-    # Bayesian a-posteriori probability for alpha after optimization of A
     def posterior_probability(self, A, alpha, entr, chisq):
+        """Bayesian a-posteriori probability for alpha after optimization of A"""
         lambda_matrix = np.sqrt(A / self.dw)[:, None] * self.d2chi2 * np.sqrt(A / self.dw)[None, :]
         lam = np.linalg.eigvalsh(lambda_matrix)
         try:
@@ -441,8 +452,8 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         log_prob = alpha * entr - 0.5 * chisq + np.log(alpha) + 0.5 * eig_sum
         return np.exp(log_prob)
 
-    # optimization of maxent functional for a given value of alpha
     def maxent_optimization(self, alpha, ustart, iterfac=10000000, **kwargs):
+        """optimization of maxent functional for a given value of alpha"""
         if not self.offdiag:
             self.compute_f_J = self.compute_f_J_diag
             self.singular_to_realspace = self.singular_to_realspace_diag
@@ -453,7 +464,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             self.entropy = self.entropy_posneg
 
         if self.optimizer == 'newton':
-            newton_solver = NewtonOptimizer(self.n_sv, initial_guess=ustart)
+            newton_solver = NewtonOptimizer(self.n_sv, initial_guess=ustart, max_hist=1)
             sol = newton_solver(self.compute_f_J, alpha)
         elif self.optimizer == 'scipy_lm':
             sol = opt.root(self.compute_f_J,  # function returning function value f and jacobian J (we search root of f)
@@ -551,13 +562,17 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
 
 
 
-    # classic maxent uses Bayes statistics to approximately determine
-    # the most probable value of alpha
-    # We start at a large value of alpha, where the optimization yields basically the default model,
-    # therefore u_opt is only a few steps away from ustart=0 (=default model)
-    # Then we gradually decrease alpha, step by step moving away from the default model towards the evidence.
-    # Using u_opt as ustart for the next (smaller) alpha brings a great speedup into this procedure.
-    def solve_classic(self):  # classic maxent
+
+    def solve_classic(self):
+        """Classic maxent alpha determination.
+
+        Classic maxent uses Bayes statistics to approximately determine
+        the most probable value of alpha
+        We start at a large value of alpha, where the optimization yields basically the default model,
+        therefore u_opt is only a few steps away from ustart=0 (=default model)
+        Then we gradually decrease alpha, step by step moving away from the default model towards data fitting.
+        Using u_opt as ustart for the next (smaller) alpha brings a great speedup into this procedure.
+        """
         if not self.offdiag:
             self.compute_f_J = self.compute_f_J_diag
             self.singular_to_realspace = self.singular_to_realspace_diag
@@ -614,9 +629,13 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         self.A_opt = sol.A_opt
         return sol, optarr
 
-    # Bryan's maxent calculates an average of spectral functions,
-    # weighted by their Bayesian probability
+
     def solve_bryan(self, alphastart=500, alphadiv=1.1, interactive=False):
+        """Bryan's method of determining the optimal spectrum.
+
+        Bryan's maxent calculates an average of spectral functions,
+        weighted by their Bayesian probability
+        """
         self.log('Solving...')
         optarr = []
         alpha = alphastart
@@ -653,7 +672,18 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         return sol, optarr
 
     def solve_chi2kink(self, alpha_start=1e9, alpha_end=1e-3, alpha_div=10., fit_position=2.5, interactive=False, **kwargs):
-        """Determine optimal alpha by searching for the kink in log(chi2) (log(alpha))"""
+        """Determine optimal alpha by searching for the kink in log(chi2) (log(alpha))
+
+        We start with an optimization at a large value of alpha (alpha_start),
+        where we should get only the default model. Then, alpha is decreased
+        step-by-step, where alpha_{n+1} = alpha_n / alpha_div, until the minimal
+        value of alpha_end is reached.
+        Then, we fit a function
+        \phi(x; a, b, c, d) = a + b / [1 + exp(-d*(x-c))],
+        from which the optimal alpha is determined by
+        x_opt = c - fit_position / d; alpha_opt = 10^x_opt.
+        """
+
         if interactive:
             import matplotlib.pyplot as plt
 
@@ -695,6 +725,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             return (optarr[-1], optarr)
 
         a, b, c, d = popt
+
         if interactive:
             print('Fit parameters {}'.format(popt))
         if d < 0.:
@@ -719,9 +750,10 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         return sol, optarr
 
 
-    # calculate the deviation for a callable function obs
-    # this feature is still experimental
+
     def error_propagation(self, obs, args):
+        """Calculate the deviation for a callable function obs.
+        This feature is still experimental"""
         hess = -self.d2chi2
         hess += self.alpha_opt * np.diag(1. / self.A_opt) \
                 * self.dw[:, None] * self.dw[None, :]  # possibly, it's 2*alpha
@@ -732,8 +764,9 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         deviation = np.sum(integrand)
         return deviation
 
-    # switch for different types of alpha selection
     def solve(self, **kwargs):
+        """Wrapper function for solve, which calls the chosen
+        method of alpha_determination."""
         alpha_determination = kwargs['alpha_determination']
         if alpha_determination == 'historic':
             return self.solve_historic()
@@ -748,12 +781,21 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
 
 
 class OptimizationResult(object):
+    """Dummy object for holding the result of an optimization."""
     def __init__(self):
         pass
 
 
 class NewtonOptimizer(object):
+    """Newton root finding."""
+
     def __init__(self, opt_size, max_hist=1, max_iter=20000, initial_guess=None):
+        """
+        :param opt_size: number of variables (integer)
+        :param max_hist: maximal history for mixing (integer)
+        :param max_iter: maximum number of iterations for root finding
+        :param initial_guess: initial guess for the root finding.
+        """
 
         if initial_guess is None:
             initial_guess = np.zeros((opt_size))
@@ -766,6 +808,14 @@ class NewtonOptimizer(object):
         self.return_object = OptimizationResult()
 
     def iteration_function(self, proposal, function_vector, jacobian_matrix):
+        """The function, whose fixed point we are searching.
+
+        This function generates the iteration procedure in the Newton root finding.
+        Basically, it computes the "result" from the "proposal".
+        It has the form result = proposal + increment, but
+        since the increment may be large, we apply a reduction of step width in such cases.
+        """
+
         increment = -np.dot(np.linalg.pinv(jacobian_matrix), function_vector)
         step_reduction = 1.
         significance_limit = 1e-4
@@ -778,7 +828,10 @@ class NewtonOptimizer(object):
         return result
 
     def __call__(self, function_and_jacobian, alpha):
+        """Main function of Newton optimization.
 
+        This function implements the self-consistent iteration of the root finding.
+        """
         f, J = function_and_jacobian(self.props[0], alpha)
         initial_result = self.iteration_function(self.props[0], f, J)
         self.res.append(initial_result)
@@ -803,8 +856,8 @@ class NewtonOptimizer(object):
         self.return_object.nfev = counter
         return self.return_object
 
-    def get_proposal(self, mixing=0.35):
-        """Propose a new solution by DIIS Pulay"""
+    def get_proposal(self, mixing=0.5):
+        """Propose a new solution by linear mixing."""
 
         n_iter = len(self.props)
         history = min(self.max_hist, n_iter) - 1
@@ -812,21 +865,22 @@ class NewtonOptimizer(object):
         new_proposal = self.props[n_iter - 1]
         f_i = self.res[n_iter - 1] - self.props[n_iter - 1]
         update = mixing * f_i
-        # return new_proposal + update
-
-        # For the singular-space algorithm, DIIS seems to fail...
-        if n_iter < 10 or history==0:# or n_iter%4!=0:  # linear mixing
-            return new_proposal + update  # this is still correct!
-
-        R = np.zeros((self.opt_size, history), dtype=np.float)
-        G = np.zeros((self.opt_size, history), dtype=np.float)
-        for k in range(history):
-            R[:, k] = self.props[n_iter - history + k] - self.props[n_iter - history + k - 1]
-            G[:, k] = self.res[n_iter - history + k] - self.res[n_iter - history + k - 1]
-        F = G - R
-        inverse = np.linalg.inv(np.dot(F.transpose(), F))
-        h_j = np.dot(F.transpose(), f_i)
-        fact1 = np.dot(R + mixing * F, inverse)
-        update = mixing * f_i - np.dot(fact1, h_j)
-
         return new_proposal + update
+
+        # Here is also an implementation of the Anderson acceleration.
+        # Unfortunately, for the singular-space algorithm, it seems to fail...
+        # if n_iter < 10 or history == 0:# or n_iter%4!=0:  # linear mixing
+        #     return new_proposal + update  # this is still correct!
+        #
+        # R = np.zeros((self.opt_size, history), dtype=np.float)
+        # G = np.zeros((self.opt_size, history), dtype=np.float)
+        # for k in range(history):
+        #     R[:, k] = self.props[n_iter - history + k] - self.props[n_iter - history + k - 1]
+        #     G[:, k] = self.res[n_iter - history + k] - self.res[n_iter - history + k - 1]
+        # F = G - R
+        # inverse = np.linalg.pinv(np.dot(F.transpose(), F))
+        # h_j = np.dot(F.transpose(), f_i)
+        # fact1 = np.dot(R + mixing * F, inverse)
+        # update = mixing * f_i - np.dot(fact1, h_j)
+        #
+        # return new_proposal + update
