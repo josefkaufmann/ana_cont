@@ -153,7 +153,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="w2dyn_tab">
      <attribute name="title">
@@ -494,7 +494,7 @@
       </item>
       <item>
        <property name="text">
-        <string>Susceptibility</string>
+        <string>bosonic</string>
        </property>
       </item>
      </widget>

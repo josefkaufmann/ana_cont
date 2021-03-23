@@ -189,12 +189,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         ax[1, 0].plot(self.input_data.mats[mats_ind], self.input_data.value.imag[mats_ind],
                       color='red', ls='None', marker='.', markersize=12, alpha=0.33,
                       label='Im[selected data]')
-        ax[1, 0].plot(self.input_data.mats, self.input_data.value.real,
-                      color='blue', ls=':', marker='x', markersize=5,
-                      label='Re[full data]')
-        ax[1, 0].plot(self.input_data.mats, self.input_data.value.imag,
-                      color='green', ls=':', marker='+', markersize=5,
-                      label='Im[full data]')
+        # ax[1, 0].plot(self.input_data.mats, self.input_data.value.real,
+        #               color='blue', ls=':', marker='x', markersize=5,
+        #               label='Re[full data]')
+        # ax[1, 0].plot(self.input_data.mats, self.input_data.value.imag,
+        #               color='green', ls=':', marker='+', markersize=5,
+        #               label='Im[full data]')
         ax[1, 0].plot(check_axis, check.real,
                       ls='--', color='gray', label='Re[Pade interpolation]')
         ax[1, 0].plot(check_axis, check.imag,

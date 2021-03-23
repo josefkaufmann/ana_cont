@@ -209,7 +209,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuPade.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.input_data_tabs.setCurrentIndex(0)
+        self.input_data_tabs.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -260,7 +260,7 @@ class Ui_MainWindow(object):
         self.input_data_tabs.setTabText(self.input_data_tabs.indexOf(self.w2dyn_tab), _translate("MainWindow", " w2dynamics file"))
         self.inp_data_type_text.setItemText(0, _translate("MainWindow", "Self-energy"))
         self.inp_data_type_text.setItemText(1, _translate("MainWindow", "Green\'s function"))
-        self.inp_data_type_text.setItemText(2, _translate("MainWindow", "Susceptibility"))
+        self.inp_data_type_text.setItemText(2, _translate("MainWindow", "bosonic"))
         self.label_14.setText(_translate("MainWindow", "Load"))
         self.label_15.setText(_translate("MainWindow", "from text file"))
         self.label_16.setText(_translate("MainWindow", "file name"))
