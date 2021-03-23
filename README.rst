@@ -27,28 +27,42 @@ are implemented.
 Package structure
 -----------------
 * **ana_cont** contains the main code files.
+* **gui** contains the code for the graphical user interface.
 * **doc** contains some learning resources.
-* **scripts** contains some simple examples how the library may be used.
+* **scripts** contains some simple examples how the library may be used; also the GUI executables are located there.
 
 Requirements
 -------------
+The code was checked to run with the following versions:
 
-* Python 2 or 3
-* numpy
-* scipy
-* Cython (only for Pade)
+* Python 3.7
+* numpy 1.18.1
+* scipy 1.4.1
+* Cython 0.29.15 (only for Pade)
+* matplotlib 3.1.3
+* h5py 2.10.0
+* PyQt5 (only for GUI)
 
-Installation
+It is likely that the code runs also with older package versions,
+but I cannot guarantee for that.
+
+
+Installation and usage
 --------------
-The package can be installed with pip by
 
-``pip install ana-cont``
-
-This installs the package with the Maxent, but without the Pade solver.
-To get also the Pade solver, use
+I recommend the following steps:
 
 ``git clone https://github.com/josefkaufmann/ana_cont``
 
+If you want to use Pade, you have to compile:
 ``python setup.py build_ext --inplace``
 
-``python setup.py install``
+Now you can add the code directory to the python path in your script
+and import the package:
+
+``sys.path.insert(0, '/path/to/ana_cont')``
+
+``import ana_cont.continuation as cont``
+
+The graphical user interface scripts can be executed as
+``/path/to/ana_cont/scripts/maxent.py``
