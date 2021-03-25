@@ -8,6 +8,18 @@ else:
 
 
 class AnalyticContinuationProblem(object):
+    """Specification of an analytic continuation problem.
+
+    This class is designed to hold the information that specifies the analytic continuation problem:
+
+    * Imaginary axis of the data
+    * Real axis on which the result is anticipated
+    * Imaginary-axis data
+    * Type of kernel (fermionic, bosonic, time, frequency)
+    * Inverse temperature beta (only necessary for time kernels)
+
+    Furthermore the class provides an interface to call the solver.
+    """
     def __init__(self, im_axis=None, re_axis=None,
                  im_data=None, kernel_mode=None, beta=None):
         self.kernel_mode = kernel_mode
@@ -43,6 +55,16 @@ class AnalyticContinuationProblem(object):
 
 
     def solve(self, method='', **kwargs):
+        """ Interface function for solving the analytic continuation problem.
+
+        :param method: Analytic continuation method, possible choices are 'maxent_svd', 'pade'
+        :param kwargs: Further keyword arguments, specific to the solution method
+        :return: OptimizationResult object
+
+        This function first creates an instance of an AnalyticContinuationSolver object,
+        then the respective solve function is called.
+        """
+
         if method == 'maxent_svd':
             self.solver = solvers.MaxentSolverSVD(
                 self.im_axis, self.re_axis, self.im_data,
@@ -64,15 +86,13 @@ class AnalyticContinuationProblem(object):
                 im_data = self.im_data)
             return self.solver.solve()
 
-    def error_propagation(self,obs,args):
-        return self.solver.error_propagation(obs,args)
-
     def partial_solution(self, method='', **kwargs):
-        if method=='maxent_svd':
-            self.solver=solvers.MaxentSolverSVD(
+        """Maxent optimization at a specific value of alpha."""
+        if method == 'maxent_svd':
+            self.solver = solvers.MaxentSolverSVD(
                 self.im_axis, self.re_axis, self.im_data,
                 kernel_mode=self.kernel_mode,
-#                model=kwargs['model'], stdev=kwargs['stdev'], offdiag=kwargs['offdiag'])
+               # model=kwargs['model'], stdev=kwargs['stdev'], offdiag=kwargs['offdiag'])
                 **kwargs)
 
             kwargs['ustart'] = kwargs['ustart'][:self.solver.n_sv]
