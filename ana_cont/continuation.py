@@ -9,7 +9,7 @@ else:
 
 class AnalyticContinuationProblem(object):
     def __init__(self, im_axis=None, re_axis=None,
-                 im_data=None, kernel_mode=None, beta=1.):
+                 im_data=None, kernel_mode=None, beta=None):
         self.kernel_mode = kernel_mode
         self.im_axis = im_axis
         self.re_axis = re_axis
