@@ -1,6 +1,11 @@
+import sys, os
 import numpy as np
-import ana_cont.continuation as cont
 import matplotlib.pyplot as plt
+
+file_dir = os.path.dirname(os.path.abspath(__file__))
+package_dir = '/'.join(file_dir.split('/')[:-1])
+sys.path.insert(0, package_dir)  # for applications, replace package_dir by the location of ana_cont
+import ana_cont.continuation as cont
 
 # real-frequency grid and example spectrum
 w = np.linspace(-10., 10., num=501, endpoint=True)
