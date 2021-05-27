@@ -25,7 +25,10 @@ class Kernel(object):
             kernel = (self.re_axis ** 2)[None, :] \
                      / ((self.re_axis ** 2)[None, :]
                         + (self.im_axis ** 2)[:, None])
-            kernel[0, 0] = 1.  # analytically with de l'Hospital
+            WhereIsiwn0 = np.where(self.im_axis==0.0)[0]
+            WhereIsw0 = np.where(self.re_axis==0.0)[0]
+            if len(WhereIsiwn0==1) and len(WhereIsw0==1):
+                kernel[WhereIsiwn0, WhereIsw0] = 1.0 # analytically with de l'Hospital
         elif self.kind == 'time_bosonic':
             kernel = 0.5 * self.re_axis[None, :] * (
                     np.exp(-self.re_axis[None, :] * self.im_axis[:, None])
@@ -90,12 +93,14 @@ class Kernel(object):
             integrand = self.gaussian_numeric[None, None, :] \
                         / (1j * self.im_axis[:, None, None] - self.re_axis[None, :, None] - self.w_integration[None, None, :])
         elif self.kind == 'freq_bosonic':
+            WhereIsiwn0 = np.where(self.im_axis==0.0)[0]
             integrand_1 = self.gaussian_numeric[None, None, :] * (self.w_integration[None, None, :] + self.re_axis[None, :, None]) ** 2 \
                           / ((self.w_integration[None, None, :] + self.re_axis[None, :, None]) ** 2 + (self.im_axis[:, None, None]) ** 2)
-            integrand_1[0] = self.gaussian_numeric[None, None, :]
             integrand_2 = self.gaussian_numeric[None, None, :] * (self.w_integration[None, None, :] - self.re_axis[None, :, None]) ** 2 \
                           / ((self.w_integration[None, None, :] - self.re_axis[None, :, None]) ** 2 + (self.im_axis[:, None, None]) ** 2)
-            integrand_2[0] = self.gaussian_numeric[None, None, :]
+            if len(WhereIsiwn0) > 0:  # analytically with de l'Hospital
+                integrand_1[WhereIsiwn0] = self.gaussian_numeric[None, None, :]
+                integrand_2[WhereIsiwn0] = self.gaussian_numeric[None, None, :]
             integrand = 0.5 * (integrand_1 + integrand_2)
         else:
             raise NotImplementedError('No preblur implemented for this kernel.')
