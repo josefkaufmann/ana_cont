@@ -194,7 +194,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                         alpha_determination='chi2kink',
                                         model=model,
                                         stdev=self.input_data.error,
-                                        interactive=False, alpha_start=1e10, alpha_end=1e-3,
+                                        interactive=False, alpha_start=1e14, alpha_end=1e-3,
                                         preblur=preblur, blur_width=bw)
 
         inp_str = 'atom {}, orb {}, spin {}, blur {}: '.format(self.input_data.atom,
