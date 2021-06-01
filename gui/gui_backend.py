@@ -193,8 +193,10 @@ class InputData(object):
     def plot(self):
         """Generate a very simple plot of the Matsubara data."""
         fig, ax = plt.subplots(ncols=1, nrows=1)
-        ax.plot(self.mats, self.value.real, label='real part')
-        ax.plot(self.mats, self.value.imag, label='imaginary part')
+        ax.errorbar(self.mats, self.value.real,
+                    yerr=self.error, label='real part')
+        ax.errorbar(self.mats, self.value.imag,
+                    yerr=self.error, label='imaginary part')
         ax.set_title('Input data')
         ax.set_xlabel('Matsubara frequency')
         ax.set_ylabel('{}'.format(self.data_type))
