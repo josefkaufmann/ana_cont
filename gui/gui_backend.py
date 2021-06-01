@@ -199,6 +199,11 @@ class InputData(object):
                     yerr=self.error, label='imaginary part')
         ax.set_title('Input data')
         ax.set_xlabel('Matsubara frequency')
+        ax.secondary_xaxis('top',
+                           functions=(
+                               lambda mat: (self.beta * mat / np.pi - 1)/2,
+                               lambda n: np.pi * (2 * n + 1)/self.beta
+                           )).set_xlabel('Index')
         ax.set_ylabel('{}'.format(self.data_type))
         ymin, ymax = ax.get_ylim()
         xmin, xmax = ax.get_xlim()
@@ -221,11 +226,11 @@ class InputData(object):
     def generate_mats_freq(self):
         """Generate the Matsubara frequency grid."""
         f = h5py.File(self.fname, 'r')
-        beta = f['.config'].attrs['general.beta']
+        self.beta = f['.config'].attrs['general.beta']
         if self.num_mats is None:
             self.num_mats = f['.config'].attrs['qmc.niw']
         f.close()
-        self.mats = np.pi / beta * (2. * np.arange(self.num_mats) + 1.)
+        self.mats = np.pi / self.beta * (2. * np.arange(self.num_mats) + 1.)
 
     def load_siw_1(self):
         """Load self-energy with jackknife error, type 1.
