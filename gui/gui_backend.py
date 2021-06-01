@@ -107,7 +107,8 @@ class InputData(object):
         try:
             self.num_mats = int(num_mats)
         except ValueError:
-            print('could not set num mats')
+            print('could not set num mats, using all available')
+            self.num_mats = None
 
         if self.iter_type is None:
             self.iter_type = 'dmft'
@@ -210,6 +211,8 @@ class InputData(object):
         """Generate the Matsubara frequency grid."""
         f = h5py.File(self.fname, 'r')
         beta = f['.config'].attrs['general.beta']
+        if self.num_mats is None:
+            self.num_mats = f['.config'].attrs['qmc.niw']
         f.close()
         self.mats = np.pi / beta * (2. * np.arange(self.num_mats) + 1.)
 
