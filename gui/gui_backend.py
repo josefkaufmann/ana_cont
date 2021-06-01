@@ -206,7 +206,16 @@ class InputData(object):
         if self.data_type == "Self-energy":
             plt.text(xmin + 0.1 * (xmax - xmin), ymin + 0.9 * (ymax - ymin),
                      'Hartree energy = {:5.4f}'.format(self.hartree))
+        elif self.data_type == "Green's function":
+            # Plot asymptotic 1/iw behavior (but only the part inside
+            # of the y-range of the data)
+            asymptote = -1/self.mats
+            astartind = np.searchsorted(asymptote,
+                                        np.amin(self.value.imag))
+            ax.plot(self.mats[astartind:], asymptote[astartind:], ':',
+                    label='asymptotic imaginary part', zorder=np.inf)
         plt.legend()
+        plt.grid()
         plt.show()
 
     def generate_mats_freq(self):
