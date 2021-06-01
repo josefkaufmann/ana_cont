@@ -336,14 +336,14 @@ class InputData(object):
             try:
                 err = f[path_to_error][self.orbital - 1, 0, self.orbital - 1, 0]
             except KeyError:
-                print('Warning: No self-energy error found; setting to constant {}'.format(err_const))
+                print('Warning: No Green\'s function error found; setting to constant {}'.format(err_const))
                 err = np.ones_like(data) * err_const
         elif self.spin == 'down':
             data = f[path_to_value][self.orbital - 1, 1, self.orbital - 1, 1]
             try:
                 err = f[path_to_error][self.orbital - 1, 1, self.orbital - 1, 1]
             except KeyError:
-                print('Warning: No self-energy error found; setting to constant {}'.format(err_const))
+                print('Warning: No Green\'s function error found; setting to constant {}'.format(err_const))
                 err = np.ones_like(data) * err_const
         elif self.spin == 'average':
             data = 0.5 * (f[path_to_value][self.orbital - 1, 0, self.orbital - 1, 0]
@@ -352,7 +352,7 @@ class InputData(object):
                 err = 1. / np.sqrt(2.) * (f[path_to_error][self.orbital - 1, 0, self.orbital - 1, 0]
                                           + f[path_to_error][self.orbital - 1, 1, self.orbital - 1, 1])
             except KeyError:
-                print('Warning: No self-energy error found; setting to constant {}'.format(err_const))
+                print('Warning: No Green\'s function error found; setting to constant {}'.format(err_const))
                 err = np.ones_like(data) * err_const
         f.close()
         niw = data.shape[0] // 2
