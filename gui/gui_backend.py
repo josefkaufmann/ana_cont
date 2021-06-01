@@ -112,9 +112,7 @@ class InputData(object):
 
         if self.iter_type is None:
             self.iter_type = 'dmft'
-        if self.iter_num is None or self.iter_num == '':
-            self.iter_num = 'last'
-        self.get_iteration()
+        self.update_iter_num(self.iter_num)
         self.ignore_real_part = ignore_real_part
 
     def update_fname(self, fname):
@@ -125,9 +123,9 @@ class InputData(object):
         self.get_iteration()
 
     def update_iter_num(self, iter_num):
-        if iter_num == '' or iter_num == 'last' or iter_num == -1:
+        if iter_num is None or iter_num in ('', 'last', -1):
             self.iter_num = 'last'
-        elif type(iter_num) == str:
+        elif type(iter_num) == str or isinstance(iter_num, int):
             self.iter_num = '{:03}'.format(int(iter_num))
         else:
             raise ValueError('cannot read iteration number')
