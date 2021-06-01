@@ -1,4 +1,4 @@
-ana_cont: Package for analytic continuation of many-body Green's functions
+ana_cont: Python package for analytic continuation
 =====
 
 Update: The Wiki now contains descriptions and tutorials for the new graphical user interface.
@@ -7,8 +7,12 @@ Any questions, suggestions and bug reports will be received gratefully.
 (Mail to: josef *dot* kaufmann *at* tuwien *dot* ac *dot* at)
 
 If you used this package to generate results for a publication, please cite 
-`this paper <https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.122.127601>`_,
-where some implementation details are described in the Supplementary Material.
+`this paper by Geffroy, Kaufmann et al. <https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.122.127601>`_
+(this
+`bibtex file <https://github.com/josefkaufmann/ana_cont/wiki/bibtex/prl_dominique.bib>`_),
+
+
+where some implementation details are described in the Supplementary Material. 
 
 Short description
 -----------------
