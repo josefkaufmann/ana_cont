@@ -197,6 +197,11 @@ class InputData(object):
                     yerr=self.error, label='real part')
         ax.errorbar(self.mats, self.value.imag,
                     yerr=self.error, label='imaginary part')
+        asymptote = self.smom/self.mats
+        astartind = np.searchsorted(asymptote,
+                                    np.amin(self.value.imag))
+        ax.plot(self.mats[astartind:], asymptote[astartind:], ':',
+                label='asymptotic imaginary part', zorder=np.inf)
         ax.set_title('Input data')
         ax.set_xlabel('Matsubara frequency')
         ax.secondary_xaxis('top',
@@ -211,14 +216,6 @@ class InputData(object):
         if self.data_type == "Self-energy":
             plt.text(xmin + 0.1 * (xmax - xmin), ymin + 0.9 * (ymax - ymin),
                      'Hartree energy = {:5.4f}'.format(self.hartree))
-        elif self.data_type == "Green's function":
-            # Plot asymptotic 1/iw behavior (but only the part inside
-            # of the y-range of the data)
-            asymptote = -1/self.mats
-            astartind = np.searchsorted(asymptote,
-                                        np.amin(self.value.imag))
-            ax.plot(self.mats[astartind:], asymptote[astartind:], ':',
-                    label='asymptotic imaginary part', zorder=np.inf)
         plt.legend()
         plt.grid()
         plt.show()
@@ -250,10 +247,12 @@ class InputData(object):
             data = f[path_to_value][:, self.orbital - 1, 0, self.orbital - 1, 0]
             err = f[path_to_error][:, self.orbital - 1, 0, self.orbital - 1, 0]
             smom = f[path_to_smom][self.orbital - 1, 0, self.orbital - 1, 0, 0]
+            self.smom = f[path_to_smom][self.orbital - 1, 0, self.orbital - 1, 0, 1]
         elif self.spin == 'down':
             data = f[path_to_value][:, self.orbital - 1, 1, self.orbital - 1, 1]
             err = f[path_to_error][:, self.orbital - 1, 1, self.orbital - 1, 1]
             smom = f[path_to_smom][self.orbital - 1, 1, self.orbital - 1, 1, 0]
+            self.smom = f[path_to_smom][self.orbital - 1, 1, self.orbital - 1, 1, 1]
         elif self.spin == 'average':
             data = 0.5 * (f[path_to_value][:, self.orbital - 1, 0, self.orbital - 1, 0]
                           + f[path_to_value][:, self.orbital - 1, 1, self.orbital - 1, 1])
@@ -261,6 +260,8 @@ class InputData(object):
                                      + f[path_to_error][:, self.orbital - 1, 1, self.orbital - 1, 1])
             smom = 0.5 * (f[path_to_smom][self.orbital - 1, 0, self.orbital - 1, 0, 0]
                           + f[path_to_smom][self.orbital - 1, 1, self.orbital - 1, 1, 0])
+            self.smom = 0.5 * (f[path_to_smom][self.orbital - 1, 0, self.orbital - 1, 0, 1]
+                               + f[path_to_smom][self.orbital - 1, 1, self.orbital - 1, 1, 1])
         f.close()
         niw = data.shape[0] // 2
         self.value = data[niw:niw + self.num_mats] - smom
@@ -285,6 +286,7 @@ class InputData(object):
         if self.spin == 'up':
             data = f[path_to_value][self.orbital - 1, 0, self.orbital - 1, 0]
             smom = f[path_to_smom][self.orbital - 1, 0, self.orbital - 1, 0, 0]
+            self.smom = f[path_to_smom][self.orbital - 1, 0, self.orbital - 1, 0, 1]
             try:
                 err = f[path_to_error][self.orbital - 1, 0, self.orbital - 1, 0]
             except KeyError:
@@ -293,6 +295,7 @@ class InputData(object):
         elif self.spin == 'down':
             data = f[path_to_value][self.orbital - 1, 1, self.orbital - 1, 1]
             smom = f[path_to_smom][self.orbital - 1, 1, self.orbital - 1, 1, 0]
+            self.smom = f[path_to_smom][self.orbital - 1, 1, self.orbital - 1, 1, 1]
             try:
                 err = f[path_to_error][self.orbital - 1, 1, self.orbital - 1, 1]
             except KeyError:
@@ -303,6 +306,8 @@ class InputData(object):
                           + f[path_to_value][self.orbital - 1, 1, self.orbital - 1, 1])
             smom = 0.5 * (f[path_to_smom][self.orbital - 1, 0, self.orbital - 1, 0, 0]
                           + f[path_to_smom][self.orbital - 1, 1, self.orbital - 1, 1, 0])
+            self.smom = 0.5 * (f[path_to_smom][self.orbital - 1, 0, self.orbital - 1, 0, 1]
+                               + f[path_to_smom][self.orbital - 1, 1, self.orbital - 1, 1, 1])
             try:
                 err = 1. / np.sqrt(2.) * (f[path_to_error][self.orbital - 1, 0, self.orbital - 1, 0]
                                           + f[path_to_error][self.orbital - 1, 1, self.orbital - 1, 1])
@@ -355,6 +360,7 @@ class InputData(object):
         niw = data.shape[0] // 2
         self.value = data[niw:niw + self.num_mats]
         self.hartree = None
+        self.smom = -1.
         self.error = err[niw:niw + self.num_mats]
 
 class TextInputData(object):
