@@ -69,6 +69,43 @@ class RealFrequencyGrid(object):
             raise ValueError('Unknown real-frequency grid type.')
         print(self.grid)
 
+
+def input_data_plot(mats, value, error, datatype, mom1=None, hartree=None):
+    """Generate a very simple plot of the Matsubara data."""
+    fig, ax = plt.subplots(ncols=1, nrows=1)
+    ax.errorbar(mats, value.real,
+                yerr=error, label='real part')
+    ax.errorbar(mats, value.imag,
+                yerr=error, label='imaginary part')
+    if mom1 is not None:
+        asymptote = mom1/mats
+        astartind = np.searchsorted(asymptote,
+                                    np.amin(value.imag))
+        ax.plot(mats[astartind:], asymptote[astartind:], ':',
+                label='asymptotic imaginary part', zorder=np.inf)
+    ax.set_title('Input data')
+    ax.set_xlabel('Matsubara frequency')
+    ax.secondary_xaxis('top',
+                       functions=(
+                           interp.interp1d(mats,
+                                           np.arange(mats.size),
+                                           fill_value="extrapolate"),
+                           interp.interp1d(np.arange(mats.size),
+                                           mats,
+                                           fill_value="extrapolate")
+                       )).set_xlabel('Index')
+    ax.set_ylabel('{}'.format(datatype))
+    ymin, ymax = ax.get_ylim()
+    xmin, xmax = ax.get_xlim()
+
+    if datatype == "Self-energy":
+        plt.text(xmin + 0.1 * (xmax - xmin), ymin + 0.9 * (ymax - ymin),
+                 'Hartree energy = {:5.4f}'.format(hartree))
+    plt.legend()
+    plt.grid()
+    plt.show()
+
+
 class InputData(object):
     """Input data for the analytic continuation of a w2dynamics result."""
 
@@ -189,43 +226,17 @@ class InputData(object):
             self.value = 1j * self.value.imag
 
     def plot(self):
-        """Generate a very simple plot of the Matsubara data."""
-        fig, ax = plt.subplots(ncols=1, nrows=1)
-        ax.errorbar(self.mats, self.value.real,
-                    yerr=self.error, label='real part')
-        ax.errorbar(self.mats, self.value.imag,
-                    yerr=self.error, label='imaginary part')
-        asymptote = self.smom/self.mats
-        astartind = np.searchsorted(asymptote,
-                                    np.amin(self.value.imag))
-        ax.plot(self.mats[astartind:], asymptote[astartind:], ':',
-                label='asymptotic imaginary part', zorder=np.inf)
-        ax.set_title('Input data')
-        ax.set_xlabel('Matsubara frequency')
-        ax.secondary_xaxis('top',
-                           functions=(
-                               lambda mat: (self.beta * mat / np.pi - 1)/2,
-                               lambda n: np.pi * (2 * n + 1)/self.beta
-                           )).set_xlabel('Index')
-        ax.set_ylabel('{}'.format(self.data_type))
-        ymin, ymax = ax.get_ylim()
-        xmin, xmax = ax.get_xlim()
-
-        if self.data_type == "Self-energy":
-            plt.text(xmin + 0.1 * (xmax - xmin), ymin + 0.9 * (ymax - ymin),
-                     'Hartree energy = {:5.4f}'.format(self.hartree))
-        plt.legend()
-        plt.grid()
-        plt.show()
+        input_data_plot(self.mats, self.value, self.error,
+                        self.data_type, self.smom, self.hartree)
 
     def generate_mats_freq(self):
         """Generate the Matsubara frequency grid."""
         f = h5py.File(self.fname, 'r')
-        self.beta = f['.config'].attrs['general.beta']
+        beta = f['.config'].attrs['general.beta']
         if self.num_mats is None:
             self.num_mats = f['.config'].attrs['qmc.niw']
         f.close()
-        self.mats = np.pi / self.beta * (2. * np.arange(self.num_mats) + 1.)
+        self.mats = np.pi / beta * (2. * np.arange(self.num_mats) + 1.)
 
     def load_siw_1(self):
         """Load self-energy with jackknife error, type 1.
@@ -425,21 +436,9 @@ class TextInputData(object):
         self.hartree = 0.
 
     def plot(self):
-        """Create a very simple plot of the input data."""
-        fig, ax = plt.subplots(ncols=1, nrows=1)
-        ax.plot(self.mats, self.value.real, label='real part')
-        ax.plot(self.mats, self.value.imag, label='imaginary part')
-        ax.set_title('Input data')
-        ax.set_xlabel('Matsubara frequency')
-        ax.set_ylabel('{}'.format(self.data_type))
-        ymin, ymax = ax.get_ylim()
-        xmin, xmax = ax.get_xlim()
-
-        if self.data_type == "Self-energy":
-            plt.text(xmin + 0.1 * (xmax - xmin), ymin + 0.9 * (ymax - ymin),
-                     'Hartree energy = {:5.4f}'.format(self.hartree))
-        plt.legend()
-        plt.show()
+        input_data_plot(self.mats, self.value, self.error, self.data_type,
+                        (-1 if self.data_type == "Green's function" else None),
+                        self.hartree)
 
 
 class OutputData(object):
