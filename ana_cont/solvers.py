@@ -722,10 +722,10 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             return a + b / (1. + np.exp(-d * (x - c)))
 
         try:
-            not_nan = np.logical_not(np.isnan(chis))
+            good_numbers = np.isfinite(chis)
             popt, pcov = opt.curve_fit(fitfun,
-                                       np.log10(alphas[not_nan]),
-                                       np.log10(chis[not_nan]),
+                                       np.log10(alphas[good_numbers]),
+                                       np.log10(chis[good_numbers]),
                                        p0=(0., 5., 2., 0.))
         except ValueError:
             print('Fermi fit failed.')
