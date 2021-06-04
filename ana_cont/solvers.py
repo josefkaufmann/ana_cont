@@ -20,11 +20,6 @@ class AnalyticContinuationSolver(object):
     pass
 
 
-# class for return value of maxent_optimization
-class OptimizationResult:
-    pass
-
-
 class PadeSolver(AnalyticContinuationSolver):
     def __init__(self, im_axis, re_axis, im_data):
         self.im_axis = im_axis
@@ -803,8 +798,18 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
 
 class OptimizationResult(object):
     """Dummy object for holding the result of an optimization."""
+
     def __init__(self):
-        pass
+        self.u_opt = None
+        self.A_opt = None
+        self.chi2 = None
+        self.backtransform = None
+        self.entropy = None
+        self.n_good = None
+        self.probability = None
+        self.alpha = None
+        self.convergence = None
+        self.trace = None
 
 
 class NewtonOptimizer(object):
