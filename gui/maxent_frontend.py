@@ -77,6 +77,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             lambda: self.realgrid.update_type(str(self.grid_type_combo.currentText()))
         )
 
+    def preset_fnames(self, fname):
+        self.inp_file_name.setText(fname)
+        self.inp_file_name_2.setText(fname)
+
     def connect_fname_input(self):
         self.inp_file_name.editingFinished.connect(
             lambda: self.input_data.update_fname(str(self.inp_file_name.text())))
