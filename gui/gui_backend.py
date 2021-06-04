@@ -69,6 +69,43 @@ class RealFrequencyGrid(object):
             raise ValueError('Unknown real-frequency grid type.')
         print(self.grid)
 
+
+def input_data_plot(mats, value, error, datatype, mom1=None, hartree=None):
+    """Generate a very simple plot of the Matsubara data."""
+    fig, ax = plt.subplots(ncols=1, nrows=1)
+    ax.errorbar(mats, value.real,
+                yerr=error, label='real part')
+    ax.errorbar(mats, value.imag,
+                yerr=error, label='imaginary part')
+    if mom1 is not None:
+        asymptote = mom1/mats
+        astartind = np.searchsorted(asymptote,
+                                    np.amin(value.imag))
+        ax.plot(mats[astartind:], asymptote[astartind:], ':',
+                label='asymptotic imaginary part', zorder=np.inf)
+    ax.set_title('Input data')
+    ax.set_xlabel('Matsubara frequency')
+    ax.secondary_xaxis('top',
+                       functions=(
+                           interp.interp1d(mats,
+                                           np.arange(mats.size),
+                                           fill_value="extrapolate"),
+                           interp.interp1d(np.arange(mats.size),
+                                           mats,
+                                           fill_value="extrapolate")
+                       )).set_xlabel('Index')
+    ax.set_ylabel('{}'.format(datatype))
+    ymin, ymax = ax.get_ylim()
+    xmin, xmax = ax.get_xlim()
+
+    if datatype == "Self-energy":
+        plt.text(xmin + 0.1 * (xmax - xmin), ymin + 0.9 * (ymax - ymin),
+                 'Hartree energy = {:5.4f}'.format(hartree))
+    plt.legend()
+    plt.grid()
+    plt.show()
+
+
 class InputData(object):
     """Input data for the analytic continuation of a w2dynamics result."""
 
@@ -107,13 +144,12 @@ class InputData(object):
         try:
             self.num_mats = int(num_mats)
         except ValueError:
-            print('could not set num mats')
+            print('could not set num mats, using all available')
+            self.num_mats = None
 
         if self.iter_type is None:
             self.iter_type = 'dmft'
-        if self.iter_num is None or self.iter_num == '':
-            self.iter_num = 'last'
-        self.get_iteration()
+        self.update_iter_num(self.iter_num)
         self.ignore_real_part = ignore_real_part
 
     def update_fname(self, fname):
@@ -124,9 +160,9 @@ class InputData(object):
         self.get_iteration()
 
     def update_iter_num(self, iter_num):
-        if iter_num == '' or iter_num == 'last' or iter_num == -1:
+        if iter_num is None or iter_num in ('', 'last', -1):
             self.iter_num = 'last'
-        elif type(iter_num) == str:
+        elif type(iter_num) == str or isinstance(iter_num, int):
             self.iter_num = '{:03}'.format(int(iter_num))
         else:
             raise ValueError('cannot read iteration number')
@@ -190,26 +226,15 @@ class InputData(object):
             self.value = 1j * self.value.imag
 
     def plot(self):
-        """Generate a very simple plot of the Matsubara data."""
-        fig, ax = plt.subplots(ncols=1, nrows=1)
-        ax.plot(self.mats, self.value.real, label='real part')
-        ax.plot(self.mats, self.value.imag, label='imaginary part')
-        ax.set_title('Input data')
-        ax.set_xlabel('Matsubara frequency')
-        ax.set_ylabel('{}'.format(self.data_type))
-        ymin, ymax = ax.get_ylim()
-        xmin, xmax = ax.get_xlim()
-
-        if self.data_type == "Self-energy":
-            plt.text(xmin + 0.1 * (xmax - xmin), ymin + 0.9 * (ymax - ymin),
-                     'Hartree energy = {:5.4f}'.format(self.hartree))
-        plt.legend()
-        plt.show()
+        input_data_plot(self.mats, self.value, self.error,
+                        self.data_type, self.smom, self.hartree)
 
     def generate_mats_freq(self):
         """Generate the Matsubara frequency grid."""
         f = h5py.File(self.fname, 'r')
         beta = f['.config'].attrs['general.beta']
+        if self.num_mats is None:
+            self.num_mats = f['.config'].attrs['qmc.niw']
         f.close()
         self.mats = np.pi / beta * (2. * np.arange(self.num_mats) + 1.)
 
@@ -231,10 +256,12 @@ class InputData(object):
             data = f[path_to_value][:, self.orbital - 1, 0, self.orbital - 1, 0]
             err = f[path_to_error][:, self.orbital - 1, 0, self.orbital - 1, 0]
             smom = f[path_to_smom][self.orbital - 1, 0, self.orbital - 1, 0, 0]
+            self.smom = f[path_to_smom][self.orbital - 1, 0, self.orbital - 1, 0, 1]
         elif self.spin == 'down':
             data = f[path_to_value][:, self.orbital - 1, 1, self.orbital - 1, 1]
             err = f[path_to_error][:, self.orbital - 1, 1, self.orbital - 1, 1]
             smom = f[path_to_smom][self.orbital - 1, 1, self.orbital - 1, 1, 0]
+            self.smom = f[path_to_smom][self.orbital - 1, 1, self.orbital - 1, 1, 1]
         elif self.spin == 'average':
             data = 0.5 * (f[path_to_value][:, self.orbital - 1, 0, self.orbital - 1, 0]
                           + f[path_to_value][:, self.orbital - 1, 1, self.orbital - 1, 1])
@@ -242,6 +269,8 @@ class InputData(object):
                                      + f[path_to_error][:, self.orbital - 1, 1, self.orbital - 1, 1])
             smom = 0.5 * (f[path_to_smom][self.orbital - 1, 0, self.orbital - 1, 0, 0]
                           + f[path_to_smom][self.orbital - 1, 1, self.orbital - 1, 1, 0])
+            self.smom = 0.5 * (f[path_to_smom][self.orbital - 1, 0, self.orbital - 1, 0, 1]
+                               + f[path_to_smom][self.orbital - 1, 1, self.orbital - 1, 1, 1])
         f.close()
         niw = data.shape[0] // 2
         self.value = data[niw:niw + self.num_mats] - smom
@@ -266,6 +295,7 @@ class InputData(object):
         if self.spin == 'up':
             data = f[path_to_value][self.orbital - 1, 0, self.orbital - 1, 0]
             smom = f[path_to_smom][self.orbital - 1, 0, self.orbital - 1, 0, 0]
+            self.smom = f[path_to_smom][self.orbital - 1, 0, self.orbital - 1, 0, 1]
             try:
                 err = f[path_to_error][self.orbital - 1, 0, self.orbital - 1, 0]
             except KeyError:
@@ -274,6 +304,7 @@ class InputData(object):
         elif self.spin == 'down':
             data = f[path_to_value][self.orbital - 1, 1, self.orbital - 1, 1]
             smom = f[path_to_smom][self.orbital - 1, 1, self.orbital - 1, 1, 0]
+            self.smom = f[path_to_smom][self.orbital - 1, 1, self.orbital - 1, 1, 1]
             try:
                 err = f[path_to_error][self.orbital - 1, 1, self.orbital - 1, 1]
             except KeyError:
@@ -284,6 +315,8 @@ class InputData(object):
                           + f[path_to_value][self.orbital - 1, 1, self.orbital - 1, 1])
             smom = 0.5 * (f[path_to_smom][self.orbital - 1, 0, self.orbital - 1, 0, 0]
                           + f[path_to_smom][self.orbital - 1, 1, self.orbital - 1, 1, 0])
+            self.smom = 0.5 * (f[path_to_smom][self.orbital - 1, 0, self.orbital - 1, 0, 1]
+                               + f[path_to_smom][self.orbital - 1, 1, self.orbital - 1, 1, 1])
             try:
                 err = 1. / np.sqrt(2.) * (f[path_to_error][self.orbital - 1, 0, self.orbital - 1, 0]
                                           + f[path_to_error][self.orbital - 1, 1, self.orbital - 1, 1])
@@ -314,14 +347,14 @@ class InputData(object):
             try:
                 err = f[path_to_error][self.orbital - 1, 0, self.orbital - 1, 0]
             except KeyError:
-                print('Warning: No self-energy error found; setting to constant {}'.format(err_const))
+                print('Warning: No Green\'s function error found; setting to constant {}'.format(err_const))
                 err = np.ones_like(data) * err_const
         elif self.spin == 'down':
             data = f[path_to_value][self.orbital - 1, 1, self.orbital - 1, 1]
             try:
                 err = f[path_to_error][self.orbital - 1, 1, self.orbital - 1, 1]
             except KeyError:
-                print('Warning: No self-energy error found; setting to constant {}'.format(err_const))
+                print('Warning: No Green\'s function error found; setting to constant {}'.format(err_const))
                 err = np.ones_like(data) * err_const
         elif self.spin == 'average':
             data = 0.5 * (f[path_to_value][self.orbital - 1, 0, self.orbital - 1, 0]
@@ -330,12 +363,13 @@ class InputData(object):
                 err = 1. / np.sqrt(2.) * (f[path_to_error][self.orbital - 1, 0, self.orbital - 1, 0]
                                           + f[path_to_error][self.orbital - 1, 1, self.orbital - 1, 1])
             except KeyError:
-                print('Warning: No self-energy error found; setting to constant {}'.format(err_const))
+                print('Warning: No Green\'s function error found; setting to constant {}'.format(err_const))
                 err = np.ones_like(data) * err_const
         f.close()
         niw = data.shape[0] // 2
         self.value = data[niw:niw + self.num_mats]
         self.hartree = None
+        self.smom = -1.
         self.error = err[niw:niw + self.num_mats]
 
 class TextInputData(object):
@@ -402,21 +436,9 @@ class TextInputData(object):
         self.hartree = 0.
 
     def plot(self):
-        """Create a very simple plot of the input data."""
-        fig, ax = plt.subplots(ncols=1, nrows=1)
-        ax.plot(self.mats, self.value.real, label='real part')
-        ax.plot(self.mats, self.value.imag, label='imaginary part')
-        ax.set_title('Input data')
-        ax.set_xlabel('Matsubara frequency')
-        ax.set_ylabel('{}'.format(self.data_type))
-        ymin, ymax = ax.get_ylim()
-        xmin, xmax = ax.get_xlim()
-
-        if self.data_type == "Self-energy":
-            plt.text(xmin + 0.1 * (xmax - xmin), ymin + 0.9 * (ymax - ymin),
-                     'Hartree energy = {:5.4f}'.format(self.hartree))
-        plt.legend()
-        plt.show()
+        input_data_plot(self.mats, self.value, self.error, self.data_type,
+                        (-1 if self.data_type == "Green's function" else None),
+                        self.hartree)
 
 
 class OutputData(object):
