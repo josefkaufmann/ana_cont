@@ -206,7 +206,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                                self.input_data.spin,
                                                                bw)
         all_chis = np.isfinite(np.array([s.chi2 for s in sol[1]]))
-        res_str = 'alpha_opt={:3.2f}, chi2(alpha_opt)={:3.2f}, min(chi2)={:3.2}'.format(
+        res_str = 'alpha_opt={:3.2f}, chi2(alpha_opt)={:3.2f}, min(chi2)={:3.2f}'.format(
             sol[0].alpha, sol[0].chi2, np.amin(all_chis)
         )
         self.text_output.append(inp_str + res_str)
