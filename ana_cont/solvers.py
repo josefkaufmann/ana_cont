@@ -20,11 +20,6 @@ class AnalyticContinuationSolver(object):
     pass
 
 
-# class for return value of maxent_optimization
-class OptimizationResult:
-    pass
-
-
 class PadeSolver(AnalyticContinuationSolver):
     def __init__(self, im_axis, re_axis, im_data):
         self.im_axis = im_axis
@@ -406,6 +401,11 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
 
     def chi2(self, A):
         """compute the log-likelihood function of A"""
+        # import matplotlib.pyplot as plt
+        # # plt.plot(self.im_data)
+        # plt.semilogy(np.abs(self.im_data - np.trapz(self.kernel.real_matrix() * A[None, :], self.re_axis, axis=-1)))
+        # plt.semilogy(1. / np.sqrt(self.E))
+        # plt.show()
         return np.sum(
             self.E * (self.im_data - np.trapz(self.kernel.real_matrix() * A[None, :], self.re_axis, axis=-1)) ** 2)
 
@@ -424,7 +424,11 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
     def bayes_conv(self, A, entr, alpha):
         """Bayesian convergence criterion for classic maxent (maximum of probablility distribution)"""
         LambdaMatrix = np.sqrt(A / self.dw)[:, None] * self.d2chi2 * np.sqrt(A / self.dw)[None, :]
-        lam = np.linalg.eigvalsh(LambdaMatrix)
+        try:
+            lam = np.linalg.eigvalsh(LambdaMatrix)
+        except np.linalg.LinAlgError:
+            self.log('LinAlgError in Bayes matrix inversion. Irrelevant for chi2kink')
+            lam = np.diag(LambdaMatrix)
         ng = -2. * alpha * entr
         tr = np.sum(lam / (alpha + lam))
         conv = tr / ng
@@ -444,7 +448,11 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
     def posterior_probability(self, A, alpha, entr, chisq):
         """Bayesian a-posteriori probability for alpha after optimization of A"""
         lambda_matrix = np.sqrt(A / self.dw)[:, None] * self.d2chi2 * np.sqrt(A / self.dw)[None, :]
-        lam = np.linalg.eigvalsh(lambda_matrix)
+        try:
+            lam = np.linalg.eigvalsh(lambda_matrix)
+        except np.linalg.LinAlgError:
+            self.log('LinAlgError in Bayes matrix inversion. Irrelevant for chi2kink')
+            lam = np.diag(lambda_matrix)
         try:
             eig_sum = np.sum(np.log(alpha / (alpha + lam)))
         except RuntimeWarning:
@@ -452,8 +460,9 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         log_prob = alpha * entr - 0.5 * chisq + np.log(alpha) + 0.5 * eig_sum
         return np.exp(log_prob)
 
-    def maxent_optimization(self, alpha, ustart, iterfac=10000000, **kwargs):
+    def maxent_optimization(self, alpha, ustart, iterfac=10000000, use_bayes=False, **kwargs):
         """optimization of maxent functional for a given value of alpha"""
+
         if not self.offdiag:
             self.compute_f_J = self.compute_f_J_diag
             self.singular_to_realspace = self.singular_to_realspace_diag
@@ -481,11 +490,13 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         A_opt = self.singular_to_realspace(sol.x)
         entr = self.entropy(A_opt, u_opt)
         chisq = self.chi2(A_opt)
-        if not self.offdiag:
-            ng, tr, conv = self.bayes_conv(A_opt, entr, alpha)
-        else:
-            ng, tr, conv = self.bayes_conv_offdiag(A_opt, entr, alpha)
         norm = np.trapz(A_opt, self.re_axis)
+        if use_bayes:
+            if not self.offdiag:
+                ng, tr, conv = self.bayes_conv(A_opt, entr, alpha)
+            else:
+                ng, tr, conv = self.bayes_conv_offdiag(A_opt, entr, alpha)
+
         # self.log('log10(alpha)={:6.4f}\tchi2={:5.4e}\tS={:5.4e}\ttr={:5.4f}\tconv={:1.3},\tnfev={},\tnorm={}'.format(
         #     np.log10(alpha), chisq, entr, tr, conv, sol.nfev, norm))
         self.log('log10(alpha) = {:3.2f},\tchi2 = {:4.3e},   S = {:4.3e},   nfev = {},   norm = {:4.3f}'.format(
@@ -503,13 +514,16 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         result.entropy = entr
         result.chi2 = chisq
         result.backtransform = self.backtransform(A_opt)
-        result.n_good = ng
-        result.trace = tr
-        result.convergence = conv
         result.norm = norm
-        if not self.offdiag:
-            result.probability = self.posterior_probability(A_opt, alpha, entr, chisq)
         result.Q = alpha * entr - 0.5 * chisq
+
+        if use_bayes:
+            result.n_good = ng
+            result.trace = tr
+            result.convergence = conv
+            if not self.offdiag:
+                result.probability = self.posterior_probability(A_opt, alpha, entr, chisq)
+
         return result
 
     # =============================================================================================
@@ -559,10 +573,6 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         return sol, optarr
 
 
-
-
-
-
     def solve_classic(self):
         """Classic maxent alpha determination.
 
@@ -588,7 +598,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         converged = False
         conv = 0.
         while conv < 1:
-            o = self.maxent_optimization(alpha, self.ustart)
+            o = self.maxent_optimization(alpha, self.ustart, use_bayes=True)
 
             ustart = o.u_opt
             optarr.append(o)
@@ -615,7 +625,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         # we find the optimal alpha by newton's root finding method.
 
         def root_fun(alpha, u0):  # this function is just for the newton root-finding
-            res = self.maxent_optimization(alpha, u0, iterfac=100000)
+            res = self.maxent_optimization(alpha, u0, iterfac=100000, use_bayes=True)
             optarr.append(res)
             u0[:] = res.u_opt
             return res.convergence - 1.
@@ -624,7 +634,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         alpha_opt = opt.newton(root_fun, alpha_opt, tol=1e-6, args=(ustart,))
         self.log('final optimal alpha: {}, log10(alpha_opt) = '.format(alpha_opt, np.log10(alpha_opt)))
 
-        sol = self.maxent_optimization(alpha_opt, ustart, iterfac=250000)
+        sol = self.maxent_optimization(alpha_opt, ustart, iterfac=250000, use_bayes=True)
         self.alpha_opt = alpha_opt
         self.A_opt = sol.A_opt
         return sol, optarr
@@ -642,7 +652,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         self.ustart = np.zeros((self.n_sv))
         maxprob = 0.
         while True:
-            o = self.maxent_optimization(alpha, self.ustart)
+            o = self.maxent_optimization(alpha, self.ustart, use_bayes=True)
             ustart = o.u_opt
             optarr.append(o)
             alpha /= alphadiv
@@ -712,7 +722,11 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             return a + b / (1. + np.exp(-d * (x - c)))
 
         try:
-            popt, pcov = opt.curve_fit(fitfun, np.log10(alphas), np.log10(chis), p0=(0., 5., 2., 0.))
+            good_numbers = np.isfinite(chis)
+            popt, pcov = opt.curve_fit(fitfun,
+                                       np.log10(alphas[good_numbers]),
+                                       np.log10(chis[good_numbers]),
+                                       p0=(0., 5., 2., 0.))
         except ValueError:
             print('Fermi fit failed.')
             if interactive:
@@ -740,6 +754,8 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             plt.plot(np.log10(alphas), fitfun(np.log10(alphas), *popt), label='fit2lin')
             #plt.plot(np.log10(alphas), chi2_interp(np.log10(alphas)), label='chi2 fit')
 
+        closest_idx = np.argmin(np.abs(np.log10(alphas) - a_opt))
+        ustart = optarr[closest_idx].u_opt
         sol = self.maxent_optimization(alpha_opt, ustart)
 
         if interactive:
@@ -782,8 +798,18 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
 
 class OptimizationResult(object):
     """Dummy object for holding the result of an optimization."""
+
     def __init__(self):
-        pass
+        self.u_opt = None
+        self.A_opt = None
+        self.chi2 = None
+        self.backtransform = None
+        self.entropy = None
+        self.n_good = None
+        self.probability = None
+        self.alpha = None
+        self.convergence = None
+        self.trace = None
 
 
 class NewtonOptimizer(object):
@@ -816,7 +842,11 @@ class NewtonOptimizer(object):
         since the increment may be large, we apply a reduction of step width in such cases.
         """
 
-        increment = -np.dot(np.linalg.pinv(jacobian_matrix), function_vector)
+        try:
+            increment = -np.dot(np.linalg.pinv(jacobian_matrix), function_vector)
+        except np.linalg.LinAlgError:
+            print('LinAlgError in Newton Solver, setting increment to zero')
+            increment = np.zeros_like(proposal)
         step_reduction = 1.
         significance_limit = 1e-4
         if np.any(np.abs(proposal) > significance_limit):

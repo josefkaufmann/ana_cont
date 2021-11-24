@@ -1,6 +1,8 @@
 #!/usr/bin/env python
-import sys, os
+import sys, os, traceback
 from PyQt5 import QtWidgets
+
+sys.excepthook = traceback.print_exception
 
 file_dir = os.path.dirname(os.path.abspath(__file__))
 package_dir = '/'.join(file_dir.split('/')[:-1])

@@ -77,6 +77,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             lambda: self.realgrid.update_type(str(self.grid_type_combo.currentText()))
         )
 
+    def preset_fnames(self, fname):
+        self.inp_file_name.setText(fname)
+        self.inp_file_name_2.setText(fname)
+
     def connect_fname_input(self):
         self.inp_file_name.editingFinished.connect(
             lambda: self.input_data.update_fname(str(self.inp_file_name.text())))
@@ -194,15 +198,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                         alpha_determination='chi2kink',
                                         model=model,
                                         stdev=self.input_data.error,
-                                        interactive=False, alpha_start=1e10, alpha_end=1e-3,
+                                        interactive=False, alpha_start=1e14, alpha_end=1e-3,
                                         preblur=preblur, blur_width=bw)
 
         inp_str = 'atom {}, orb {}, spin {}, blur {}: '.format(self.input_data.atom,
                                                                self.input_data.orbital,
                                                                self.input_data.spin,
                                                                bw)
-        res_str = 'alpha_opt={:3.2f}, chi2(alpha_opt)={:3.2f}, min(chi2)={:3.2}'.format(
-            sol[0].alpha, sol[0].chi2, sol[1][-1].chi2
+        all_chis = np.isfinite(np.array([s.chi2 for s in sol[1]]))
+        res_str = 'alpha_opt={:3.2f}, chi2(alpha_opt)={:3.2f}, min(chi2)={:3.2f}'.format(
+            sol[0].alpha, sol[0].chi2, np.amin(all_chis)
         )
         self.text_output.append(inp_str + res_str)
         alphas = [s.alpha for s in sol[1]]
