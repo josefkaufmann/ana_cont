@@ -181,11 +181,17 @@ class AnalyticContinuationProblem(object):
         return blur_solutions[-3], [sol_alphasearch, blur_solutions]
 
 
-# This class defines a GreensFunction object. The main use of this
-# is to calculate a full Green's function with real- and imaginary part
-# from a spectrum.
+
 class GreensFunction(object):
+    """
+    This class defines a GreensFunction object. The main use of this
+    is to calculate a full Green's function with real- and imaginary part
+    from a spectrum.
+    """
+
     def __init__(self, spectrum = None, wgrid = None, kind = ''):
+        """Initialize with spectral function and real-frequency grid.
+        """
         self.spectrum = spectrum
         self.wgrid = wgrid
         self.wmin = self.wgrid[0]
@@ -198,6 +204,10 @@ class GreensFunction(object):
         #            or: symmetric,       antisymmetric, general
 
     def kkt(self):
+        """Kramers Kronig transformation
+
+        Obtain full complex Green's function from its imaginary part.
+        """
         if self.kind == 'fermionic_phsym' or self.kind == 'symmetric':
             if self.wmin < 0.:
                 print('warning: wmin<0 not permitted for fermionic_phsym greens functions.')
@@ -215,7 +225,7 @@ class GreensFunction(object):
             m = self.dw[:,None] * self.spectrum[:,None]\
                 /(self.wgrid[None,:]-self.wgrid[:,None])
 
-        np.fill_diagonal(m, 0.)
+        np.fill_diagonal(m, 0.)  # set manually where w==w'
         self.g_real = np.sum(m, axis=0)
         self.g_imag = -self.spectrum*np.pi
         return self.g_real + 1j*self.g_imag
