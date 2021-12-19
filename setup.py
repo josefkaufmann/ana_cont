@@ -20,5 +20,7 @@ setup(name='ana_cont',
       include_package_data=True,
       zip_safe=False,
       setup_requires=['Cython'],
-      install_requires=['numpy', 'scipy'])
+      install_requires=['numpy', 'scipy', 'Cython', 'h5py', 'matplotlib', 'PyQt5'],
+      scripts=['scripts/maxent.py', 'scripts/pade.py', 'scripts/maxent_bosonic.py']
+      )
 
