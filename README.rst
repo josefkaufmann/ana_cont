@@ -1,5 +1,5 @@
 ana_cont: Python package for analytic continuation
-=====
+==================================================
 
 Update: The Wiki now contains descriptions and tutorials for the new graphical user interface.
 
@@ -36,7 +36,7 @@ Package structure
 * **scripts** contains some simple examples how the library may be used; also the GUI executables are located there.
 
 Requirements
--------------
+------------
 The code was checked to run with the following versions:
 
 * Python 3.7
@@ -52,7 +52,7 @@ but I cannot guarantee for that.
 
 
 Installation and usage
---------------
+----------------------
 
 I recommend the following steps:
 
