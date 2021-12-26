@@ -1,7 +1,7 @@
 import sys
 import numpy as np
 import scipy.optimize as opt
-import scipy.interpolate as interp
+import collections
 from . import kernels
 
 if sys.version_info[0] > 2:
@@ -55,19 +55,19 @@ class PadeSolver(AnalyticContinuationSolver):
         denominator = pade.B(self.re_axis, self.im_axis.shape[0],
                            1j * self.im_axis, self.im_data, self.a)
 
-        self.result = numerator / denominator
+        result = numerator / denominator
 
-        sol = OptimizationResult()
-        sol.numerator = numerator
-        sol.denominator = denominator
-        sol.numerator_function = numerator_function
-        sol.denominator_function = denominator_function
-        sol.check = self.check()
-        sol.ivcheck = self.ivcheck
-        sol.A_opt = -self.result.imag / np.pi
-        sol.g_ret = numerator / denominator
+        result_dict = {}
+        result_dict.update({"numerator": numerator,
+                            "denominator": denominator,
+                            "numerator_function": numerator_function,
+                            "denominator_function": denominator_function,
+                            "check": self.check(),
+                            "ivcheck": self.ivcheck,
+                            "A_opt": -result.imag / np.pi,
+                            "g_ret": numerator / denominator})
 
-        return sol
+        return OptimizationResult(**result_dict)
 
 
 class MaxentSolverPlain(AnalyticContinuationSolver):
@@ -389,18 +389,12 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
                         self.re_axis, axis=-1)
 
     def chi2(self, A):
-        """compute the log-likelihood function of A"""
-        # import matplotlib.pyplot as plt
-        # # plt.plot(self.im_data)
-        # plt.semilogy(np.abs(self.im_data - np.trapz(self.kernel.real_matrix() * A[None, :], self.re_axis, axis=-1)))
-        # plt.semilogy(1. / np.sqrt(self.E))
-        # plt.show()
+        """compute the log-likelihood function or chi-squared-deviation of A"""
         return np.sum(
             self.E * (self.im_data - np.trapz(self.kernel.real_matrix() * A[None, :], self.re_axis, axis=-1)) ** 2)
 
     def entropy_pos(self, A, u):
         """Compute entropy for positive definite spectral function."""
-        # return np.trapz(A - self.model - A * (np.log(A) - np.log(self.model)), self.re_axis)
         return np.trapz(A - self.model - A * np.dot(self.V_svd, u), self.re_axis)
 
     def entropy_posneg(self, A, u):
@@ -421,7 +415,6 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         ng = -2. * alpha * entr
         tr = np.sum(lam / (alpha + lam))
         conv = tr / ng
-        # print('entropy={}, trace={}, -2 alpha S / trace = {}'.format(entr, tr, ng / tr))
         return ng, tr, conv
 
     def bayes_conv_offdiag(self, A, entr, alpha):
@@ -480,42 +473,53 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         u_opt = sol.x
         A_opt = self.singular_to_realspace(sol.x)
         entr = self.entropy(A_opt, u_opt)
-        chisq = self.chi2(A_opt)
-        norm = np.trapz(A_opt, self.re_axis)
+        chisq = self.chi2(A_opt)  # has to be applied before blurring
+        norm = np.trapz(A_opt, self.re_axis)  # is not changed by blurring
+
+        # result = OptimizationResult()
+        result_dict = {}
+        result_dict.update({"u_opt": u_opt})
+        if self.preblur:
+            result_dict.update({"A_opt": self.kernel.blur(A_opt),
+                                "blur_width": self.kernel.blur_width})
+            # result.A_opt = self.kernel.blur(A_opt)
+            # result.blur_width = self.kernel.blur_width
+        else:
+            result_dict.update({"A_opt": A_opt, "blur_width": 0.})
+            # result.A_opt = A_opt
+            # result.blur_width = 0.
+        result_dict.update({"alpha": alpha,
+                            "entropy": entr,
+                            "chi2": chisq,
+                            "backtransform": self.backtransform(A_opt),
+                            "norm": norm,
+                            "Q": alpha * entr - 0.5 * chisq})
+        # result.alpha = alpha
+        # result.entropy = entr
+        # result.chi2 = chisq
+        # result.backtransform = self.backtransform(A_opt)
+        # result.norm = norm
+        # result.Q = alpha * entr - 0.5 * chisq
+
         if use_bayes:
             if not self.offdiag:
                 ng, tr, conv = self.bayes_conv(A_opt, entr, alpha)
             else:
                 ng, tr, conv = self.bayes_conv_offdiag(A_opt, entr, alpha)
 
-        # self.log('log10(alpha)={:6.4f}\tchi2={:5.4e}\tS={:5.4e}\ttr={:5.4f}\tconv={:1.3},\tnfev={},\tnorm={}'.format(
-        #     np.log10(alpha), chisq, entr, tr, conv, sol.nfev, norm))
+            # result.n_good = ng
+            # result.trace = tr
+            # result.convergence = conv
+            result_dict.update({"n_good": ng, "trace": tr, "convergence": conv})
+            if not self.offdiag:
+                prob = self.posterior_probability(A_opt, alpha, entr, chisq)
+                # result.probability = prob
+                result_dict.update({"prob": prob})
+
         self.log('log10(alpha) = {:3.2f},\tchi2 = {:4.3e},   S = {:4.3e},   nfev = {},   norm = {:4.3f}'.format(
             np.log10(alpha), chisq, entr, sol.nfev, norm))
 
-        result = OptimizationResult()
-        result.u_opt = u_opt
-        if self.preblur:
-            result.A_opt = self.kernel.blur(A_opt)
-            result.blur_width = self.kernel.blur_width
-        else:
-            result.A_opt = A_opt
-            result.blur_width = 0.
-        result.alpha = alpha
-        result.entropy = entr
-        result.chi2 = chisq
-        result.backtransform = self.backtransform(A_opt)
-        result.norm = norm
-        result.Q = alpha * entr - 0.5 * chisq
-
-        if use_bayes:
-            result.n_good = ng
-            result.trace = tr
-            result.convergence = conv
-            if not self.offdiag:
-                result.probability = self.posterior_probability(A_opt, alpha, entr, chisq)
-
-        return result
+        return OptimizationResult(**result_dict)
 
     # =============================================================================================
     # Several variants of maxent are implemented in the following
@@ -637,6 +641,10 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         Bryan's maxent calculates an average of spectral functions,
         weighted by their Bayesian probability
         """
+
+        if interactive:
+            import matplotlib.pyplot as plt
+
         self.log('Solving...')
         optarr = []
         alpha = alphastart
@@ -667,9 +675,9 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         A_opt = -np.trapz(specarr * probarr[:, None], alpharr,
                           axis=0)  # need a "-" sign, because alpha goes from large to small.
 
-        sol = OptimizationResult()
-        sol.A_opt = A_opt
-        sol.backtransform = self.backtransform(A_opt)
+        sol = OptimizationResult(A_opt=A_opt,
+                                 backtransform=self.backtransform(A_opt))
+
         return sol, optarr
 
     def solve_chi2kink(self, alpha_start=1e9, alpha_end=1e-3, alpha_div=10., fit_position=2.5, interactive=False, **kwargs):
@@ -692,7 +700,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         chi = []
         alphas = []
         optarr = []
-        ustart=np.zeros((self.n_sv))
+        ustart = np.zeros((self.n_sv))
         while True:
             try:
                 o = self.maxent_optimization(alpha=alpha, ustart=ustart)
@@ -791,17 +799,44 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
 class OptimizationResult(object):
     """Dummy object for holding the result of an optimization."""
 
-    def __init__(self):
-        self.u_opt = None
-        self.A_opt = None
-        self.chi2 = None
-        self.backtransform = None
-        self.entropy = None
-        self.n_good = None
-        self.probability = None
-        self.alpha = None
-        self.convergence = None
-        self.trace = None
+    def __init__(self,
+                 u_opt=None,
+                 A_opt=None,
+                 chi2=None,
+                 backtransform=None,
+                 entropy=None,
+                 n_good=None,
+                 probability=None,
+                 alpha=None,
+                 convergence=None,
+                 trace=None,
+                 Q=None,
+                 norm=None,
+                 blur_width=None,
+                 numerator=None,
+                 denominator=None,
+                 numerator_function=None,
+                 denominator_function=None,
+                 check=None,
+                 ivcheck=None,
+                 g_ret=None):
+        self.u_opt = u_opt
+        self.A_opt = A_opt
+        self.chi2 = chi2
+        self.backtransform = backtransform
+        self.entropy = entropy
+        self.n_good = n_good
+        self.probability = probability
+        self.alpha = alpha
+        self.convergence = convergence
+        self.trace = trace
+        self.Q = Q
+        self.norm = norm
+        self.blur_width = blur_width
+        self.numerator=numerator
+        self.denominator=denominator
+        self.numerator_function=numerator_function
+        self.denominator_function=denominator_function
 
 
 class NewtonOptimizer(object):
@@ -823,7 +858,7 @@ class NewtonOptimizer(object):
         self.max_hist = max_hist
         self.max_iter = max_iter
         self.opt_size = opt_size
-        self.return_object = OptimizationResult()
+        self.return_object = collections.namedtuple("NewtonResult", ['x', 'nfev'])
 
     def iteration_function(self, proposal, function_vector, jacobian_matrix):
         """The function, whose fixed point we are searching.
