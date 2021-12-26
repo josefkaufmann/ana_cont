@@ -120,67 +120,6 @@ class AnalyticContinuationProblem(object):
         else:
             return None
 
-    def solve_preblur(self, verbose=False, interactive=False, **kwargs):
-        """Solve the AnalyticContinuationProblem with preblur.
-
-        First, determine the optimal alpha without preblur.
-        Then, try to find a reasonable increment for the preblur search.
-        The blur_width is increased, until chi2 is increased by a factor
-        of 1.5 with respect to the no-preblur solution.
-        One of the last elements, e.g. [-3] is taken as the final solution.
-        """
-
-        sol_noblur, sol_alphasearch = self.solve(method='maxent_svd',
-                                                 optimizer='newton',
-                                                 preblur=False,
-                                                 alpha_determination='chi2kink',
-                                                 verbose=verbose,
-                                                 interactive=interactive,
-                                                 **kwargs)
-
-        # detect peaks to get good spacing for b
-        spec_interp = interp.InterpolatedUnivariateSpline(self.re_axis, sol_noblur.A_opt, ext='zeros', k=4)
-        extrema = spec_interp.derivative().roots()
-
-        minimal_distance = np.amin(np.diff(extrema))
-        b_spacing = 1. / (15. / minimal_distance + 200. / (self.re_axis[-1] - self.re_axis[0]))
-        if verbose:
-            print('Found extrema at {}'.format(extrema))
-            print('Minimal distance between two extrema {}'.format(minimal_distance))
-            print('Use spacing of {} for search of optimal blur'.format(b_spacing))
-        b = 0.
-        chi2_arr = [sol_noblur.chi2]
-        b_arr = [0.]
-        blur_solutions = []
-        while True:
-            b += b_spacing
-            sol = self.partial_solution(method='maxent_svd',
-                                        optimizer='newton',
-                                        preblur=True,
-                                        blur_width=b,
-                                        verbose=verbose,
-                                        alpha=sol_noblur.alpha,
-                                        ustart=sol_noblur.u_opt,
-                                        interactive=interactive,
-                                        **kwargs)
-
-            if sol.chi2 > 1.5 * sol_noblur.chi2 or len(b_arr) > 100:
-                break
-            blur_solutions.append(sol)
-            b_arr.append(b)
-            chi2_arr.append(sol.chi2)
-
-        if interactive:
-            import matplotlib.pyplot as plt
-            plt.plot(b_arr, chi2_arr, marker='.', color='blue')
-            plt.plot(b_arr[-3], chi2_arr[-3], marker='x', color='orange')
-            plt.xlabel('b')
-            plt.ylabel('chi2')
-            plt.show()
-
-        return blur_solutions[-3], [sol_alphasearch, blur_solutions]
-
-
 
 class GreensFunction(object):
     """

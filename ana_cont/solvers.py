@@ -45,26 +45,15 @@ class PadeSolver(AnalyticContinuationSolver):
         def numerator_function(z):
             return pade.A(z, self.im_axis.shape[0],
                            1j * self.im_axis, self.im_data, self.a)
-        # numerator_function = np.vectorize(numerator_function)
-        #
+
         def denominator_function(z):
             return pade.B(z, self.im_axis.shape[0],
                            1j * self.im_axis, self.im_data, self.a)
-        # denominator_function = np.vectorize(denominator_function)
-        #
-        # numerator = np.array([numerator_function(x) for x in self.re_axis])
-        # denominator = np.array([denominator_function(x) for x in self.re_axis])
+
         numerator = pade.A(self.re_axis, self.im_axis.shape[0],
                            1j * self.im_axis, self.im_data, self.a)
         denominator = pade.B(self.re_axis, self.im_axis.shape[0],
                            1j * self.im_axis, self.im_data, self.a)
-        # numerator = pade.A(self.re_axis, self.im_axis.shape[0],
-        #                    1j * self.im_axis, self.im_data, self.a)
-        # denominator = pade.B(self.re_axis, self.im_axis.shape[0],
-        #                    1j * self.im_axis, self.im_data, self.a)
-
-        # self.result = pade.C(self.re_axis, 1j * self.im_axis,
-        #                      self.im_data, self.a)
 
         self.result = numerator / denominator
 
@@ -880,7 +869,6 @@ class NewtonOptimizer(object):
                 raise RuntimeWarning('Function returned NaN.')
         if counter > self.max_iter:
             raise RuntimeWarning('Failed to get optimization result in {} iterations'.format(self.max_iter))
-        #print('{} iterations, solution {}'.format(counter, result))
 
         self.return_object.x = result
         self.return_object.nfev = counter
@@ -896,21 +884,3 @@ class NewtonOptimizer(object):
         f_i = self.res[n_iter - 1] - self.props[n_iter - 1]
         update = mixing * f_i
         return new_proposal + update
-
-        # Here is also an implementation of the Anderson acceleration.
-        # Unfortunately, for the singular-space algorithm, it seems to fail...
-        # if n_iter < 10 or history == 0:# or n_iter%4!=0:  # linear mixing
-        #     return new_proposal + update  # this is still correct!
-        #
-        # R = np.zeros((self.opt_size, history), dtype=np.float)
-        # G = np.zeros((self.opt_size, history), dtype=np.float)
-        # for k in range(history):
-        #     R[:, k] = self.props[n_iter - history + k] - self.props[n_iter - history + k - 1]
-        #     G[:, k] = self.res[n_iter - history + k] - self.res[n_iter - history + k - 1]
-        # F = G - R
-        # inverse = np.linalg.pinv(np.dot(F.transpose(), F))
-        # h_j = np.dot(F.transpose(), f_i)
-        # fact1 = np.dot(R + mixing * F, inverse)
-        # update = mixing * f_i - np.dot(fact1, h_j)
-        #
-        # return new_proposal + update
