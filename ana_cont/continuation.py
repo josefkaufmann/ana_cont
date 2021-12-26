@@ -106,14 +106,6 @@ class AnalyticContinuationProblem(object):
                 sol.A_opt *= self.beta
                 sol.backtransform /= self.beta
             return sol
-        elif method=='maxent_plain':
-            self.solver = solvers.MaxentSolverPlain(self.im_axis,
-                                                    self.re_axis,
-                                                    self.im_data,
-                                                    kernel_mode=self.kernel_mode,
-                                                    **kwargs)
-            sol = self.solver.maxent_optimization(A_start=kwargs['model'], **kwargs)
-            return sol
         else:
             return ValueError("Unknown solver method.")
 
