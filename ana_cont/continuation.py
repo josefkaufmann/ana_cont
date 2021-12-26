@@ -1,6 +1,5 @@
 import sys
 import numpy as np
-import scipy.interpolate as interp
 if sys.version_info[0] > 2:
     from . import solvers
 else:
@@ -52,6 +51,8 @@ class AnalyticContinuationProblem(object):
             self.re_axis = re_axis * beta
             self.im_data = im_data
             self.beta = beta
+        else:
+            raise ValueError("Unsupported kernel_mode.")
 
 
     def solve(self, method='', **kwargs):
@@ -78,13 +79,15 @@ class AnalyticContinuationProblem(object):
                 sol[0].A_opt *= self.beta
                 sol[0].backtransform /= self.beta
             return sol
-        if method == 'maxent_mc':
+        elif method == 'maxent_mc':
             raise NotImplementedError
-        if method == 'pade':
+        elif method == 'pade':
             self.solver = solvers.PadeSolver(
                 im_axis = self.im_axis, re_axis = self.re_axis,
                 im_data = self.im_data)
             return self.solver.solve()
+        else:
+            raise ValueError("Unknown continuation method. Use one of 'maxent_svd', 'pade'.")
 
     def partial_solution(self, method='', **kwargs):
         """Maxent optimization at a specific value of alpha."""
@@ -92,19 +95,13 @@ class AnalyticContinuationProblem(object):
             self.solver = solvers.MaxentSolverSVD(
                 self.im_axis, self.re_axis, self.im_data,
                 kernel_mode=self.kernel_mode,
-               # model=kwargs['model'], stdev=kwargs['stdev'], offdiag=kwargs['offdiag'])
                 **kwargs)
 
+            # truncate ustart to actual number of significant singular values
             kwargs['ustart'] = kwargs['ustart'][:self.solver.n_sv]
-            # sol = self.solver.maxent_optimization(kwargs['alpha'], ustart, **kwargs)
             sol = self.solver.maxent_optimization(**kwargs)
             if self.kernel_mode == 'time_fermionic':
                 sol.A_opt *= self.beta
-            elif self.kernel_mode == 'freq_fermionic':
-                pass
-#                bt = sol.backtransform
-#                n = bt.shape[0] // 2
-#                sol.backtransform = bt[:n] + 1j*bt[n:]
             elif self.kernel_mode == 'time_bosonic':
                 sol.A_opt *= self.beta
                 sol.backtransform /= self.beta
@@ -118,7 +115,7 @@ class AnalyticContinuationProblem(object):
             sol = self.solver.maxent_optimization(A_start=kwargs['model'], **kwargs)
             return sol
         else:
-            return None
+            return ValueError("Unknown solver method.")
 
 
 class GreensFunction(object):
@@ -163,6 +160,9 @@ class GreensFunction(object):
         elif self.kind == 'fermionic' or self.kind == 'general':
             m = self.dw[:,None] * self.spectrum[:,None]\
                 /(self.wgrid[None,:]-self.wgrid[:,None])
+
+        else:
+            raise ValueError("Unknown kind of Greens function.")
 
         np.fill_diagonal(m, 0.)  # set manually where w==w'
         self.g_real = np.sum(m, axis=0)

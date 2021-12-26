@@ -474,6 +474,8 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
                                    'diag': np.exp(np.arange(self.n_sv))},
                           # scale for values to find (assume that they decay exponentially)
                           args=(alpha))  # additional argument for self.compute_f_J
+        else:
+            raise ValueError("Unknown optimizer. Use either 'newton' (recommended) or 'scipy_lm'.")
 
         u_opt = sol.x
         A_opt = self.singular_to_realspace(sol.x)
@@ -516,7 +518,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         return result
 
     # =============================================================================================
-    # Now actually solve the problem!
+    # Several variants of maxent are implemented in the following
     # =============================================================================================
 
     def solve_historic(self):
@@ -699,6 +701,9 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
                 chi.append(o.chi2)
                 alphas.append(alpha)
             except:
+                # For small alphas sometimes the optimization fails
+                # Usually this happens at values of alpha that
+                # are too small anyway, so don't worry.
                 print('Optimization at alpha={} failed.'.format(alpha))
             alpha = alpha / alpha_div
             if alpha < alpha_end:
@@ -725,7 +730,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
                     plt.plot(o.backtransform)
                 plt.plot(self.im_data)
                 plt.show()
-            return (optarr[-1], optarr)
+            return optarr[-1], optarr
 
         a, b, c, d = popt
 
@@ -753,8 +758,6 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             plt.show()
 
         return sol, optarr
-
-
 
     def error_propagation(self, obs, args):
         """Calculate the deviation for a callable function obs.
