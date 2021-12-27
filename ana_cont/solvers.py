@@ -2,6 +2,7 @@ import sys
 import numpy as np
 import scipy.optimize as opt
 import collections
+from abc import ABC, abstractmethod
 from . import kernels
 
 if sys.version_info[0] > 2:
@@ -16,8 +17,16 @@ else:
         pass
 
 
-class AnalyticContinuationSolver(object):
-    pass
+class AnalyticContinuationSolver(ABC):
+    """Abstract base class for solver classes.
+
+    Each Solver class has to inherit from this class.
+    The purpose of this is to ensure that each child class
+    has a method 'solve' implemented.
+    """
+    @abstractmethod
+    def solve(self):
+        pass
 
 
 class PadeSolver(AnalyticContinuationSolver):
@@ -71,11 +80,15 @@ class PadeSolver(AnalyticContinuationSolver):
 
 
 class MaxentSolverSVD(AnalyticContinuationSolver):
+    """Maxent with singular-value decomposition.
 
-
+    The singular-value decomposition of the kernel leads to a basis
+    in which the dimensionality of the analytic continuation problem
+    is much reduced. This makes computations faster and enforces some
+    constraints.
+    """
     def log(self, msg):
         if self.verbose: print(msg)
-
 
     def __init__(self, im_axis, re_axis, im_data,
                  kernel_mode='', model=None,
