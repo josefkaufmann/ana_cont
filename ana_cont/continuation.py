@@ -9,7 +9,7 @@ else:
 class AnalyticContinuationProblem(object):
     """Specification of an analytic continuation problem.
 
-    This class is designed to hold the information that specifies the analytic continuation problem:
+    This This class is designed to hold the information that specifies the analytic continuation problem:
 
     * Imaginary axis of the data
     * Real axis on which the result is anticipated

@@ -30,6 +30,7 @@ class AnalyticContinuationSolver(ABC):
 
 
 class PadeSolver(AnalyticContinuationSolver):
+    """Pade solver"""
     def __init__(self, im_axis, re_axis, im_data):
         self.im_axis = im_axis
         self.re_axis = re_axis
@@ -86,6 +87,9 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
     in which the dimensionality of the analytic continuation problem
     is much reduced. This makes computations faster and enforces some
     constraints.
+
+    This class is never instantiated directly by the user, but instead by
+    the solve method of continuation.AnalyticContinuationProblem.
     """
     def log(self, msg):
         if self.verbose: print(msg)
@@ -97,6 +101,28 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
                  preblur=False, blur_width=0.,
                  optimizer='scipy_lm', 
                  verbose=True, **kwargs):
+        """Create a Maxent solver object.
+
+        Here we pass the data to the solver and do some precomputations.
+        This makes the process of solving much faster.
+
+        Parameters
+        ----------
+        im_axis : numpy.ndarray
+                  One-dimensional numpy array of type float
+                  Matsubara frequencies or imaginary time points of the input data.
+        re_axis : numpy.ndarray
+                  One-dimensional numpy array of type float
+                  Real-frequency grid to use for the analytic continuation.
+        im_data : numpy.ndarray
+                  One-dimensional numpy array of type float or complex
+                  Imaginary-axis data, e.g. Matsubara Green's function
+        kernel_mode : {'freq_fermionic', 'freq_bosonic', 'time_fermionic', 'time_bosonic'}
+                  * 'freq_fermionic' fermionic Matsubara Greens function
+                  * 'freq_bosonic' bosonic Matsubara Greens function
+                  Additionally there are less established special-purpose options
+                  ['freq_bosonic_xyz', 'freq_fermionic_phsym', 'time_fermionic_phsym'].
+        """
 
         self.verbose = verbose
 
@@ -213,6 +239,8 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         f_m(u) = SVD(dQ/dA)_m = 0.
         For more efficient root finding, we also need the Jacobian J.
         It is directly computed in singular space, J_mi=df_m/du_i.
+
+        Some more documentation.
         """
 
         v = np.dot(self.V_svd, u)
