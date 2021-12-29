@@ -7,6 +7,20 @@ class Kernel(object):
     """This class handles the kernel of the analytic continuation."""
 
     def __init__(self, kind=None, re_axis=None, im_axis=None):
+        """
+        Parameters
+        ----------
+        kind : str, default=None
+                  Which kind of kernel to use. Possible options:
+                  'freq_bosonic', 'time_bosonic', 'freq_bosonic_xyz',
+                  'freq_fermionic', 'time_fermionic', 'freq_fermionic_phsym',
+                  'time_fermionic_phsym'
+        re_axis : numpy.ndarray, default=None
+                  real-frequency axis to generate the kernel matrix
+        im_axis : numpy.ndarray, default=None
+                  imaginary axis (time, Matsubara frequency)
+                  to generate the kernel matrix
+        """
         if (kind is None
                 or re_axis is None
                 or im_axis is None):
@@ -20,7 +34,10 @@ class Kernel(object):
         self.niw = self.im_axis.shape[0]
 
     def kernel_matrix(self):
-        """Set the kernel"""
+        """Compute the kernel matrix.
+        If you want to implement another kernel,
+        you just have to add another 'elif' here. """
+
         if self.kind == 'freq_bosonic':
             kernel = (self.re_axis ** 2)[None, :] \
                      / ((self.re_axis ** 2)[None, :]
@@ -70,14 +87,14 @@ class Kernel(object):
         """
         Convolve bosonic or fermionic kernel with a Gaussian.
 
-        The Gaussian is g(x) = exp(x^2/(2b^2)) / (b sqrt(2 pi)).
+        The Gaussian is :math:`g(x) = \\frac{1}{b \\sqrt{2 \\pi}} exp(-x^2/(2b^2))`.
         In the fermionic case, the convolution can be written as
-        K_preblur(ivn, w) = \\int_{-5b}^{5b} dx g(x) / (ivn - x - w)
+        :math:`K_{preblur}(i\\nu_n, \\omega) = \\int_{-5b}^{5b} dx\\; \\frac{g(x)}{i\\nu_n - x - \\omega}`
 
         In the bosonic case, the convolution can be written as
-        K_preblur(iwn, w) = \\int_{-5b}^{5b} dx g(x) ((x+w)^2 / ((x+w)^2 + wn^2) + (x-w)^2 / ((x-w)^2 + wn^2)) / 2
+        :math:`K_{preblur}(i\\omega_n, \\nu) = \\frac{1}{2} \\int_{-5b}^{5b} dx\\; g(x) [\\frac{(x+\\nu)^2 }{ ((x+\\nu)^2 + \\omega_n^2)} + \\frac{(x-\\nu)^2 }{ ((x-\\nu)^2 + \\omega_n^2)}]`
 
-        Integration over the Gaussian from -5b to 5b is certainly sufficient.
+        Integration over the Gaussian from :math:`-5b` to :math:`5b` is certainly sufficient.
         Thus the Gaussian has to be computed only once and integration by scipy.integrate.simps
         gives very accurate results even for tiny values of b.
 
