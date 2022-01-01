@@ -1,0 +1,782 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytic continuation with ana_cont &#8212; ana_cont 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "tex2jax_ignore|mathjax_ignore|document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Square lattice Hubbard model, \(U=2\), \(\beta=5\), half-filling" href="tutorial.html" />
+    <link rel="prev" title="ana_cont: Python package for analytic continuation" href="includeme.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<div class="section" id="Analytic-continuation-with-ana_cont">
+<h1>Analytic continuation with ana_cont<a class="headerlink" href="#Analytic-continuation-with-ana_cont" title="Permalink to this headline">¶</a></h1>
+<p>There is no general-purpose main program of ana_cont. Therefore the user has to write a script according to his needs. This is very simple and some examples are presented in this notebook.</p>
+<p>First we have to import some libraries.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+</div>
+<p>The ana_cont library can be imported directly, if it was installed properly. If not, or if there are multiple installations in your system, you should add the path to your favourite version:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;HOME&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;/Programs/ana_cont&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">ana_cont.continuation</span> <span class="k">as</span> <span class="nn">cont</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="Continuation-of-a-fermionic-Green’s-function">
+<h2>Continuation of a fermionic Green’s function<a class="headerlink" href="#Continuation-of-a-fermionic-Green’s-function" title="Permalink to this headline">¶</a></h2>
+<p>A fermionic Green’s function <span class="math notranslate nohighlight">\(G(z)\)</span> has complex values, and its values on the Matsubara frequencies are related to the spectral function <span class="math notranslate nohighlight">\(A(w)\)</span> by</p>
+<div class="math notranslate nohighlight">
+\[G(i\omega_n) = \int_{-\infty}^\infty \frac{A(\omega)}{i\omega_n - \omega}.\]</div>
+<p>The same relation holds for the self-energy as well, if the Hartree term is subtracted [J.M.Luttinger, Phys. Rev. 121, 942 (1961)].</p>
+<p>Note that the spectral function is normalized to 1 only for diagonal elements of Green’s functions. Diagonal elements of the self-energy are normalized to its first moment. Off-diagonal elements are normalized to 0. This simple example deals only with diagonal elements, off-diagonal elements are considered in a separate notebook.</p>
+<p>Here we consider the continuation from fermionic Matsubara frequencies to real frequencies. It is of course also possible to continue from imaginary time to real frequencies, but this has two disadvantages: First, if data are obtained from CT-QMC, they need to be collected in imaginary-time bins, which reduces accuracy in steep regions. (The binned value does not in general coincide with the actual value at the bin center.) Fourier-transformed data can be obtained directly by NFFT, without any
+binning error. Second, the Matsubara-representation is more compact, meaning that much fewer Matsubara frequencies than imaginary-time bins are needed. This makes the linear-algebra operations cheaper and thus the continuation faster. For the sake of completeness let it be mentioned that the package continues <span class="math notranslate nohighlight">\(G(-\tau)\)</span> for positive values of <span class="math notranslate nohighlight">\(\tau\)</span>, i.e. positive values.</p>
+<div class="section" id="Generate-test-data">
+<h3>Generate test data<a class="headerlink" href="#Generate-test-data" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">w_real</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">2001</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">spec_real</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">w_real</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="mf">0.2</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">spec_real</span> <span class="o">+=</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">w_real</span><span class="o">+</span><span class="mf">2.5</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="mf">0.8</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">spec_real</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">spec_real</span><span class="p">,</span> <span class="n">w_real</span><span class="p">)</span> <span class="c1"># normalization</span>
+
+<span class="n">beta</span> <span class="o">=</span> <span class="mf">10.</span>
+<span class="n">iw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>
+
+<span class="n">noise_amplitude</span> <span class="o">=</span> <span class="mf">1e-4</span> <span class="c1"># create gaussian noise</span>
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+<span class="n">noise_abs</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="n">noise_amplitude</span><span class="p">,</span> <span class="n">iw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">noise_phase</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">iw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">noise</span> <span class="o">=</span> <span class="n">noise_abs</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">noise_phase</span><span class="p">)</span>
+
+<span class="n">kernel</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">iw</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">w_real</span><span class="p">[</span><span class="kc">None</span><span class="p">,:])</span>
+<span class="n">gf_mats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">kernel</span><span class="o">*</span><span class="n">spec_real</span><span class="p">[</span><span class="kc">None</span><span class="p">,:],</span> <span class="n">w_real</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">noise</span>
+
+<span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w_real</span><span class="p">,</span> <span class="n">spec_real</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;spectrum&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;real frequency&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Spectrum&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">gf_mats</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;real part&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">gf_mats</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;imag part&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Matsubara frequency&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Matsubara Greensfunction&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/basics_8_0.png" src="_images/basics_8_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Create-the-continuation-problem">
+<h3>Create the continuation problem<a class="headerlink" href="#Create-the-continuation-problem" title="Permalink to this headline">¶</a></h3>
+<p>The first important part of the analytic continuation script is the creation of an <code class="docutils literal notranslate"><span class="pre">AnalyticContinuationProblem</span></code> object. If the analytic continuation is done by the Maximum entropy method, we need the following input: * Matsubara frequency grid (<code class="docutils literal notranslate"><span class="pre">im_axis</span></code>). Only positive Matsubara frequencies should be used for the continuation. The number of frequencies to be used depends on temperature, but one should use only the region that contains physical information, i.e. the low-frequency region.
+The behaviour in the high-frequency region is trivial and encoded in the kernel. * Real frequency grid (<code class="docutils literal notranslate"><span class="pre">re_axis</span></code>). The real frequency grid must cover the whole bandwidth of the spectrum (ideally a bit more). It does not need to be equispaced. On the contrary, it is often of advantage to make it denser in regions, where the spectral function is expected to have a complicated structure. * Imaginary axis data (<code class="docutils literal notranslate"><span class="pre">im_data</span></code>). The Green’s function data belonging to the Matsubara frequencies given
+above. If you continue a self-energy, make sure that you subtracted the Hartree term. You might also like to normalize it by its first moment. * Kind of the Green’s function (<code class="docutils literal notranslate"><span class="pre">kernel_mode</span></code>). If you want to continue a fermionic Green’s function or self energy from Matsubara frequencies, use <code class="docutils literal notranslate"><span class="pre">kernel_mode='freq_fermionic'</span></code></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">501</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">iw</span><span class="p">,</span> <span class="n">re_axis</span><span class="o">=</span><span class="n">w</span><span class="p">,</span>
+                                        <span class="n">im_data</span><span class="o">=</span><span class="n">gf_mats</span><span class="p">,</span> <span class="n">kernel_mode</span><span class="o">=</span><span class="s1">&#39;freq_fermionic&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Solve-the-continuation-problem">
+<h3>Solve the continuation problem<a class="headerlink" href="#Solve-the-continuation-problem" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line">Now we can actually solve the problem. For this we use the maximum entropy method with singular value decomposition, <code class="docutils literal notranslate"><span class="pre">method='maxent_svd'</span></code>. This algorithm needs the following additional information: * Alpha determination algorithm. It is recommended to use <code class="docutils literal notranslate"><span class="pre">alpha_determination='chi2kink'</span></code>, since the “classic” and “Bryan” algorithms in practice frequently lead to overfitting. * Error estimate: passed to the solver through the keyword <code class="docutils literal notranslate"><span class="pre">stdev</span></code>. It must have the same shape as <code class="docutils literal notranslate"><span class="pre">im_axis</span></code>.</div>
+<div class="line">* Default model: passed to the solver through the keyword <code class="docutils literal notranslate"><span class="pre">model</span></code>. For a first try, use a flat default model. However, you can use an arbitrarily creative model. By experience a function that strongly decays in the high-frequency region can be useful. It is also possible to re-use a spectrum that was obtained from continuation with strong underfitting.</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">iw</span><span class="p">)</span><span class="o">*</span><span class="n">noise_amplitude</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+<span class="n">sol</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">probl</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;maxent_svd&#39;</span><span class="p">,</span> <span class="n">alpha_determination</span><span class="o">=</span><span class="s1">&#39;chi2kink&#39;</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;newton&#39;</span><span class="p">,</span> <span class="n">stdev</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+501 data points on real axis
+20 data points on imaginary axis
+19 significant singular values
+Precomputation of coefficient matrices...
+log10(alpha) = 9.00,    chi2 = 2.517e+07,   S = -6.597e-04,   nfev = 13,   norm = 1.019
+log10(alpha) = 8.00,    chi2 = 1.282e+07,   S = -2.855e-02,   nfev = 18,   norm = 1.115
+log10(alpha) = 7.00,    chi2 = 2.701e+06,   S = -1.925e-01,   nfev = 20,   norm = 1.177
+log10(alpha) = 6.00,    chi2 = 2.082e+05,   S = -5.159e-01,   nfev = 43,   norm = 1.127
+log10(alpha) = 5.00,    chi2 = 1.098e+04,   S = -7.399e-01,   nfev = 39,   norm = 1.057
+log10(alpha) = 4.00,    chi2 = 1.048e+03,   S = -8.667e-01,   nfev = 34,   norm = 1.020
+log10(alpha) = 3.00,    chi2 = 5.258e+01,   S = -9.805e-01,   nfev = 22,   norm = 1.006
+log10(alpha) = 2.00,    chi2 = 1.426e+01,   S = -1.025e+00,   nfev = 36,   norm = 1.001
+log10(alpha) = 1.00,    chi2 = 1.036e+01,   S = -1.076e+00,   nfev = 25,   norm = 1.000
+log10(alpha) = 0.00,    chi2 = 9.911e+00,   S = -1.144e+00,   nfev = 75,   norm = 0.999
+log10(alpha) = -1.00,   chi2 = 9.686e+00,   S = -1.546e+00,   nfev = 33,   norm = 0.999
+log10(alpha) = -2.00,   chi2 = 9.612e+00,   S = -2.573e+00,   nfev = 74,   norm = 0.999
+log10(alpha) = -3.00,   chi2 = 9.602e+00,   S = -3.731e+00,   nfev = 77,   norm = 0.999
+Optimal log alpha 2.171526733569218
+log10(alpha) = 2.17,    chi2 = 1.598e+01,   S = -1.018e+00,   nfev = 77,   norm = 1.002
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Plot-the-result">
+<h3>Plot the result<a class="headerlink" href="#Plot-the-result" title="Permalink to this headline">¶</a></h3>
+<p>Now we can plot the result of the continuation. It is highly recommended to look at two kinds of plots. First, one should look at the backtransform and compare it to the original data. (Plotting one over another, or the difference.) The backtransform should be a good fit, but of course you should not try to fit noise. Second, one should check, if the result looks reasonably. In the case of noise-fitting, peaks become sharp and hight, and even additional peaks can appear. Another typical symptom
+is that spectral weight is shifted to the borders of the real-frequency interval.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">gf_mats</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;data real&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">gf_mats</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;data imag&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;backtransform real&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;backtransform imag&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Matsubara frequency&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Fit&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">gf_mats</span><span class="o">.</span><span class="n">real</span><span class="o">-</span><span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;real&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">gf_mats</span><span class="o">.</span><span class="n">imag</span><span class="o">-</span><span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;imag&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Matsubara frequency&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Misfit&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">A_opt</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;result&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w_real</span><span class="p">,</span> <span class="n">spec_real</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;truth&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;real frequency&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Spectrum&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/basics_14_0.png" src="_images/basics_14_0.png" />
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="Constructing-a-full-complex-valued-Green’s-function-from-a-spectrum">
+<h2>Constructing a full complex-valued Green’s function from a spectrum<a class="headerlink" href="#Constructing-a-full-complex-valued-Green’s-function-from-a-spectrum" title="Permalink to this headline">¶</a></h2>
+<p>Especially when one continues a self-energy, one usually wants not only its spectrum, but rather the full Green’s function. The spectrum is related to the <em>imaginary</em> part of the retarded Green’s function:</p>
+<div class="math notranslate nohighlight">
+\[A(\omega) = -\frac{1}{\pi} \mathrm{Im} G(\omega)\]</div>
+<p>The Kramers-Kronig relations provide a way to get the real part from the imaginary part:</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{Re} G(\omega) = \frac{1}{\pi} \mathcal{P} \int_{-\infty}^\infty d\omega
+    \frac{\mathrm{Im} G(\omega')}{\omega'-\omega}.\]</div>
+<p>This functionality is implemented in the class <code class="docutils literal notranslate"><span class="pre">GreensFunction</span></code>, which has a method <code class="docutils literal notranslate"><span class="pre">kkt()</span></code>. The following line of code produces a warning, which can be safely ignored. (In the integration kernel, a division <span class="math notranslate nohighlight">\(0/0\)</span> occurs. The respective value is set by hand, however.)</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">gf_full</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">GreensFunction</span><span class="p">(</span><span class="n">spectrum</span><span class="o">=</span><span class="n">sol</span><span class="o">.</span><span class="n">A_opt</span><span class="p">,</span> <span class="n">wgrid</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;fermionic&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">kkt</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/josef/Programs/ana_cont/ana_cont/continuation.py:215: RuntimeWarning: divide by zero encountered in true_divide
+  m = self.dw[:,None] * self.spectrum[:,None]\
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">gf_full</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;real&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">gf_full</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;imag&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">w</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;frequency&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/basics_17_0.png" src="_images/basics_17_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Continuation-of-a-bosonic-Green’s-function">
+<h2>Continuation of a bosonic Green’s function<a class="headerlink" href="#Continuation-of-a-bosonic-Green’s-function" title="Permalink to this headline">¶</a></h2>
+<p>The continuation of a bosonic Green’s function (response function) works very similar to the fermionic case. It is arguably even simpler. There are howvever a few points to consider: * Trivial but a common source of mistakes: you have to use bosonic Matsubara frequencies. * The implemented kernel assumes that bosonic Green’s functions are purely real on the imaginary axis. * Only positive real frequencies must be used, as the symmetry of bosonic spectra is encoded in the kernel. * At
+<span class="math notranslate nohighlight">\(\omega = i\omega_0 = 0\)</span>, the kernel diverges. This is avoided by defining the spectral function as done below. We nevertheless get a 0/0 warning, but the respective value is set manually, so don’t worry.</p>
+<p>The problem of the last point is mitigated by defining the spectrum as <span class="math notranslate nohighlight">\(S(\omega) = \frac{2}{\pi} \frac{Im G(\omega)}{\omega}\)</span>, where <span class="math notranslate nohighlight">\(G\)</span> is the actual response function. This leads to the relation</p>
+<div class="math notranslate nohighlight">
+\[\chi(i\omega_n) = \int_0^\infty d\omega \frac{\omega^2}{\omega^2+\omega_n^2} S(\omega)\]</div>
+<p>Apart from the differences just mentioned, the continuation workflow is the same as in the fermionic case. Therefore, it is recommended to read the above section about fermionic continuation first. In the following only the comments only address differences in the bosonic case.</p>
+<div class="section" id="id1">
+<h3>Generate test data<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">w_real</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">2001</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">spec_real</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">w_real</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="mf">0.2</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">spec_real</span> <span class="o">+=</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">w_real</span><span class="o">-</span><span class="mf">1.5</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="mf">0.8</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">spec_real</span> <span class="o">+=</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">w_real</span><span class="o">+</span><span class="mf">1.5</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="mf">0.8</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="c1"># must be symmetric around 0!</span>
+<span class="n">spec_real</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">spec_real</span><span class="p">,</span> <span class="n">w_real</span><span class="p">)</span> <span class="c1"># normalization</span>
+
+<span class="n">beta</span> <span class="o">=</span> <span class="mf">10.</span>
+<span class="n">iw</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">beta</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">noise_amplitude</span> <span class="o">=</span> <span class="mf">1e-4</span> <span class="c1"># create gaussian noise</span>
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+<span class="n">noise</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="n">noise_amplitude</span><span class="p">,</span> <span class="n">iw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="n">kernel</span> <span class="o">=</span> <span class="p">(</span><span class="n">w_real</span><span class="o">**</span><span class="mi">2</span><span class="p">)[</span><span class="kc">None</span><span class="p">,:]</span><span class="o">/</span><span class="p">((</span><span class="n">iw</span><span class="o">**</span><span class="mi">2</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">w_real</span><span class="o">**</span><span class="mi">2</span><span class="p">)[</span><span class="kc">None</span><span class="p">,:])</span>
+<span class="n">kernel</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+<span class="n">gf_bos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">kernel</span><span class="o">*</span><span class="n">spec_real</span><span class="p">[</span><span class="kc">None</span><span class="p">,:],</span> <span class="n">w_real</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">noise</span>
+<span class="n">norm</span> <span class="o">=</span> <span class="n">gf_bos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">gf_bos</span> <span class="o">/=</span> <span class="n">norm</span>
+<span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w_real</span><span class="p">,</span> <span class="n">spec_real</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;spectrum&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w_real</span><span class="p">,</span> <span class="n">w_real</span><span class="o">*</span><span class="n">spec_real</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;response function&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;real frequency&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Spectrum&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">gf_bos</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Matsubara frequency&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Matsubara Greensfunction&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+&lt;ipython-input-9-1624c05b75e5&gt;:14: RuntimeWarning: invalid value encountered in true_divide
+  kernel = (w_real**2)[None,:]/((iw**2)[:,None] + (w_real**2)[None,:])
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/basics_20_1.png" src="_images/basics_20_1.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Set-the-problem">
+<h3>Set the problem<a class="headerlink" href="#Set-the-problem" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Use only positive frequencies</p></li>
+<li><p>Use bosonic Matsubara frequencies</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">kernel_mode='freq_bosonic'</span></code></p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">501</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">iw</span><span class="p">,</span> <span class="n">re_axis</span><span class="o">=</span><span class="n">w</span><span class="p">,</span>
+                                        <span class="n">im_data</span><span class="o">=</span><span class="n">gf_bos</span><span class="p">,</span> <span class="n">kernel_mode</span><span class="o">=</span><span class="s1">&#39;freq_bosonic&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Solve-the-problem">
+<h3>Solve the problem<a class="headerlink" href="#Solve-the-problem" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">iw</span><span class="p">)</span> <span class="o">*</span> <span class="n">noise_amplitude</span> <span class="o">/</span> <span class="n">norm</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+<span class="n">sol</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">probl</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;maxent_svd&#39;</span><span class="p">,</span> <span class="n">alpha_determination</span><span class="o">=</span><span class="s1">&#39;chi2kink&#39;</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;newton&#39;</span><span class="p">,</span> <span class="n">stdev</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/josef/Programs/ana_cont/ana_cont/kernels.py:25: RuntimeWarning: invalid value encountered in true_divide
+  kernel = (self.re_axis ** 2)[None, :] \
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+501 data points on real axis
+10 data points on imaginary axis
+9 significant singular values
+Precomputation of coefficient matrices...
+log10(alpha) = 9.00,    chi2 = 3.113e+07,   S = -2.813e-03,   nfev = 15,   norm = 0.935
+log10(alpha) = 8.00,    chi2 = 1.284e+07,   S = -3.527e-02,   nfev = 19,   norm = 0.823
+log10(alpha) = 7.00,    chi2 = 2.004e+06,   S = -2.242e-01,   nfev = 20,   norm = 0.907
+log10(alpha) = 6.00,    chi2 = 7.631e+04,   S = -4.289e-01,   nfev = 31,   norm = 0.987
+log10(alpha) = 5.00,    chi2 = 8.535e+03,   S = -5.194e-01,   nfev = 21,   norm = 0.998
+log10(alpha) = 4.00,    chi2 = 2.695e+02,   S = -6.141e-01,   nfev = 21,   norm = 1.000
+log10(alpha) = 3.00,    chi2 = 1.324e+01,   S = -6.385e-01,   nfev = 19,   norm = 1.000
+log10(alpha) = 2.00,    chi2 = 7.493e+00,   S = -6.473e-01,   nfev = 34,   norm = 1.000
+log10(alpha) = 1.00,    chi2 = 4.765e+00,   S = -6.916e-01,   nfev = 25,   norm = 1.000
+log10(alpha) = 0.00,    chi2 = 4.163e+00,   S = -7.789e-01,   nfev = 27,   norm = 1.000
+log10(alpha) = -1.00,   chi2 = 3.828e+00,   S = -1.391e+00,   nfev = 30,   norm = 1.000
+log10(alpha) = -2.00,   chi2 = 3.742e+00,   S = -2.537e+00,   nfev = 33,   norm = 1.000
+log10(alpha) = -3.00,   chi2 = 3.733e+00,   S = -3.708e+00,   nfev = 36,   norm = 1.000
+Optimal log alpha 2.3312800437988215
+log10(alpha) = 2.33,    chi2 = 8.742e+00,   S = -6.429e-01,   nfev = 32,   norm = 1.000
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Plot-the-results">
+<h3>Plot the results<a class="headerlink" href="#Plot-the-results" title="Permalink to this headline">¶</a></h3>
+<p>Remember that the code calculates the <em>spectrum</em>. To get the response function on the real axis, multiply the spectrum by <span class="math notranslate nohighlight">\(\omega\)</span>!</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">gf_bos</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;data real&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;backtransform real&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Matsubara frequency&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Fit&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">gf_bos</span><span class="o">.</span><span class="n">real</span><span class="o">-</span><span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;real&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Matsubara frequency&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Misfit&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">A_opt</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;result spectrum&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">w</span><span class="o">*</span><span class="n">sol</span><span class="o">.</span><span class="n">A_opt</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;result resp funct&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w_real</span><span class="p">,</span> <span class="n">spec_real</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;true spectrum&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w_real</span><span class="p">,</span> <span class="n">w_real</span><span class="o">*</span><span class="n">spec_real</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;true resp funct&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;real frequency&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Spectrum&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/basics_26_0.png" src="_images/basics_26_0.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">ana_cont</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="includeme.html">ana_cont: Python package for analytic continuation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Analytic continuation with ana_cont</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Continuation-of-a-fermionic-Green’s-function">Continuation of a fermionic Green’s function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Constructing-a-full-complex-valued-Green’s-function-from-a-spectrum">Constructing a full complex-valued Green’s function from a spectrum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Continuation-of-a-bosonic-Green’s-function">Continuation of a bosonic Green’s function</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Square lattice Hubbard model, <span class="math notranslate nohighlight">\(U=2\)</span>, <span class="math notranslate nohighlight">\(\beta=5\)</span>, half-filling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Strontium-vanadate">Strontium vanadate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Analytical-continuation-of-a-matrix-valued-function-(Kagome)">Analytical continuation of a matrix-valued function (Kagome)</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="includeme.html" title="previous chapter">ana_cont: Python package for analytic continuation</a></li>
+      <li>Next: <a href="tutorial.html" title="next chapter">Square lattice Hubbard model, <span class="math notranslate nohighlight">\(U=2\)</span>, <span class="math notranslate nohighlight">\(\beta=5\)</span>, half-filling</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Josef Kaufmann.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/basics.ipynb.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

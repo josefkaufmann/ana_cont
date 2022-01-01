@@ -1,2 +1,0 @@
-include ana_cont/pade.pyx
-exclude ana_cont/*.c

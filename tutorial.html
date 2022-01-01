@@ -1,0 +1,1750 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Square lattice Hubbard model, \(U=2\), \(\beta=5\), half-filling &#8212; ana_cont 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "tex2jax_ignore|mathjax_ignore|document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Analytic continuation with ana_cont" href="basics.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;../..&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">ana_cont.continuation</span> <span class="k">as</span> <span class="nn">cont</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="Square-lattice-Hubbard-model,-U=2,-\beta=5,-half-filling">
+<h1>Square lattice Hubbard model, <span class="math notranslate nohighlight">\(U=2\)</span>, <span class="math notranslate nohighlight">\(\beta=5\)</span>, half-filling<a class="headerlink" href="#Square-lattice-Hubbard-model,-U=2,-\beta=5,-half-filling" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="Analytic-continuation-of-self-energy">
+<h2>Analytic continuation of self-energy<a class="headerlink" href="#Analytic-continuation-of-self-energy" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># load data</span>
+<span class="n">siw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;data/square_U2_b5/siw.npy&#39;</span><span class="p">)</span>
+<span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;data/square_U2_b5/siw_err.npy&#39;</span><span class="p">)</span>
+<span class="n">beta</span> <span class="o">=</span> <span class="mf">5.</span>
+<span class="n">mu</span> <span class="o">=</span> <span class="mf">1.</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># define the problem</span>
+<span class="n">niw</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># number of Matsubara frequencies</span>
+<span class="n">iw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">niw</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>  <span class="c1"># fermionic Matsubara frequencies</span>
+
+<span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">20.</span><span class="p">,</span> <span class="mf">20.</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">501</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># real-frequency grid</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>  <span class="c1"># flat default model</span>
+<span class="n">model</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>  <span class="c1"># normalization, not strictly necessary</span>
+
+<span class="c1"># the problem is defined by: imaginary grid, real grid, data, kernel type</span>
+<span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">iw</span><span class="p">,</span>  <span class="c1"># imaginary grid</span>
+                                         <span class="n">re_axis</span><span class="o">=</span><span class="n">w</span><span class="p">,</span>  <span class="c1"># real grid</span>
+                                         <span class="n">im_data</span><span class="o">=</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">siw</span><span class="o">.</span><span class="n">imag</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span>  <span class="c1"># data</span>
+                                         <span class="n">kernel_mode</span><span class="o">=</span><span class="s1">&#39;freq_fermionic&#39;</span><span class="p">)</span>  <span class="c1"># kernel type</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># most basic way to solve the problem</span>
+<span class="n">sol</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">probl</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;maxent_svd&#39;</span><span class="p">,</span>  <span class="c1"># Maxent solver that works with singular value decomp.</span>
+                     <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;newton&#39;</span><span class="p">,</span>  <span class="c1"># newton root finding for the optimization problem</span>
+                     <span class="n">alpha_determination</span><span class="o">=</span><span class="s1">&#39;chi2kink&#39;</span><span class="p">,</span>
+                     <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>  <span class="c1"># default model</span>
+                     <span class="n">stdev</span><span class="o">=</span><span class="n">err</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span>  <span class="c1"># standard deviation of the data</span>
+                     <span class="n">alpha_start</span><span class="o">=</span><span class="mf">1e12</span><span class="p">,</span>  <span class="c1"># largest alpha, starting value</span>
+                     <span class="n">interactive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+501 data points on real axis
+200 data points on imaginary axis
+31 significant singular values
+Precomputation of coefficient matrices...
+log10(alpha) = 12.00,   chi2 = 4.238e+06,   S = -5.061e-11,   nfev = 2,   norm = 1.000
+log10(alpha) = 11.00,   chi2 = 4.236e+06,   S = -5.058e-09,   nfev = 11,   norm = 1.000
+log10(alpha) = 10.00,   chi2 = 4.218e+06,   S = -5.030e-07,   nfev = 17,   norm = 1.001
+log10(alpha) = 9.00,    chi2 = 4.045e+06,   S = -4.756e-05,   nfev = 22,   norm = 1.008
+log10(alpha) = 8.00,    chi2 = 2.898e+06,   S = -2.878e-03,   nfev = 26,   norm = 1.062
+log10(alpha) = 7.00,    chi2 = 1.088e+06,   S = -3.482e-02,   nfev = 28,   norm = 1.179
+log10(alpha) = 6.00,    chi2 = 2.258e+05,   S = -1.751e-01,   nfev = 34,   norm = 1.133
+log10(alpha) = 5.00,    chi2 = 2.230e+04,   S = -4.523e-01,   nfev = 88,   norm = 1.047
+log10(alpha) = 4.00,    chi2 = 1.078e+03,   S = -6.940e-01,   nfev = 40,   norm = 1.012
+log10(alpha) = 3.00,    chi2 = 8.521e+01,   S = -8.045e-01,   nfev = 51,   norm = 1.003
+log10(alpha) = 2.00,    chi2 = 4.769e+01,   S = -8.460e-01,   nfev = 35,   norm = 1.001
+log10(alpha) = 1.00,    chi2 = 4.528e+01,   S = -8.820e-01,   nfev = 57,   norm = 1.001
+log10(alpha) = 0.00,    chi2 = 4.411e+01,   S = -1.084e+00,   nfev = 67,   norm = 1.000
+log10(alpha) = -1.00,   chi2 = 4.371e+01,   S = -1.722e+00,   nfev = 76,   norm = 1.000
+log10(alpha) = -2.00,   chi2 = 4.362e+01,   S = -2.824e+00,   nfev = 48,   norm = 1.000
+log10(alpha) = -3.00,   chi2 = 4.362e+01,   S = -3.880e+00,   nfev = 59,   norm = 1.000
+Fit parameters [1.58559603 5.0305896  4.91072294 1.09647514]
+Optimal log alpha 2.6306894986666274
+log10(alpha) = 2.63,    chi2 = 5.803e+01,   S = -8.241e-01,   nfev = 72,   norm = 1.002
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_5_1.png" src="_images/tutorial_5_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># load fitted self-energy</span>
+<span class="n">w_fit</span><span class="p">,</span> <span class="n">sw_fit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;data/square_U2_b5/sw_fit.npy&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+<span class="c1">#plot results</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">A_opt</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Maxent solution&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w_fit</span><span class="p">,</span> <span class="n">sw_fit</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;2-parameter fit&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\omega$&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw</span><span class="o">.</span><span class="n">imag</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$i\omega_n$&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="p">(</span><span class="n">siw</span><span class="p">[:</span><span class="n">niw</span><span class="p">]</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">err</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="o">-</span><span class="n">err</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$i\omega_n$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_6_0.png" src="_images/tutorial_6_0.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># more sophisticated solution, using preblur</span>
+
+<span class="n">bw</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.75</span><span class="p">]</span>  <span class="c1"># some values for the blur width</span>
+<span class="n">bt_list</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># here we store the backtransform arrays</span>
+<span class="n">spec_list</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># here we store the spectral functions</span>
+<span class="n">chi_list</span><span class="o">=</span> <span class="p">[]</span>  <span class="c1"># here we store the chi2 deviation</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bw</span><span class="p">)):</span>  <span class="c1"># loop over some values of the blur width</span>
+    <span class="n">sol</span><span class="p">,</span> <span class="n">sol_all</span> <span class="o">=</span> <span class="n">probl</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;maxent_svd&#39;</span><span class="p">,</span>  <span class="c1"># Maxent solver that works with singular value decomp.</span>
+                         <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;newton&#39;</span><span class="p">,</span>  <span class="c1"># newton root finding for the optimization problem</span>
+                         <span class="n">alpha_determination</span><span class="o">=</span><span class="s1">&#39;chi2kink&#39;</span><span class="p">,</span>
+                         <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>  <span class="c1"># default model</span>
+                         <span class="n">stdev</span><span class="o">=</span><span class="n">err</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span>  <span class="c1"># standard deviation of the data</span>
+                         <span class="n">preblur</span><span class="o">=</span><span class="n">bw</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">&gt;</span><span class="mf">0.</span><span class="p">,</span>  <span class="c1"># switch on preblur if blur_width &gt; 0.</span>
+                         <span class="n">blur_width</span><span class="o">=</span><span class="n">bw</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>  <span class="c1"># 1. is good, 1.5 is limit</span>
+                         <span class="n">alpha_start</span><span class="o">=</span><span class="mf">1e12</span><span class="p">,</span>  <span class="c1"># largest alpha, starting value</span>
+                         <span class="n">interactive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                         <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">bt_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span>
+    <span class="n">spec_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">A_opt</span><span class="p">)</span>
+    <span class="n">chi_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sol_all</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">chi2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">#plot results</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bw</span><span class="p">)):</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">spec_list</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;b=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bw</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bw</span><span class="p">)):</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="p">(</span><span class="n">siw</span><span class="p">[:</span><span class="n">niw</span><span class="p">]</span> <span class="o">-</span> <span class="n">bt_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span>
+               <span class="n">label</span><span class="o">=</span><span class="s1">&#39;b=</span><span class="si">{}</span><span class="s1">, min $\chi^2$=</span><span class="si">{:.1f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bw</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">chi_list</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">err</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="o">-</span><span class="n">err</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_8_0.png" src="_images/tutorial_8_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># take b=1., which is list element #2 (in zero-based indexing)</span>
+<span class="n">sw</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">GreensFunction</span><span class="p">(</span><span class="n">spectrum</span><span class="o">=</span><span class="n">spec_list</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">wgrid</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;fermionic&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">kkt</span><span class="p">()</span> <span class="o">+</span> <span class="mf">1.</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+../../ana_cont/continuation.py:418: RuntimeWarning: divide by zero encountered in true_divide
+  /(self.wgrid[None,:]-self.wgrid[:,None])
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">sw</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;real part&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">sw</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;imaginary part&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_10_0.png" src="_images/tutorial_10_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Calculate-spectrum-from-self-energy-and-DOS">
+<h2>Calculate spectrum from self-energy and DOS<a class="headerlink" href="#Calculate-spectrum-from-self-energy-and-DOS" title="Permalink to this headline">¶</a></h2>
+<p>In cases where the self-energy is proportional to a unit matrix in orbital space, we can calculate the spectral function from the non-interacting DOS <span class="math notranslate nohighlight">\(A_0(\omega)\)</span> and the self-energy in real frequencies as</p>
+<div class="math notranslate nohighlight">
+\[A(\omega) = -\frac{1}{\pi} \mathrm{Im}\; \int_\text{band} d\omega' \frac{A_0(\omega')}{\omega - \omega' + \mu - \Sigma(\omega)}\]</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">ellipk</span>
+<span class="n">w_dos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">dos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">ellipk</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="p">(</span><span class="n">w_dos</span> <span class="o">/</span> <span class="mf">4.</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/josef/anaconda3/lib/python3.7/site-packages/ipykernel_launcher.py:3: RuntimeWarning: invalid value encountered in sqrt
+  This is separate from the ipykernel package so we can avoid doing imports until
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">g_from_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">dos</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
+                    <span class="o">/</span> <span class="p">(</span><span class="n">w</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="n">mu</span> <span class="o">-</span> <span class="n">w_dos</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">sw</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]),</span>
+                    <span class="n">w_dos</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="o">-</span><span class="n">g_from_s</span><span class="o">.</span><span class="n">imag</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">3.</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;spectral function&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w_dos</span><span class="p">,</span> <span class="n">dos</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;DOS&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">8.</span><span class="p">,</span> <span class="mf">8.</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_14_0.png" src="_images/tutorial_14_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Direct-analytic-continuation-of-the-Green’s-function">
+<h2>Direct analytic continuation of the Green’s function<a class="headerlink" href="#Direct-analytic-continuation-of-the-Green’s-function" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">giw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;data/square_U2_b5/giw.npy&#39;</span><span class="p">)</span>
+<span class="n">err_g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">giw</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e-4</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">niw_g</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">iw_g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">niw_g</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>
+
+<span class="n">w_g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">12.</span><span class="p">,</span> <span class="mf">12.</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">501</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">w_g</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">w_g</span><span class="p">)</span>  <span class="c1"># normalization, not strictly necessary</span>
+
+<span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">iw_g</span><span class="p">,</span>
+                                         <span class="n">re_axis</span><span class="o">=</span><span class="n">w_g</span><span class="p">,</span>
+                                         <span class="n">im_data</span><span class="o">=</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">giw</span><span class="o">.</span><span class="n">imag</span><span class="p">[:</span><span class="n">niw_g</span><span class="p">],</span>
+                                         <span class="n">kernel_mode</span><span class="o">=</span><span class="s1">&#39;freq_fermionic&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">sol</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">probl</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;maxent_svd&#39;</span><span class="p">,</span>
+                     <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;newton&#39;</span><span class="p">,</span>
+                     <span class="n">alpha_determination</span><span class="o">=</span><span class="s1">&#39;chi2kink&#39;</span><span class="p">,</span>
+                     <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+                     <span class="n">stdev</span><span class="o">=</span><span class="n">err_g</span><span class="p">[:</span><span class="n">niw_g</span><span class="p">],</span>
+                     <span class="n">interactive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                     <span class="n">alpha_start</span><span class="o">=</span><span class="mf">1e11</span><span class="p">,</span>
+                     <span class="n">alpha_end</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+501 data points on real axis
+200 data points on imaginary axis
+27 significant singular values
+Precomputation of coefficient matrices...
+log10(alpha) = 11.00,   chi2 = 2.113e+07,   S = -1.867e-08,   nfev = 10,   norm = 1.000
+log10(alpha) = 10.00,   chi2 = 2.106e+07,   S = -1.866e-06,   nfev = 18,   norm = 1.001
+log10(alpha) = 9.00,    chi2 = 2.039e+07,   S = -1.857e-04,   nfev = 24,   norm = 1.011
+log10(alpha) = 8.00,    chi2 = 1.432e+07,   S = -1.636e-02,   nfev = 28,   norm = 1.102
+log10(alpha) = 7.00,    chi2 = 1.698e+06,   S = -2.150e-01,   nfev = 28,   norm = 1.281
+log10(alpha) = 6.00,    chi2 = 2.101e+05,   S = -4.029e-01,   nfev = 33,   norm = 1.173
+log10(alpha) = 5.00,    chi2 = 1.556e+04,   S = -6.481e-01,   nfev = 34,   norm = 1.056
+log10(alpha) = 4.00,    chi2 = 9.667e+02,   S = -8.289e-01,   nfev = 61,   norm = 1.013
+log10(alpha) = 3.00,    chi2 = 2.968e+01,   S = -9.280e-01,   nfev = 54,   norm = 1.003
+log10(alpha) = 2.00,    chi2 = 1.042e+00,   S = -9.596e-01,   nfev = 31,   norm = 1.000
+log10(alpha) = 1.00,    chi2 = 1.699e-02,   S = -9.698e-01,   nfev = 43,   norm = 1.000
+log10(alpha) = 0.00,    chi2 = 7.127e-04,   S = -9.713e-01,   nfev = 32,   norm = 1.000
+log10(alpha) = -1.00,   chi2 = 2.308e-04,   S = -9.720e-01,   nfev = 29,   norm = 1.000
+log10(alpha) = -2.00,   chi2 = 1.796e-04,   S = -9.726e-01,   nfev = 49,   norm = 1.000
+log10(alpha) = -3.00,   chi2 = 1.649e-04,   S = -9.754e-01,   nfev = 62,   norm = 1.000
+log10(alpha) = -4.00,   chi2 = 1.446e-04,   S = -1.019e+00,   nfev = 44,   norm = 1.000
+Fit parameters [-4.28238488 11.83879519  3.22272696  0.5777884 ]
+Optimal log alpha -1.1041165863564482
+log10(alpha) = -1.10,   chi2 = 2.173e-04,   S = -9.721e-01,   nfev = 86,   norm = 1.000
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_18_1.png" src="_images/tutorial_18_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w_g</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">A_opt</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw_g</span><span class="p">,</span> <span class="n">giw</span><span class="o">.</span><span class="n">imag</span><span class="p">[:</span><span class="n">niw_g</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw_g</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw_g</span><span class="p">,</span> <span class="p">(</span><span class="n">giw</span><span class="p">[:</span><span class="n">niw_g</span><span class="p">]</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_19_0.png" src="_images/tutorial_19_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="o">-</span><span class="n">g_from_s</span><span class="o">.</span><span class="n">imag</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">3.</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;spectral function from $\Sigma$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w_g</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">A_opt</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">3.</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;spectral function from $G$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w_dos</span><span class="p">,</span> <span class="n">dos</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;DOS&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">8.</span><span class="p">,</span> <span class="mf">8.</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_20_0.png" src="_images/tutorial_20_0.png" />
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="Strontium-vanadate">
+<h1>Strontium vanadate<a class="headerlink" href="#Strontium-vanadate" title="Permalink to this headline">¶</a></h1>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">siw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;data/svo/siw.npy&#39;</span><span class="p">)</span>
+<span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;data/svo/siw_err.npy&#39;</span><span class="p">)</span>
+<span class="n">hartree</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;data/svo/hartree.npy&#39;</span><span class="p">)</span>
+<span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;data/svo/beta.npy&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">niw</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">iw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">niw</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>
+
+<span class="c1"># here we want a non-equispaced grid to cover a larger interval</span>
+<span class="n">w</span> <span class="o">=</span> <span class="mi">30</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.1</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">501</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.1</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">w</span> <span class="o">/</span> <span class="mi">20</span><span class="p">)</span><span class="o">**</span><span class="mi">6</span><span class="p">)</span>  <span class="c1"># smooth cut-off at |w| &gt; 20</span>
+<span class="n">model</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="mf">4.77</span>  <span class="c1"># normalization, not strictly necessary</span>
+
+<span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">iw</span><span class="p">,</span>
+                                         <span class="n">re_axis</span><span class="o">=</span><span class="n">w</span><span class="p">,</span>
+                                         <span class="n">im_data</span><span class="o">=</span><span class="n">siw</span><span class="p">[:</span><span class="n">niw</span><span class="p">]</span><span class="o">-</span><span class="n">hartree</span><span class="p">,</span>
+                                         <span class="n">kernel_mode</span><span class="o">=</span><span class="s1">&#39;freq_fermionic&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">sol</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">probl</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;maxent_svd&#39;</span><span class="p">,</span>
+                     <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;newton&#39;</span><span class="p">,</span>
+                     <span class="n">alpha_determination</span><span class="o">=</span><span class="s1">&#39;chi2kink&#39;</span><span class="p">,</span>
+                     <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+                     <span class="n">stdev</span><span class="o">=</span><span class="n">err</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span>
+                     <span class="n">preblur</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                     <span class="n">blur_width</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+                     <span class="n">interactive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                     <span class="n">alpha_start</span><span class="o">=</span><span class="mf">1e12</span><span class="p">,</span>
+                     <span class="n">alpha_end</span><span class="o">=</span><span class="mf">1e-1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+501 data points on real axis
+600 data points on imaginary axis
+51 significant singular values
+Precomputation of coefficient matrices...
+log10(alpha) = 12.00,   chi2 = 5.181e+07,   S = -3.514e-10,   nfev = 5,   norm = 4.770
+log10(alpha) = 11.00,   chi2 = 5.179e+07,   S = -3.513e-08,   nfev = 13,   norm = 4.770
+log10(alpha) = 10.00,   chi2 = 5.167e+07,   S = -3.507e-06,   nfev = 19,   norm = 4.772
+log10(alpha) = 9.00,    chi2 = 5.042e+07,   S = -3.444e-04,   nfev = 24,   norm = 4.787
+log10(alpha) = 8.00,    chi2 = 3.975e+07,   S = -2.854e-02,   nfev = 31,   norm = 4.937
+log10(alpha) = 7.00,    chi2 = 9.856e+06,   S = -5.861e-01,   nfev = 81,   norm = 5.640
+log10(alpha) = 6.00,    chi2 = 1.282e+06,   S = -1.744e+00,   nfev = 45,   norm = 5.621
+log10(alpha) = 5.00,    chi2 = 9.610e+04,   S = -3.252e+00,   nfev = 48,   norm = 5.080
+log10(alpha) = 4.00,    chi2 = 6.853e+03,   S = -4.306e+00,   nfev = 40,   norm = 4.853
+log10(alpha) = 3.00,    chi2 = 5.785e+02,   S = -5.065e+00,   nfev = 72,   norm = 4.782
+log10(alpha) = 2.00,    chi2 = 2.517e+02,   S = -5.413e+00,   nfev = 97,   norm = 4.767
+log10(alpha) = 1.00,    chi2 = 2.330e+02,   S = -5.760e+00,   nfev = 99,   norm = 4.766
+log10(alpha) = 0.00,    chi2 = 2.174e+02,   S = -8.239e+00,   nfev = 78,   norm = 4.769
+log10(alpha) = -1.00,   chi2 = 2.132e+02,   S = -1.370e+01,   nfev = 88,   norm = 4.770
+Fit parameters [2.25041422 5.51210904 5.05097152 0.98324766]
+Optimal log alpha 2.5083771244615654
+log10(alpha) = 2.51,    chi2 = 3.032e+02,   S = -5.284e+00,   nfev = 128,   norm = 4.771
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_24_1.png" src="_images/tutorial_24_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">A_opt</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;spectrum&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">model</span> <span class="o">*</span> <span class="n">sol</span><span class="o">.</span><span class="n">norm</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;model&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw</span><span class="o">.</span><span class="n">imag</span><span class="p">[:</span><span class="n">niw</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="p">(</span><span class="n">siw</span><span class="p">[:</span><span class="n">niw</span><span class="p">]</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">err</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="o">-</span><span class="n">err</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_25_0.png" src="_images/tutorial_25_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Analytical-continuation-of-a-matrix-valued-function-(Kagome)">
+<h1>Analytical continuation of a matrix-valued function (Kagome)<a class="headerlink" href="#Analytical-continuation-of-a-matrix-valued-function-(Kagome)" title="Permalink to this headline">¶</a></h1>
+<p>As an example for matrix-valued analytical continuation we take a D<span class="math notranslate nohighlight">\(\Gamma\)</span>A self-energy for the kagome Hubbard model at <span class="math notranslate nohighlight">\(U=6t\)</span>, <span class="math notranslate nohighlight">\(\beta=3/t\)</span>, half-filling, for a certain <span class="math notranslate nohighlight">\(\mathbf{k}\)</span>-point.</p>
+<p>There, the self-energy is a 3$:nbsphinx-math:<cite>times`$3-matrix, with non-zero offdiagonal elements. In this case we are lucky and the projection of the self-energy on the eigenstates of the tight-binding Hamiltonian for this :math:</cite>mathbf{k}`-point is diagonal. This means that here we have two ways of doing the analytic continuation: 1. Via projections: * Project self-energy on eigenbasis of tb-Hamiltonian * Continue only the diagonal elements (standard problem) * Rotate back to original
+basis 2. Direct * Continue the diagonal elements in original basis (standard problem) * construct better default model for offdiag elements * continue the offdiag elements (pos-neg problem)</p>
+<p>In the end we can compare both results.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># load data</span>
+<span class="n">siw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;data/kagome_offdiag/siw.npy&#39;</span><span class="p">)</span>  <span class="c1"># DGA self-energy at certain k-point</span>
+<span class="n">states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;data/kagome_offdiag/states.npy&#39;</span><span class="p">)</span>  <span class="c1"># eigenstates of tb-Hamiltonian at this k-point</span>
+<span class="n">hartree</span> <span class="o">=</span> <span class="mf">3.</span>  <span class="c1"># for U=6 and half-filling</span>
+<span class="n">beta</span> <span class="o">=</span> <span class="mf">3.</span>
+<span class="n">niw</span> <span class="o">=</span> <span class="n">siw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">iw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">niw</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># project self-energy to Hamiltonian eigenbasis</span>
+<span class="n">siw_projected</span> <span class="o">=</span> <span class="n">states</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span> <span class="o">@</span> <span class="n">siw</span> <span class="o">@</span> <span class="n">states</span>
+
+<span class="c1"># plot original and projected matrix elements</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span>
+        <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;original&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw_projected</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw_projected</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;projected&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_28_0.png" src="_images/tutorial_28_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># define real frequencies, default model and error for continuation</span>
+<span class="n">nw</span> <span class="o">=</span> <span class="mi">401</span>
+<span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">20.</span><span class="p">,</span> <span class="mf">20.</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">nw</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="mf">9.</span>  <span class="c1"># for U=6 and half-filling, the norm is 9.</span>
+<span class="n">iw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">niw</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>
+<span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">iw</span><span class="p">)</span> <span class="o">*</span> <span class="mf">2e-3</span>
+<span class="n">sw_diag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nw</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span>  <span class="c1"># we have 3 eigenmodes</span>
+    <span class="c1"># specify the problem</span>
+    <span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">iw</span><span class="p">,</span>
+                                             <span class="n">re_axis</span><span class="o">=</span><span class="n">w</span><span class="p">,</span>
+                                             <span class="n">im_data</span><span class="o">=</span><span class="n">siw_projected</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">hartree</span><span class="p">,</span>  <span class="c1"># subtract Hartree term</span>
+                                             <span class="n">kernel_mode</span><span class="o">=</span><span class="s1">&#39;freq_fermionic&#39;</span><span class="p">)</span>
+
+    <span class="c1"># solve the problem</span>
+    <span class="n">sol</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">probl</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;maxent_svd&#39;</span><span class="p">,</span>
+                         <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;newton&#39;</span><span class="p">,</span>
+                         <span class="n">alpha_determination</span><span class="o">=</span><span class="s1">&#39;chi2kink&#39;</span><span class="p">,</span>
+                         <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+                         <span class="n">stdev</span><span class="o">=</span><span class="n">err</span><span class="p">,</span>
+                         <span class="n">interactive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># get full self-energy from Kramers Kronig</span>
+    <span class="n">sw_diag</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">GreensFunction</span><span class="p">(</span><span class="n">spectrum</span><span class="o">=</span><span class="n">sol</span><span class="o">.</span><span class="n">A_opt</span><span class="p">,</span> <span class="n">wgrid</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;fermionic&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">kkt</span><span class="p">()</span> <span class="o">+</span> <span class="n">hartree</span>
+
+    <span class="c1"># plot</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">A_opt</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw_projected</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">real</span> <span class="o">-</span> <span class="n">hartree</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw_projected</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="p">(</span><span class="n">siw_projected</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">hartree</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="p">(</span><span class="n">siw_projected</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">hartree</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># go back to original basis</span>
+<span class="n">sw_rotated_back</span> <span class="o">=</span> <span class="n">states</span> <span class="o">@</span> <span class="n">sw_diag</span> <span class="o">@</span> <span class="n">states</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+401 data points on real axis
+80 data points on imaginary axis
+26 significant singular values
+Precomputation of coefficient matrices...
+log10(alpha) = 9.00,    chi2 = 6.783e+05,   S = -4.278e-08,   nfev = 7,   norm = 9.001
+log10(alpha) = 8.00,    chi2 = 6.767e+05,   S = -4.272e-06,   nfev = 16,   norm = 9.005
+log10(alpha) = 7.00,    chi2 = 6.615e+05,   S = -4.214e-04,   nfev = 21,   norm = 9.050
+log10(alpha) = 6.00,    chi2 = 5.274e+05,   S = -3.608e-02,   nfev = 26,   norm = 9.466
+log10(alpha) = 5.00,    chi2 = 1.281e+05,   S = -7.818e-01,   nfev = 29,   norm = 11.124
+log10(alpha) = 4.00,    chi2 = 2.349e+04,   S = -2.224e+00,   nfev = 31,   norm = 11.403
+log10(alpha) = 3.00,    chi2 = 1.953e+03,   S = -5.132e+00,   nfev = 62,   norm = 10.332
+log10(alpha) = 2.00,    chi2 = 1.346e+02,   S = -7.279e+00,   nfev = 55,   norm = 9.823
+log10(alpha) = 1.00,    chi2 = 2.966e+01,   S = -8.397e+00,   nfev = 54,   norm = 9.684
+log10(alpha) = 0.00,    chi2 = 2.604e+01,   S = -8.865e+00,   nfev = 72,   norm = 9.663
+log10(alpha) = -1.00,   chi2 = 2.551e+01,   S = -9.576e+00,   nfev = 40,   norm = 9.665
+log10(alpha) = -2.00,   chi2 = 2.540e+01,   S = -1.143e+01,   nfev = 43,   norm = 9.666
+log10(alpha) = -3.00,   chi2 = 2.535e+01,   S = -1.939e+01,   nfev = 48,   norm = 9.667
+Fit parameters [1.3402957  4.51440874 3.34634067 1.12696788]
+Optimal log alpha 1.1279988363578277
+log10(alpha) = 1.13,    chi2 = 3.146e+01,   S = -8.320e+00,   nfev = 81,   norm = 9.691
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_29_1.png" src="_images/tutorial_29_1.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+../../ana_cont/continuation.py:418: RuntimeWarning: divide by zero encountered in true_divide
+  /(self.wgrid[None,:]-self.wgrid[:,None])
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_29_3.png" src="_images/tutorial_29_3.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+401 data points on real axis
+80 data points on imaginary axis
+26 significant singular values
+Precomputation of coefficient matrices...
+log10(alpha) = 9.00,    chi2 = 2.587e+05,   S = -1.459e-08,   nfev = 7,   norm = 9.000
+log10(alpha) = 8.00,    chi2 = 2.581e+05,   S = -1.455e-06,   nfev = 15,   norm = 9.004
+log10(alpha) = 7.00,    chi2 = 2.530e+05,   S = -1.423e-04,   nfev = 21,   norm = 9.040
+log10(alpha) = 6.00,    chi2 = 2.101e+05,   S = -1.138e-02,   nfev = 26,   norm = 9.364
+log10(alpha) = 5.00,    chi2 = 8.735e+04,   S = -2.497e-01,   nfev = 28,   norm = 10.733
+log10(alpha) = 4.00,    chi2 = 2.374e+04,   S = -1.311e+00,   nfev = 30,   norm = 11.318
+log10(alpha) = 3.00,    chi2 = 2.221e+03,   S = -4.292e+00,   nfev = 55,   norm = 10.354
+log10(alpha) = 2.00,    chi2 = 1.513e+02,   S = -6.728e+00,   nfev = 58,   norm = 9.831
+log10(alpha) = 1.00,    chi2 = 2.791e+01,   S = -8.065e+00,   nfev = 72,   norm = 9.683
+log10(alpha) = 0.00,    chi2 = 2.456e+01,   S = -8.398e+00,   nfev = 34,   norm = 9.657
+log10(alpha) = -1.00,   chi2 = 2.444e+01,   S = -8.599e+00,   nfev = 82,   norm = 9.655
+log10(alpha) = -2.00,   chi2 = 2.438e+01,   S = -9.493e+00,   nfev = 41,   norm = 9.657
+log10(alpha) = -3.00,   chi2 = 2.436e+01,   S = -1.312e+01,   nfev = 45,   norm = 9.657
+Fit parameters [1.32887755 4.07280425 3.0878616  1.23959631]
+Optimal log alpha 1.0710759887920251
+log10(alpha) = 1.07,    chi2 = 2.901e+01,   S = -8.015e+00,   nfev = 92,   norm = 9.688
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_29_5.png" src="_images/tutorial_29_5.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+../../ana_cont/continuation.py:418: RuntimeWarning: divide by zero encountered in true_divide
+  /(self.wgrid[None,:]-self.wgrid[:,None])
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_29_7.png" src="_images/tutorial_29_7.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+401 data points on real axis
+80 data points on imaginary axis
+26 significant singular values
+Precomputation of coefficient matrices...
+log10(alpha) = 9.00,    chi2 = 2.592e+05,   S = -1.385e-08,   nfev = 7,   norm = 9.000
+log10(alpha) = 8.00,    chi2 = 2.587e+05,   S = -1.382e-06,   nfev = 15,   norm = 9.004
+log10(alpha) = 7.00,    chi2 = 2.538e+05,   S = -1.352e-04,   nfev = 20,   norm = 9.039
+log10(alpha) = 6.00,    chi2 = 2.129e+05,   S = -1.087e-02,   nfev = 25,   norm = 9.350
+log10(alpha) = 5.00,    chi2 = 9.153e+04,   S = -2.497e-01,   nfev = 28,   norm = 10.698
+log10(alpha) = 4.00,    chi2 = 2.489e+04,   S = -1.360e+00,   nfev = 30,   norm = 11.318
+log10(alpha) = 3.00,    chi2 = 2.364e+03,   S = -4.505e+00,   nfev = 55,   norm = 10.354
+log10(alpha) = 2.00,    chi2 = 1.469e+02,   S = -7.057e+00,   nfev = 57,   norm = 9.829
+log10(alpha) = 1.00,    chi2 = 2.922e+01,   S = -8.340e+00,   nfev = 73,   norm = 9.684
+log10(alpha) = 0.00,    chi2 = 2.578e+01,   S = -8.695e+00,   nfev = 55,   norm = 9.658
+log10(alpha) = -1.00,   chi2 = 2.558e+01,   S = -9.015e+00,   nfev = 61,   norm = 9.657
+log10(alpha) = -2.00,   chi2 = 2.549e+01,   S = -1.046e+01,   nfev = 41,   norm = 9.659
+log10(alpha) = -3.00,   chi2 = 2.546e+01,   S = -1.500e+01,   nfev = 46,   norm = 9.659
+Fit parameters [1.35107894 4.04894961 3.08105855 1.26503099]
+Optimal log alpha 1.1048223864404598
+log10(alpha) = 1.10,    chi2 = 3.094e+01,   S = -8.265e+00,   nfev = 93,   norm = 9.690
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_29_9.png" src="_images/tutorial_29_9.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+../../ana_cont/continuation.py:418: RuntimeWarning: divide by zero encountered in true_divide
+  /(self.wgrid[None,:]-self.wgrid[:,None])
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_29_11.png" src="_images/tutorial_29_11.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">sw_full</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">sw_diag</span><span class="p">)</span>
+
+
+<span class="c1"># first loop only over the diagonal elements</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Diagonal element </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+
+    <span class="c1"># specify the problem</span>
+    <span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">iw</span><span class="p">,</span>
+                                             <span class="n">re_axis</span><span class="o">=</span><span class="n">w</span><span class="p">,</span>
+                                             <span class="n">im_data</span><span class="o">=</span><span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">hartree</span><span class="p">,</span>  <span class="c1"># subtract Hartree term</span>
+                                             <span class="n">kernel_mode</span><span class="o">=</span><span class="s1">&#39;freq_fermionic&#39;</span><span class="p">)</span>
+
+    <span class="c1"># solve the problem</span>
+    <span class="n">sol</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">probl</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;maxent_svd&#39;</span><span class="p">,</span>
+                         <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;newton&#39;</span><span class="p">,</span>
+                         <span class="n">alpha_determination</span><span class="o">=</span><span class="s1">&#39;chi2kink&#39;</span><span class="p">,</span>
+                         <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+                         <span class="n">stdev</span><span class="o">=</span><span class="n">err</span><span class="p">,</span>
+                         <span class="n">interactive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># construct full self-energy by Kramers Kronig</span>
+    <span class="n">sw_full</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">GreensFunction</span><span class="p">(</span><span class="n">spectrum</span><span class="o">=</span><span class="n">sol</span><span class="o">.</span><span class="n">A_opt</span><span class="p">,</span> <span class="n">wgrid</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;fermionic&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">kkt</span><span class="p">()</span> <span class="o">+</span> <span class="n">hartree</span>
+
+    <span class="c1"># plot</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">A_opt</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">real</span> <span class="o">-</span> <span class="n">hartree</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="p">(</span><span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">hartree</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="p">(</span><span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">hartree</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># now loop over the offdiagonal elements</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">j</span><span class="p">:</span> <span class="k">continue</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Offdiagonal element </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">))</span>
+
+        <span class="c1"># construct a good default model</span>
+        <span class="n">offdiag_model</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sw_full</span><span class="o">.</span><span class="n">imag</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">sw_full</span><span class="o">.</span><span class="n">imag</span><span class="p">[:,</span> <span class="n">j</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>  <span class="c1"># &quot;poorman&#39;s method&quot; Kraberger et al.</span>
+
+        <span class="c1"># specify the problem</span>
+        <span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">iw</span><span class="p">,</span>
+                                                 <span class="n">re_axis</span><span class="o">=</span><span class="n">w</span><span class="p">,</span>
+                                                 <span class="n">im_data</span><span class="o">=</span><span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span>  <span class="c1"># no Hartree term here!</span>
+                                                 <span class="n">kernel_mode</span><span class="o">=</span><span class="s1">&#39;freq_fermionic&#39;</span><span class="p">)</span>
+
+        <span class="c1"># solve the problem</span>
+        <span class="n">sol</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">probl</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;maxent_svd&#39;</span><span class="p">,</span>
+                             <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;newton&#39;</span><span class="p">,</span>
+                             <span class="n">alpha_determination</span><span class="o">=</span><span class="s1">&#39;chi2kink&#39;</span><span class="p">,</span>
+                             <span class="n">model</span><span class="o">=</span><span class="n">offdiag_model</span><span class="p">,</span>  <span class="c1"># switch on offdiag mode</span>
+                             <span class="n">stdev</span><span class="o">=</span><span class="n">err</span><span class="p">,</span>
+                             <span class="n">offdiag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                             <span class="n">alpha_start</span><span class="o">=</span><span class="mf">1e10</span><span class="p">,</span>
+                             <span class="n">alpha_end</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
+                             <span class="n">fit_position</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>  <span class="c1"># smaller value to prevent overfitting</span>
+                             <span class="n">interactive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># construct full self-energy by Kramers Kronig</span>
+        <span class="n">sw_full</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">GreensFunction</span><span class="p">(</span><span class="n">spectrum</span><span class="o">=</span><span class="n">sol</span><span class="o">.</span><span class="n">A_opt</span><span class="p">,</span> <span class="n">wgrid</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;fermionic&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">kkt</span><span class="p">()</span>
+
+        <span class="c1"># plot</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">A_opt</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="p">(</span><span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="p">(</span><span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Diagonal element 0
+401 data points on real axis
+80 data points on imaginary axis
+26 significant singular values
+Precomputation of coefficient matrices...
+log10(alpha) = 9.00,    chi2 = 3.003e+05,   S = -1.797e-08,   nfev = 7,   norm = 9.000
+log10(alpha) = 8.00,    chi2 = 2.996e+05,   S = -1.793e-06,   nfev = 15,   norm = 9.004
+log10(alpha) = 7.00,    chi2 = 2.933e+05,   S = -1.755e-04,   nfev = 21,   norm = 9.043
+log10(alpha) = 6.00,    chi2 = 2.400e+05,   S = -1.417e-02,   nfev = 26,   norm = 9.389
+log10(alpha) = 5.00,    chi2 = 8.949e+04,   S = -3.016e-01,   nfev = 28,   norm = 10.814
+log10(alpha) = 4.00,    chi2 = 2.324e+04,   S = -1.381e+00,   nfev = 30,   norm = 11.331
+log10(alpha) = 3.00,    chi2 = 2.095e+03,   S = -4.284e+00,   nfev = 70,   norm = 10.348
+log10(alpha) = 2.00,    chi2 = 1.421e+02,   S = -6.596e+00,   nfev = 59,   norm = 9.830
+log10(alpha) = 1.00,    chi2 = 2.607e+01,   S = -7.838e+00,   nfev = 49,   norm = 9.684
+log10(alpha) = 0.00,    chi2 = 2.308e+01,   S = -8.137e+00,   nfev = 44,   norm = 9.657
+log10(alpha) = -1.00,   chi2 = 2.298e+01,   S = -8.278e+00,   nfev = 77,   norm = 9.653
+log10(alpha) = -2.00,   chi2 = 2.293e+01,   S = -9.278e+00,   nfev = 72,   norm = 9.653
+log10(alpha) = -3.00,   chi2 = 2.290e+01,   S = -1.440e+01,   nfev = 45,   norm = 9.652
+Fit parameters [1.29842143 4.17127903 3.12916432 1.21176069]
+Optimal log alpha 1.0660506971144708
+log10(alpha) = 1.07,    chi2 = 2.697e+01,   S = -7.796e+00,   nfev = 118,   norm = 9.688
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_30_1.png" src="_images/tutorial_30_1.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+../../ana_cont/continuation.py:418: RuntimeWarning: divide by zero encountered in true_divide
+  /(self.wgrid[None,:]-self.wgrid[:,None])
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_30_3.png" src="_images/tutorial_30_3.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Diagonal element 1
+401 data points on real axis
+80 data points on imaginary axis
+26 significant singular values
+Precomputation of coefficient matrices...
+log10(alpha) = 9.00,    chi2 = 3.010e+05,   S = -1.795e-08,   nfev = 7,   norm = 9.000
+log10(alpha) = 8.00,    chi2 = 3.004e+05,   S = -1.791e-06,   nfev = 15,   norm = 9.004
+log10(alpha) = 7.00,    chi2 = 2.940e+05,   S = -1.753e-04,   nfev = 21,   norm = 9.043
+log10(alpha) = 6.00,    chi2 = 2.408e+05,   S = -1.416e-02,   nfev = 26,   norm = 9.389
+log10(alpha) = 5.00,    chi2 = 9.008e+04,   S = -3.022e-01,   nfev = 28,   norm = 10.814
+log10(alpha) = 4.00,    chi2 = 2.340e+04,   S = -1.389e+00,   nfev = 30,   norm = 11.332
+log10(alpha) = 3.00,    chi2 = 2.099e+03,   S = -4.314e+00,   nfev = 68,   norm = 10.347
+log10(alpha) = 2.00,    chi2 = 1.402e+02,   S = -6.623e+00,   nfev = 61,   norm = 9.830
+log10(alpha) = 1.00,    chi2 = 2.604e+01,   S = -7.844e+00,   nfev = 49,   norm = 9.684
+log10(alpha) = 0.00,    chi2 = 2.308e+01,   S = -8.141e+00,   nfev = 45,   norm = 9.657
+log10(alpha) = -1.00,   chi2 = 2.298e+01,   S = -8.284e+00,   nfev = 73,   norm = 9.653
+log10(alpha) = -2.00,   chi2 = 2.293e+01,   S = -9.296e+00,   nfev = 72,   norm = 9.653
+log10(alpha) = -3.00,   chi2 = 2.290e+01,   S = -1.446e+01,   nfev = 45,   norm = 9.652
+Fit parameters [1.29883645 4.17134995 3.12935829 1.21593531]
+Optimal log alpha 1.0733278544808305
+log10(alpha) = 1.07,    chi2 = 2.704e+01,   S = -7.798e+00,   nfev = 119,   norm = 9.689
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_30_5.png" src="_images/tutorial_30_5.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+../../ana_cont/continuation.py:418: RuntimeWarning: divide by zero encountered in true_divide
+  /(self.wgrid[None,:]-self.wgrid[:,None])
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_30_7.png" src="_images/tutorial_30_7.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Diagonal element 2
+401 data points on real axis
+80 data points on imaginary axis
+26 significant singular values
+Precomputation of coefficient matrices...
+log10(alpha) = 9.00,    chi2 = 2.994e+05,   S = -1.801e-08,   nfev = 7,   norm = 9.000
+log10(alpha) = 8.00,    chi2 = 2.987e+05,   S = -1.797e-06,   nfev = 15,   norm = 9.004
+log10(alpha) = 7.00,    chi2 = 2.924e+05,   S = -1.759e-04,   nfev = 21,   norm = 9.043
+log10(alpha) = 6.00,    chi2 = 2.390e+05,   S = -1.420e-02,   nfev = 26,   norm = 9.390
+log10(alpha) = 5.00,    chi2 = 8.866e+04,   S = -3.010e-01,   nfev = 28,   norm = 10.815
+log10(alpha) = 4.00,    chi2 = 2.303e+04,   S = -1.370e+00,   nfev = 30,   norm = 11.330
+log10(alpha) = 3.00,    chi2 = 2.089e+03,   S = -4.243e+00,   nfev = 71,   norm = 10.349
+log10(alpha) = 2.00,    chi2 = 1.450e+02,   S = -6.559e+00,   nfev = 57,   norm = 9.831
+log10(alpha) = 1.00,    chi2 = 2.612e+01,   S = -7.832e+00,   nfev = 55,   norm = 9.684
+log10(alpha) = 0.00,    chi2 = 2.307e+01,   S = -8.135e+00,   nfev = 54,   norm = 9.657
+log10(alpha) = -1.00,   chi2 = 2.298e+01,   S = -8.274e+00,   nfev = 88,   norm = 9.653
+log10(alpha) = -2.00,   chi2 = 2.293e+01,   S = -9.260e+00,   nfev = 75,   norm = 9.653
+log10(alpha) = -3.00,   chi2 = 2.290e+01,   S = -1.433e+01,   nfev = 45,   norm = 9.652
+Fit parameters [1.29780736 4.17145334 3.12884244 1.205656  ]
+Optimal log alpha 1.0552824805540584
+log10(alpha) = 1.06,    chi2 = 2.687e+01,   S = -7.797e+00,   nfev = 106,   norm = 9.687
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_30_9.png" src="_images/tutorial_30_9.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+../../ana_cont/continuation.py:418: RuntimeWarning: divide by zero encountered in true_divide
+  /(self.wgrid[None,:]-self.wgrid[:,None])
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_30_11.png" src="_images/tutorial_30_11.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Offdiagonal element 0 1
+401 data points on real axis
+80 data points on imaginary axis
+26 significant singular values
+Precomputation of coefficient matrices...
+log10(alpha) = 10.00,   chi2 = 6.525e+04,   S = -4.689e-10,   nfev = 1,   norm = 0.000
+log10(alpha) = 9.00,    chi2 = 6.508e+04,   S = -4.676e-08,   nfev = 5,   norm = 0.000
+log10(alpha) = 8.00,    chi2 = 6.344e+04,   S = -4.552e-06,   nfev = 14,   norm = 0.003
+log10(alpha) = 7.00,    chi2 = 5.003e+04,   S = -3.542e-04,   nfev = 19,   norm = 0.018
+log10(alpha) = 6.00,    chi2 = 1.220e+04,   S = -7.678e-03,   nfev = 29,   norm = 0.009
+log10(alpha) = 5.00,    chi2 = 9.045e+02,   S = -2.131e-02,   nfev = 32,   norm = -0.079
+log10(alpha) = 4.00,    chi2 = 5.157e+01,   S = -3.166e-02,   nfev = 25,   norm = -0.080
+log10(alpha) = 3.00,    chi2 = 7.075e+00,   S = -3.665e-02,   nfev = 38,   norm = -0.048
+log10(alpha) = 2.00,    chi2 = 2.438e+00,   S = -4.344e-02,   nfev = 25,   norm = -0.029
+log10(alpha) = 1.00,    chi2 = 1.600e+00,   S = -5.622e-02,   nfev = 41,   norm = -0.020
+log10(alpha) = 0.00,    chi2 = 1.265e+00,   S = -1.187e-01,   nfev = 27,   norm = -0.015
+log10(alpha) = -1.00,   chi2 = 9.880e-01,   S = -6.166e-01,   nfev = 30,   norm = -0.010
+log10(alpha) = -2.00,   chi2 = 6.846e-01,   S = -6.943e+00,   nfev = 113,   norm = -0.007
+log10(alpha) = -3.00,   chi2 = 4.620e-01,   S = -5.035e+01,   nfev = 116,   norm = -0.005
+log10(alpha) = -4.00,   chi2 = 2.742e-01,   S = -3.289e+02,   nfev = 143,   norm = -0.005
+log10(alpha) = -5.00,   chi2 = 1.697e-01,   S = -2.243e+03,   nfev = 203,   norm = -0.007
+log10(alpha) = -6.00,   chi2 = 1.462e-01,   S = -6.135e+03,   nfev = 99,   norm = -0.011
+Fit parameters [-0.39097276  5.43464373  4.36226097  0.80648082]
+Optimal log alpha 2.502328333779151
+log10(alpha) = 2.50,    chi2 = 3.918e+00,   S = -3.943e-02,   nfev = 199,   norm = -0.036
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_30_13.png" src="_images/tutorial_30_13.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+../../ana_cont/continuation.py:418: RuntimeWarning: divide by zero encountered in true_divide
+  /(self.wgrid[None,:]-self.wgrid[:,None])
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_30_15.png" src="_images/tutorial_30_15.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Offdiagonal element 0 2
+401 data points on real axis
+80 data points on imaginary axis
+26 significant singular values
+Precomputation of coefficient matrices...
+log10(alpha) = 10.00,   chi2 = 3.497e+04,   S = -2.028e-10,   nfev = 1,   norm = -0.000
+log10(alpha) = 9.00,    chi2 = 3.490e+04,   S = -2.023e-08,   nfev = 4,   norm = -0.001
+log10(alpha) = 8.00,    chi2 = 3.418e+04,   S = -1.978e-06,   nfev = 13,   norm = -0.006
+log10(alpha) = 7.00,    chi2 = 2.817e+04,   S = -1.601e-04,   nfev = 18,   norm = -0.053
+log10(alpha) = 6.00,    chi2 = 8.684e+03,   S = -4.093e-03,   nfev = 24,   norm = -0.266
+log10(alpha) = 5.00,    chi2 = 8.224e+02,   S = -1.443e-02,   nfev = 25,   norm = -0.337
+log10(alpha) = 4.00,    chi2 = 8.786e+01,   S = -2.348e-02,   nfev = 26,   norm = -0.215
+log10(alpha) = 3.00,    chi2 = 1.631e+01,   S = -3.355e-02,   nfev = 29,   norm = -0.126
+log10(alpha) = 2.00,    chi2 = 2.891e+00,   S = -5.109e-02,   nfev = 35,   norm = -0.076
+log10(alpha) = 1.00,    chi2 = 1.253e+00,   S = -7.461e-02,   nfev = 40,   norm = -0.053
+log10(alpha) = 0.00,    chi2 = 7.296e-01,   S = -1.677e-01,   nfev = 27,   norm = -0.040
+log10(alpha) = -1.00,   chi2 = 4.765e-01,   S = -6.223e-01,   nfev = 28,   norm = -0.029
+log10(alpha) = -2.00,   chi2 = 2.909e-01,   S = -3.844e+00,   nfev = 116,   norm = -0.020
+log10(alpha) = -3.00,   chi2 = 1.945e-01,   S = -2.190e+01,   nfev = 133,   norm = -0.012
+log10(alpha) = -4.00,   chi2 = 1.311e-01,   S = -1.214e+02,   nfev = 61,   norm = -0.007
+log10(alpha) = -5.00,   chi2 = 9.567e-02,   S = -8.655e+02,   nfev = 138,   norm = -0.006
+log10(alpha) = -6.00,   chi2 = 7.966e-02,   S = -3.558e+03,   nfev = 65,   norm = -0.011
+Fit parameters [-0.84341047  5.72437399  3.83747472  0.61814642]
+Optimal log alpha 1.4108651822688816
+log10(alpha) = 1.41,    chi2 = 1.628e+00,   S = -6.305e-02,   nfev = 214,   norm = -0.060
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_30_17.png" src="_images/tutorial_30_17.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+../../ana_cont/continuation.py:418: RuntimeWarning: divide by zero encountered in true_divide
+  /(self.wgrid[None,:]-self.wgrid[:,None])
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_30_19.png" src="_images/tutorial_30_19.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Offdiagonal element 1 0
+401 data points on real axis
+80 data points on imaginary axis
+26 significant singular values
+Precomputation of coefficient matrices...
+log10(alpha) = 10.00,   chi2 = 6.523e+04,   S = -4.929e-10,   nfev = 1,   norm = 0.000
+log10(alpha) = 9.00,    chi2 = 6.505e+04,   S = -4.915e-08,   nfev = 4,   norm = 0.001
+log10(alpha) = 8.00,    chi2 = 6.332e+04,   S = -4.772e-06,   nfev = 13,   norm = 0.009
+log10(alpha) = 7.00,    chi2 = 4.951e+04,   S = -3.635e-04,   nfev = 19,   norm = 0.076
+log10(alpha) = 6.00,    chi2 = 1.316e+04,   S = -7.272e-03,   nfev = 23,   norm = 0.263
+log10(alpha) = 5.00,    chi2 = 1.551e+03,   S = -2.290e-02,   nfev = 23,   norm = 0.203
+log10(alpha) = 4.00,    chi2 = 6.559e+01,   S = -4.067e-02,   nfev = 25,   norm = 0.087
+log10(alpha) = 3.00,    chi2 = 6.448e+00,   S = -4.680e-02,   nfev = 26,   norm = 0.048
+log10(alpha) = 2.00,    chi2 = 2.318e+00,   S = -5.281e-02,   nfev = 25,   norm = 0.029
+log10(alpha) = 1.00,    chi2 = 1.561e+00,   S = -6.424e-02,   nfev = 40,   norm = 0.021
+log10(alpha) = 0.00,    chi2 = 1.270e+00,   S = -1.196e-01,   nfev = 38,   norm = 0.016
+log10(alpha) = -1.00,   chi2 = 9.898e-01,   S = -6.360e-01,   nfev = 60,   norm = 0.012
+log10(alpha) = -2.00,   chi2 = 6.704e-01,   S = -7.233e+00,   nfev = 162,   norm = 0.007
+log10(alpha) = -3.00,   chi2 = 4.413e-01,   S = -5.117e+01,   nfev = 97,   norm = 0.001
+log10(alpha) = -4.00,   chi2 = 2.615e-01,   S = -3.186e+02,   nfev = 135,   norm = -0.002
+log10(alpha) = -5.00,   chi2 = 1.667e-01,   S = -2.055e+03,   nfev = 195,   norm = -0.005
+log10(alpha) = -6.00,   chi2 = 1.488e-01,   S = -4.818e+03,   nfev = 83,   norm = -0.006
+Fit parameters [-0.39264747  5.38926441  4.25688119  0.84949536]
+Optimal log alpha 2.4911269912025564
+log10(alpha) = 2.49,    chi2 = 3.578e+00,   S = -4.934e-02,   nfev = 175,   norm = 0.037
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_30_21.png" src="_images/tutorial_30_21.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+../../ana_cont/continuation.py:418: RuntimeWarning: divide by zero encountered in true_divide
+  /(self.wgrid[None,:]-self.wgrid[:,None])
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_30_23.png" src="_images/tutorial_30_23.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Offdiagonal element 1 2
+401 data points on real axis
+80 data points on imaginary axis
+26 significant singular values
+Precomputation of coefficient matrices...
+log10(alpha) = 10.00,   chi2 = 4.747e+04,   S = -2.987e-10,   nfev = 1,   norm = -0.000
+log10(alpha) = 9.00,    chi2 = 4.736e+04,   S = -2.980e-08,   nfev = 4,   norm = -0.000
+log10(alpha) = 8.00,    chi2 = 4.631e+04,   S = -2.910e-06,   nfev = 13,   norm = -0.004
+log10(alpha) = 7.00,    chi2 = 3.755e+04,   S = -2.328e-04,   nfev = 19,   norm = -0.037
+log10(alpha) = 6.00,    chi2 = 1.036e+04,   S = -5.645e-03,   nfev = 24,   norm = -0.211
+log10(alpha) = 5.00,    chi2 = 8.102e+02,   S = -1.752e-02,   nfev = 23,   norm = -0.296
+log10(alpha) = 4.00,    chi2 = 8.474e+01,   S = -2.655e-02,   nfev = 26,   norm = -0.199
+log10(alpha) = 3.00,    chi2 = 1.522e+01,   S = -3.605e-02,   nfev = 42,   norm = -0.116
+log10(alpha) = 2.00,    chi2 = 3.075e+00,   S = -5.217e-02,   nfev = 26,   norm = -0.070
+log10(alpha) = 1.00,    chi2 = 1.498e+00,   S = -7.510e-02,   nfev = 41,   norm = -0.049
+log10(alpha) = 0.00,    chi2 = 9.631e-01,   S = -1.713e-01,   nfev = 27,   norm = -0.036
+log10(alpha) = -1.00,   chi2 = 6.728e-01,   S = -6.903e-01,   nfev = 42,   norm = -0.027
+log10(alpha) = -2.00,   chi2 = 4.379e-01,   S = -5.034e+00,   nfev = 110,   norm = -0.017
+log10(alpha) = -3.00,   chi2 = 2.997e-01,   S = -3.111e+01,   nfev = 133,   norm = -0.010
+log10(alpha) = -4.00,   chi2 = 1.906e-01,   S = -1.983e+02,   nfev = 56,   norm = -0.007
+log10(alpha) = -5.00,   chi2 = 1.283e-01,   S = -1.436e+03,   nfev = 173,   norm = -0.007
+log10(alpha) = -6.00,   chi2 = 1.073e-01,   S = -4.961e+03,   nfev = 103,   norm = -0.012
+Fit parameters [-0.65366493  5.66409808  4.03328656  0.64482825]
+Optimal log alpha 1.7070857487890638
+log10(alpha) = 1.71,    chi2 = 2.324e+00,   S = -5.737e-02,   nfev = 233,   norm = -0.062
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_30_25.png" src="_images/tutorial_30_25.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+../../ana_cont/continuation.py:418: RuntimeWarning: divide by zero encountered in true_divide
+  /(self.wgrid[None,:]-self.wgrid[:,None])
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_30_27.png" src="_images/tutorial_30_27.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Offdiagonal element 2 0
+401 data points on real axis
+80 data points on imaginary axis
+26 significant singular values
+Precomputation of coefficient matrices...
+log10(alpha) = 10.00,   chi2 = 3.499e+04,   S = -2.410e-10,   nfev = 1,   norm = 0.000
+log10(alpha) = 9.00,    chi2 = 3.490e+04,   S = -2.402e-08,   nfev = 4,   norm = 0.001
+log10(alpha) = 8.00,    chi2 = 3.406e+04,   S = -2.331e-06,   nfev = 13,   norm = 0.012
+log10(alpha) = 7.00,    chi2 = 2.734e+04,   S = -1.765e-04,   nfev = 18,   norm = 0.101
+log10(alpha) = 6.00,    chi2 = 9.609e+03,   S = -3.584e-03,   nfev = 23,   norm = 0.402
+log10(alpha) = 5.00,    chi2 = 1.559e+03,   S = -1.607e-02,   nfev = 25,   norm = 0.399
+log10(alpha) = 4.00,    chi2 = 1.045e+02,   S = -3.359e-02,   nfev = 28,   norm = 0.220
+log10(alpha) = 3.00,    chi2 = 1.491e+01,   S = -4.495e-02,   nfev = 29,   norm = 0.126
+log10(alpha) = 2.00,    chi2 = 2.747e+00,   S = -6.085e-02,   nfev = 39,   norm = 0.076
+log10(alpha) = 1.00,    chi2 = 1.197e+00,   S = -8.279e-02,   nfev = 52,   norm = 0.053
+log10(alpha) = 0.00,    chi2 = 7.387e-01,   S = -1.655e-01,   nfev = 40,   norm = 0.040
+log10(alpha) = -1.00,   chi2 = 4.813e-01,   S = -6.434e-01,   nfev = 78,   norm = 0.030
+log10(alpha) = -2.00,   chi2 = 2.774e-01,   S = -4.180e+00,   nfev = 54,   norm = 0.020
+log10(alpha) = -3.00,   chi2 = 1.689e-01,   S = -2.425e+01,   nfev = 111,   norm = 0.011
+log10(alpha) = -4.00,   chi2 = 1.132e-01,   S = -1.098e+02,   nfev = 117,   norm = 0.004
+log10(alpha) = -5.00,   chi2 = 8.941e-02,   S = -5.790e+02,   nfev = 98,   norm = 0.000
+log10(alpha) = -6.00,   chi2 = 8.205e-02,   S = -1.574e+03,   nfev = 55,   norm = 0.002
+Fit parameters [-0.85180161  5.67618507  3.72214498  0.65382993]
+Optimal log alpha 1.4279704163454854
+log10(alpha) = 1.43,    chi2 = 1.560e+00,   S = -7.192e-02,   nfev = 251,   norm = 0.061
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_30_29.png" src="_images/tutorial_30_29.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+../../ana_cont/continuation.py:418: RuntimeWarning: divide by zero encountered in true_divide
+  /(self.wgrid[None,:]-self.wgrid[:,None])
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_30_31.png" src="_images/tutorial_30_31.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Offdiagonal element 2 1
+401 data points on real axis
+80 data points on imaginary axis
+26 significant singular values
+Precomputation of coefficient matrices...
+log10(alpha) = 10.00,   chi2 = 4.751e+04,   S = -3.436e-10,   nfev = 1,   norm = 0.000
+log10(alpha) = 9.00,    chi2 = 4.738e+04,   S = -3.426e-08,   nfev = 4,   norm = 0.001
+log10(alpha) = 8.00,    chi2 = 4.618e+04,   S = -3.323e-06,   nfev = 13,   norm = 0.012
+log10(alpha) = 7.00,    chi2 = 3.663e+04,   S = -2.511e-04,   nfev = 18,   norm = 0.104
+log10(alpha) = 6.00,    chi2 = 1.183e+04,   S = -4.974e-03,   nfev = 23,   norm = 0.403
+log10(alpha) = 5.00,    chi2 = 1.842e+03,   S = -2.002e-02,   nfev = 25,   norm = 0.385
+log10(alpha) = 4.00,    chi2 = 1.071e+02,   S = -4.088e-02,   nfev = 29,   norm = 0.204
+log10(alpha) = 3.00,    chi2 = 1.381e+01,   S = -5.215e-02,   nfev = 29,   norm = 0.116
+log10(alpha) = 2.00,    chi2 = 2.879e+00,   S = -6.659e-02,   nfev = 26,   norm = 0.070
+log10(alpha) = 1.00,    chi2 = 1.428e+00,   S = -8.733e-02,   nfev = 63,   norm = 0.049
+log10(alpha) = 0.00,    chi2 = 9.735e-01,   S = -1.707e-01,   nfev = 40,   norm = 0.037
+log10(alpha) = -1.00,   chi2 = 6.780e-01,   S = -7.193e-01,   nfev = 61,   norm = 0.028
+log10(alpha) = -2.00,   chi2 = 4.174e-01,   S = -5.514e+00,   nfev = 113,   norm = 0.017
+log10(alpha) = -3.00,   chi2 = 2.640e-01,   S = -3.380e+01,   nfev = 77,   norm = 0.008
+log10(alpha) = -4.00,   chi2 = 1.680e-01,   S = -1.817e+02,   nfev = 136,   norm = 0.002
+log10(alpha) = -5.00,   chi2 = 1.218e-01,   S = -1.083e+03,   nfev = 146,   norm = -0.001
+log10(alpha) = -6.00,   chi2 = 1.110e-01,   S = -2.586e+03,   nfev = 87,   norm = 0.000
+Fit parameters [-0.65452172  5.58782076  3.88284785  0.69667047]
+Optimal log alpha 1.7297495455491867
+log10(alpha) = 1.73,    chi2 = 2.224e+00,   S = -7.102e-02,   nfev = 219,   norm = 0.063
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_30_33.png" src="_images/tutorial_30_33.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+../../ana_cont/continuation.py:418: RuntimeWarning: divide by zero encountered in true_divide
+  /(self.wgrid[None,:]-self.wgrid[:,None])
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_30_35.png" src="_images/tutorial_30_35.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># now plot all matrix elements from both methods and compare</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span>
+        <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">sw_full</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;direct&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">sw_rotated_back</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;from projection&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">10.</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_31_0.png" src="_images/tutorial_31_0.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">ana_cont</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="includeme.html">ana_cont: Python package for analytic continuation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basics.html">Analytic continuation with ana_cont</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Square lattice Hubbard model, <span class="math notranslate nohighlight">\(U=2\)</span>, <span class="math notranslate nohighlight">\(\beta=5\)</span>, half-filling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Analytic-continuation-of-self-energy">Analytic continuation of self-energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Calculate-spectrum-from-self-energy-and-DOS">Calculate spectrum from self-energy and DOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Direct-analytic-continuation-of-the-Green’s-function">Direct analytic continuation of the Green’s function</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#Strontium-vanadate">Strontium vanadate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#Analytical-continuation-of-a-matrix-valued-function-(Kagome)">Analytical continuation of a matrix-valued function (Kagome)</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="basics.html" title="previous chapter">Analytic continuation with ana_cont</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Josef Kaufmann.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/tutorial.ipynb.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
