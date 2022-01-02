@@ -10,16 +10,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-steps:
-      - uses: actions/checkout@v2
-      - name: Install Python 3
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3.8
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          apt install python3-dev
-          pip install -r requirements.txt
-      - name: Run tests
-        run: python3 -m unittest tests/ana_cont_tests.py -v
+    steps:
+          - uses: actions/checkout@v2
+          - name: Install Python 3
+            uses: actions/setup-python@v1
+            with:
+              python-version: 3.8
+          - name: Install dependencies
+            run: |
+              python -m pip install --upgrade pip
+              apt install python3-dev         
+              pip install -r requirements.txt
+          - name: Run tests
+            run: python3 -m unittest tests/ana_cont_tests.py -v
