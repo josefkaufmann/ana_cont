@@ -24,8 +24,93 @@ class TestGreensFunction(unittest.TestCase):
     def test_kkt(self):
         self.assertTrue(np.allclose(self.greens_function.kkt(), self.complex_greens_function))
 
+class TestMaxentFermionic(unittest.TestCase):
+    def setUp(self):
+        # real-frequency grid and example spectrum
+        w = np.linspace(-10., 10., num=501, endpoint=True)
+        spec = 0.4 * np.exp(-0.5 * (w - 1.8) ** 2) + 0.6 * np.exp(-0.5 * (w + 1.8) ** 2)
+        spec /= np.trapz(spec, w)
+
+        # Matsubara frequency grid and transformation of data
+        beta = 10.
+        niw = 20
+        iw = np.pi / beta * (2. * np.arange(niw) + 1.)
+        kernel = 1. / (1j * iw[:, None] - w[None, :])
+        giw = np.trapz(kernel * spec[None, :], w, axis=1)
+
+        # add noise to the data
+        rng = np.random.RandomState(4713)
+        noise_ampl = 0.0001
+        giw += noise_ampl * (rng.randn(niw) + 1j * rng.randn(niw))
+
+        # error bars and default model for analytic continuation
+        err = np.ones_like(iw) * noise_ampl
+        model = np.ones_like(w)
+        model /= np.trapz(model, w)
+
+        # specify the analytic continuation problem
+        probl = cont.AnalyticContinuationProblem(im_axis=iw, re_axis=w,
+                                                 im_data=giw, kernel_mode='freq_fermionic')
+
+        # solve the problem
+        self.sol, _ = probl.solve(method='maxent_svd', alpha_determination='chi2kink', optimizer='newton',
+                             model=model, stdev=err, interactive=False, alpha_start=1e12, alpha_end=1e-2,
+                             preblur=True, blur_width=0.5, verbose=False)
+
+        self.A_opt_reference = np.load("A_opt_maxent_fermionic.npy")
+        self.backtransform_reference = np.load("backtransform_maxent_fermionic.npy")
+        self.chi2_reference = np.load("chi2_maxent_fermionic.npy")
+
+    def test_continuation(self):
+        self.assertTrue(np.allclose(self.sol.A_opt, self.A_opt_reference))
+
+    def test_backtransform(self):
+        self.assertTrue(np.allclose(self.backtransform_reference, self.sol.backtransform))
+
+    def test_chi2(self):
+        self.assertEqual(self.chi2_reference, self.sol.chi2)
 
 
+class TestPade(unittest.TestCase):
+    def setUp(self):
+        # real-frequency grid and example spectrum
+        w = np.linspace(-10., 10., num=501, endpoint=True)
+        spec = 0.4 * np.exp(-0.5 * (w - 1.8) ** 2) + 0.6 * np.exp(-0.5 * (w + 1.8) ** 2)
+        spec /= np.trapz(spec, w)
+
+        # Matsubara frequency grid and transformation of data
+        beta = 10.
+        niw = 20
+        iw = np.pi / beta * (2. * np.arange(niw) + 1.)
+        kernel = 1. / (1j * iw[:, None] - w[None, :])
+        giw = np.trapz(kernel * spec[None, :], w, axis=1)
+
+        # add noise to the data
+        rng = np.random.RandomState(4713)
+        noise_ampl = 0.0001
+        giw += noise_ampl * (rng.randn(niw) + 1j * rng.randn(niw))
+
+        # error bars and default model for analytic continuation
+        err = np.ones_like(iw) * noise_ampl
+
+        # specify the analytic continuation problem
+        mats_ind = [0, 1, 2, 3, 4, 5, 6, 8, 9]  # Matsubara indices of data points to use in Pade
+        probl = cont.AnalyticContinuationProblem(im_axis=iw[mats_ind], re_axis=w,
+                                                 im_data=giw[mats_ind], kernel_mode='freq_fermionic')
+
+        # solve the problem
+        self.sol = probl.solve(method='pade')
+        check_axis = np.linspace(0., 1.25 * iw[mats_ind[-1]], num=500)
+        self.check = probl.solver.check(im_axis_fine=check_axis)
+
+        self.A_opt_reference = np.load("A_opt_pade.npy")
+        self.check_reference = np.load("check_pade.npy")
+
+    def test_continuation(self):
+        self.assertTrue(np.allclose(self.sol.A_opt, self.A_opt_reference))
+
+    def test_check(self):
+        self.assertTrue(np.allclose(self.check, self.check_reference))
 
 if __name__ == '__main__':
     unittest.main()
