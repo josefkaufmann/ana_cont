@@ -1,7 +1,7 @@
 ana_cont: Python package for analytic continuation
 ==================================================
 
-Update: The Wiki now contains descriptions and tutorials for the new graphical user interface.
+Update: Documentation and resources can be found on `<https://josefkaufmann.github.io/ana_cont/>`_.
 
 Any questions, suggestions and bug reports will be received gratefully. 
 (Mail to: josefkaufma *at* gmail *dot* com)
