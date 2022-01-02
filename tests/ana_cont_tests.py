@@ -94,9 +94,9 @@ class TestMaxentFermionic(unittest.TestCase):
                              model=model, stdev=err, interactive=False, alpha_start=1e12, alpha_end=1e-2,
                              preblur=True, blur_width=0.5, verbose=False)
 
-        self.A_opt_reference = np.load("A_opt_maxent_fermionic.npy")
-        self.backtransform_reference = np.load("backtransform_maxent_fermionic.npy")
-        self.chi2_reference = np.load("chi2_maxent_fermionic.npy")
+        self.A_opt_reference = np.load("tests/A_opt_maxent_fermionic.npy")
+        self.backtransform_reference = np.load("tests/backtransform_maxent_fermionic.npy")
+        self.chi2_reference = np.load("tests/chi2_maxent_fermionic.npy")
 
     def test_continuation(self):
         self.assertTrue(np.allclose(self.sol.A_opt, self.A_opt_reference))
@@ -140,8 +140,8 @@ class TestPade(unittest.TestCase):
         check_axis = np.linspace(0., 1.25 * iw[mats_ind[-1]], num=500)
         self.check = probl.solver.check(im_axis_fine=check_axis)
 
-        self.A_opt_reference = np.load("A_opt_pade.npy")
-        self.check_reference = np.load("check_pade.npy")
+        self.A_opt_reference = np.load("tests/A_opt_pade.npy")
+        self.check_reference = np.load("tests/check_pade.npy")
 
     def test_continuation(self):
         self.assertTrue(np.allclose(self.sol.A_opt, self.A_opt_reference))
@@ -183,9 +183,9 @@ class TestMaxentBosonic(unittest.TestCase):
                              stdev=err, model=model,
                              interactive=False, verbose=False)
 
-        self.A_opt_reference = np.load("A_opt_maxent_bosonic.npy")
-        self.backtransform_reference = np.load("backtransform_maxent_bosonic.npy")
-        self.chi2_reference = np.load("chi2_maxent_bosonic.npy")
+        self.A_opt_reference = np.load("tests/A_opt_maxent_bosonic.npy")
+        self.backtransform_reference = np.load("tests/backtransform_maxent_bosonic.npy")
+        self.chi2_reference = np.load("tests/chi2_maxent_bosonic.npy")
 
     def test_continuation(self):
         self.assertTrue(np.allclose(self.sol.A_opt, self.A_opt_reference))
