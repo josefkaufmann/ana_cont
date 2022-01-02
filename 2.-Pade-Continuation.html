@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction &#8212; ana_cont 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "tex2jax_ignore|mathjax_ignore|document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="introduction">
+<span id="gui-pade-label"></span><h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>This application is a user interface for analytic continuation by means of Pade interpolation. It can be used for
+analytic continuation from fermionic or bosonic Matsubara frequencies to real frequencies.</p>
+<p>Before launching the program, I recommend to go to your preferred working directory, e.g. where you have stored the data that you want to continue.</p>
+<p>Then you can start the program from the command line by <code class="docutils literal notranslate"><span class="pre">/path/to/ana_cont/scripts/pade.py</span></code> and the main window of the application will appear on the screen. First, we will now have a look at the main window and explain its features. At the end of this page, there is also a tutorial.</p>
+</div>
+<div class="section" id="main-window">
+<h1>Main Window<a class="headerlink" href="#main-window" title="Permalink to this headline">¶</a></h1>
+<p>Basically, the main window is very similar to the main window of MaxEnt.
+Therefore we will not again describe every widget,
+just the ones differ from MaxEnt.</p>
+<a class="reference external image-reference" href="/images/pade_1_edited.png"><img alt="" src="_images/pade_1_edited.png" /></a>
+<a class="reference external image-reference" href="/images/pade_2_edited.png"><img alt="" src="_images/pade_2_edited.png" /></a>
+<p>In the data type menu B13, there is now a third possible choice: “bosonic”.
+For bosonic data, the text input file contains only three columns:</p>
+<ol class="arabic simple">
+<li><p>Matsubara frequency</p></li>
+<li><p>Data (real)</p></li>
+<li><p>Error</p></li>
+</ol>
+<p>There is no column for the imaginary part, since susceptibilities are real.
+Note that the error column still has to be present, although
+the error bars cannot be used in Pade.</p>
+<p>The most visible difference of the user interface concerns frame <strong>C</strong>.
+In the line edit field C1 it is necessary to write the indices of the
+Matsubara frequencies that should be used for the construction
+of the Pade coefficients. Note that the computation time starts to considerably
+increase when using more than about 25 frequencies.
+The real-frequency grid in this case is merely the grid, at which
+the Pade approximant is evaluated. Therefore it is not in principle necessary
+to cover the whole band width, and spacing is not critical.</p>
+</div>
+<div class="section" id="tutorial">
+<h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<p>As a short tutorial, we consider the same doped square-lattice Hubbard
+model as in the MaxEnt tutorial.</p>
+<p>For this choice of frequencies,</p>
+<a class="reference external image-reference" href="/images/pade_window_n085_U2_b2.png"><img alt="" src="_images/pade_window_n085_U2_b2.png" /></a>
+<p>we get this plot:</p>
+<a class="reference external image-reference" href="/images/pade_plot_n085_U2_b2.png"><img alt="" src="_images/pade_plot_n085_U2_b2.png" /></a>
+<p>Note that some Matsubara frequencies can be left out for constructing
+the Pade approximant. In the fermionic case, it however seems to be
+important to use an odd number of data points on the Matsubara axis.</p>
+<p>The output plot shows, in the top left panel, the resulting spectral function.
+In the top right panel, we show the loaded data, and the frequencies
+used for the Pade interpolation are marked by opaque red dots.</p>
+<p>The bottom right panel shows a plot with the selected Matsubara frequencies
+and the interpolation that is given by the Pade approximant.
+The Pade approximant is a rational function that can be evaluated, in principle,
+on the whole complex plane.
+Ideally, it has poles only in the lower half-plane. If your data are noisy,
+or for some reason the selection of Matsubara frequencies is not good,
+the gray lines will show some features between the interpolated red dots.
+This means that there are poles close to the positive Matsubara axis.
+Although without such poles, noisy data can hardly be interpolated,
+they will result in strange features of the spectral function,
+especially if they are close to the real axis.
+Therefore, try to find a combination of Matsubara frequencies, where this does
+not occur. Alternatively, if the data are too noisy, better use MaxEnt
+or get better data (which I recommend!).</p>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">ana_cont</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="includeme.html">ana_cont: Python package for analytic continuation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basics.html">Analytic continuation with ana_cont</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Square lattice Hubbard model, <span class="math notranslate nohighlight">\(U=2\)</span>, <span class="math notranslate nohighlight">\(\beta=5\)</span>, half-filling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Strontium-vanadate">Strontium vanadate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Analytical-continuation-of-a-matrix-valued-function-(Kagome)">Analytical continuation of a matrix-valued function (Kagome)</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Josef Kaufmann.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/2.-Pade-Continuation.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

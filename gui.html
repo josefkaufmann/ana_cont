@@ -1,0 +1,365 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2. GUI documentation &#8212; ana_cont 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "tex2jax_ignore|mathjax_ignore|document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="3. Analytic continuation with the ana_cont library" href="basics.html" />
+    <link rel="prev" title="1. Installation of ana_cont" href="installation.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="gui-documentation">
+<h1><span class="section-number">2. </span>GUI documentation<a class="headerlink" href="#gui-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="maxent-for-fermionic-green-s-functions">
+<h2><span class="section-number">2.1. </span>Maxent for fermionic Green’s functions<a class="headerlink" href="#maxent-for-fermionic-green-s-functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="introduction">
+<h3><span class="section-number">2.1.1. </span>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h3>
+<p>This application is an implementation of the standard algorithm of MaxEnt for fermionic quantities.
+Thus it can be used for the analytic continuation of one-particle Green’s functions and self-energies
+from Matsubara frequencies to real frequencies.</p>
+<p>Before launching the program, I recommend to go to your preferred working directory, e.g. where
+you have stored the data that you want to continue.</p>
+<p>Then you can start the program from the command line by
+<code class="docutils literal notranslate"><span class="pre">/path/to/ana_cont/scripts/maxent.py</span></code>
+and the main window of the application will appear on the screen.
+First, we will now have a look at the main window and explain its features.
+At the end of this page, there is also a tutorial.</p>
+</div>
+<div class="section" id="the-main-window">
+<h3><span class="section-number">2.1.2. </span>The main window<a class="headerlink" href="#the-main-window" title="Permalink to this headline">¶</a></h3>
+<a class="reference external image-reference" href="/images/maxent_1_edited.png"><img alt="" src="_images/maxent_1_edited.png" /></a>
+<p>The main window consists of three parts, which are marked by red (<strong>A</strong>), green (<strong>B</strong>) and blue frames (<strong>C</strong>).</p>
+<div class="section" id="real-frequency-grid">
+<h4><span class="section-number">2.1.2.1. </span>Real-frequency grid<a class="headerlink" href="#real-frequency-grid" title="Permalink to this headline">¶</a></h4>
+<p>In frame <strong>A</strong> you can edit the real-frequency grid. The menu <strong>A1</strong> provides a choice between <em>equispaced symmetric</em> and <em>centered symmetric</em>. Both options cover an interval that is symmetric with respect to zero, but the latter has a higher density of grid points at low frequencies.
+In the text-edit field <strong>A2</strong> the cut-off of the real-frequency interval is specified. For example, wmax=20 means that the interval goes from -20 to 20. The following field <strong>A3</strong> concerns the number of grid points. If it is an even number, 0 will not be contained, so I recommend using an odd number. Once you have edited the real-frequency grid, click on the “Generate” button <strong>A4</strong> and your grid is set.</p>
+</div>
+<div class="section" id="input-data">
+<h4><span class="section-number">2.1.2.2. </span>Input data<a class="headerlink" href="#input-data" title="Permalink to this headline">¶</a></h4>
+<p>In frame <strong>B</strong> you can load the input data. There are two supported file formats for this, namely w2dynamics files and text files. There is a tab for each of them.</p>
+<div class="section" id="w2dynamics-input-data">
+<h5><span class="section-number">2.1.2.2.1. </span>w2dynamics input data<a class="headerlink" href="#w2dynamics-input-data" title="Permalink to this headline">¶</a></h5>
+<p>In the menu <strong>B1</strong> you have to choose if you want to load a self-energy or a Green’s function. In the case of a self-energy the Hartree term will be subtracted automatically. If the checkbox <strong>B2</strong> is checked, the real part of the data is ignored. This feature is used to restore particle-hole symmetry that is violated by a real part of zero plus noise. If you’re not 100% sure that the real part must be zero in your case, don’t use this feature!</p>
+<p>In the text-edit field B3 the name of the input file is specified. Importantly, the absolute path has to be included as well. Since this can be annoying, there is also the file dialog button <strong>B4</strong> that opens a file dialog. This lets you choose your input file in a more convenient way.</p>
+<p>In the menu <strong>B5</strong> you can choose between DMFT and STAT iterations. In <strong>B6</strong> the iteration number can be provided, but if it is left blank, the last iteration is selected automatically. <strong>B7</strong> selects the inequivalent atom. If you have only one atom in the unit cell or all atoms of the unit cell are equivalent, then it is always 1. In <strong>B8</strong> you specify which orbital component is to be used (orbital-diagonal Green’s functions are assumed here.) For a single-orbital calculation is is always 1. In the “Spin” menu <strong>B9</strong> you have the choice between “up”, “down” and “average”. The latter is preferred for paramagnetic calculations. For the number of Matsubara frequencies <strong>B10</strong> no default value is provided, because it strongly depends on the problem at hand. If you are not sure about the necessary number, you can also vary it later.
+Please mind, if your w2dynamics file does not contain the QMC error bars, they are set to a constant value automatically.</p>
+<p>Now you can load the data by clicking the button <strong>B11</strong>. To check if everything is alright, I strongly recommend to also click the button <strong>B12</strong> that opens a simple plot of the data. There you can inspect, e.g., if the Hartree term is subtracted correctly. Also it will give you an impression whether you have loaded enough (or too many) Matsubara frequencies. If, for example, you conclude that you need a different number of frequencies, just edit the number in <strong>B10</strong>, and again click <strong>B11</strong> and <strong>B12</strong>. (Of course also the other settings can be changed in the same way.)</p>
+</div>
+<div class="section" id="text-input-data">
+<h5><span class="section-number">2.1.2.2.2. </span>Text input data<a class="headerlink" href="#text-input-data" title="Permalink to this headline">¶</a></h5>
+<p>In order to load input data from a text file, select the tab “text file”.</p>
+<a class="reference external image-reference" href="/images/maxent_2_edited.png"><img alt="" src="_images/maxent_2_edited.png" /></a>
+<p>First, select if you load a self-energy or a Green’s function in the menu <strong>B13</strong>. Note that here it is <strong>not</strong> possible to automatically subtract the Hartree term, but the choice “Self-energy” will have some influence on the postprocessing later. This means that in a text file you have to provide data in a form that is ready for analytic continuation:</p>
+<ul class="simple">
+<li><p>Only positive Matsubara frequencies</p></li>
+<li><p>Real part of the data approaches zero at high frequency.</p></li>
+</ul>
+<p>Then, in <strong>B14</strong>, the file name is specified, but it can also be selected in the file dialog that is opened upon clicking the button <strong>B15</strong>.
+The file needs to have four columns:</p>
+<ol class="arabic simple">
+<li><p>Matsubara frequency (really the frequency value, not an index!)</p></li>
+<li><p>real part</p></li>
+<li><p>imaginary part</p></li>
+<li><p>error bar</p></li>
+</ol>
+<p>Additionally you have the option to ignore some comment lines at the beginning of the file by setting <strong>B16</strong>. If you leave it empty, all lines of the file will be read. Also, you can reduce the number of Matsubara frequencies to use by setting <strong>B17</strong>. If you leave it empty, all Matsubara frequencies will be read.
+If you do not know the error bars of your data, you may write a constant value of, e.g., 0.001 in the file.
+Then you can load the data by clicking <strong>B18</strong> and look at them by clicking <strong>B19</strong>.</p>
+</div>
+</div>
+<div class="section" id="work-space">
+<h4><span class="section-number">2.1.2.3. </span>Work space<a class="headerlink" href="#work-space" title="Permalink to this headline">¶</a></h4>
+<p>Let us now turn to frame <strong>C</strong>, the work space area.
+If you check <strong>C1</strong>, preblur will be used, where the width of the Gaussian
+is specified in <strong>C2</strong>.
+If you press the button <strong>C3</strong>, the analytic continuation for the given data and settings
+is done. As a result, a line with optimal alpha and chi-squared values
+is printed in <strong>C4</strong>, and a plot window appears. How to deal with this output
+is described in the tutorial.</p>
+<p>If you are not yet happy with the result of the analytic continuation, you can edit
+all settings in frame <strong>A</strong> (don’t forget to click on “Generate”!) and in frame <strong>B</strong>
+(don’t forged to click “Load data” and “Show data”!). Also <strong>C1</strong> and <strong>C2</strong> can be edited,
+of course. Then click the “Do it!” button <strong>C3</strong> and see what you get.</p>
+<p>Once you arrived at a satisfactory result, you can save it to a text file.
+In some cases, especially if you used a “centered” real-frequency grid, you
+may want to store the result on a different grid. To do so, check <strong>C5</strong>
+and set the number of regularly spaced grid points <strong>C6</strong>. Then the output
+data are interpolated to such a grid.</p>
+<p>Then, select an output file after clicking <strong>C7</strong> or type it manually in <strong>C8</strong> (again with
+absolute path.)
+<em>Importantly</em> then click the button “Save” (<strong>C9</strong>), otherwise the results are
+not saved. (Unfortunately, in the file dialog there is also a “Save” button, but
+it merely sets the file name and does not save anything.)</p>
+<p>Now your choice of <strong>B1</strong>/<strong>B13</strong>, self-energy or Green’s function, comes into play.
+If you have continued a self-energy, its full analytic form with real part
+is calculated by a Kramers Kronig transformation. In case of w2dynamics input
+data, also the Hartree term is added. The output file then has 3 columns:</p>
+<ol class="arabic simple">
+<li><p>real frequency</p></li>
+<li><p>real part</p></li>
+<li><p>imaginary part (-pi * “spectrum”)</p></li>
+</ol>
+<p>If you have continued a Green’s function, such a transformation is usually not
+required and simply the spectral function is saved to a 2-column file:</p>
+<ol class="arabic simple">
+<li><p>real frequency</p></li>
+<li><p>spectral function</p></li>
+</ol>
+<p>Once you have saved the output you can load different data, e.g. just the next orbital
+component of your self-energy, and do the continuation. There is no need to
+restart the application.</p>
+</div>
+</div>
+<div class="section" id="tutorial-square-lattice-hubbard-model">
+<h3><span class="section-number">2.1.3. </span>Tutorial: square lattice Hubbard model<a class="headerlink" href="#tutorial-square-lattice-hubbard-model" title="Permalink to this headline">¶</a></h3>
+<p>Let us consider the DMFT self-energy for a square-lattice Hubbard model
+with U=2t, T=t/2 and 15% hole doping. This is a rather simple DMFT calculation,
+but for a tutorial is is fine. The w2dynamics output file can be downloaded
+<a class="reference external" href="datafiles/square_n085_U2_b2.hdf5">here</a>.</p>
+<p>We first do a calculation without preblur, then we set it to 0.5.
+Here is the application window:</p>
+<a class="reference external image-reference" href="/images/window_n085_U2_b2.png"><img alt="" src="_images/window_n085_U2_b2.png" /></a>
+<p>As you can see, there are two lines in the text output field, because
+we have done two calculations. Each line contains, for identification,
+the atom, orbital and spin quantum number. Then the blur width is printed.
+As output quantities it contains the optimal value of alpha, the
+chi-squared deviation at this optimal alpha, and the minimal chi-squared
+deviation (at the smallest value of alpha that was used.)
+We can see that in this case, the preblur does not significantly change the
+quality of the fit, since the minimal chi-squared deviation is unchanged.</p>
+<p>And here is the plot for the latter case, with preblur:</p>
+<a class="reference external image-reference" href="/images/plot_square_n085_U2_b2.png"><img alt="" src="_images/plot_square_n085_U2_b2.png" /></a>
+<p>The top left panel shows the dependence of the chi-squared deviation on alpha.
+The determined optimal value is marked by a red star.
+The bottom left panel shows the “spectrum” of the self-energy, i.e.
+-Im(Sigma)/pi. We see that it has the characteristic weak-coupling form, but
+it is asymmetric due to the doping.</p>
+<p>The top right panel shows the Matsubara-frequency data (crosses)
+and the fit (lines). Since the data are quite precise, we can not see a
+difference without zooming.
+However, plotting the difference between data and fit is more instructive,
+see bottom right panel. Indeed, the data are fitted very well and
+the deviation of the data from the fit looks like noise.</p>
+<p>Let me also remark that the plot is generated by matplotlib. This means
+that you can use the toolbar in the top left corner or the usual
+matplotlib hotkeys, e.g. for zooming. You can therefore also simply
+save the plot from there.</p>
+<p>Of course, you can also try to continue the Green’s function instead of the self-energy.
+Also there is a <a class="reference external" href="datafiles/square_U2_b2.hdf5">file</a> for the same model
+at the same U and T, but at half filling.</p>
+</div>
+</div>
+<div class="section" id="pade-method-for-analytic-continuation">
+<h2><span class="section-number">2.2. </span>Pade Method for analytic continuation<a class="headerlink" href="#pade-method-for-analytic-continuation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h3><span class="section-number">2.2.1. </span>Introduction<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>This application is a user interface for analytic continuation by means of Pade interpolation. It can be used for
+analytic continuation from fermionic or bosonic Matsubara frequencies to real frequencies.</p>
+<p>Before launching the program, I recommend to go to your preferred working directory, e.g. where you have stored the data that you want to continue.</p>
+<p>Then you can start the program from the command line by <code class="docutils literal notranslate"><span class="pre">/path/to/ana_cont/scripts/pade.py</span></code> and the main window of the application will appear on the screen. First, we will now have a look at the main window and explain its features. At the end of this page, there is also a tutorial.</p>
+</div>
+<div class="section" id="main-window">
+<h3><span class="section-number">2.2.2. </span>Main Window<a class="headerlink" href="#main-window" title="Permalink to this headline">¶</a></h3>
+<p>Basically, the main window is very similar to the main window of MaxEnt.
+Therefore we will not again describe every widget,
+just the ones differ from MaxEnt.</p>
+<a class="reference external image-reference" href="/images/pade_1_edited.png"><img alt="" src="_images/pade_1_edited.png" /></a>
+<a class="reference external image-reference" href="/images/pade_2_edited.png"><img alt="" src="_images/pade_2_edited.png" /></a>
+<p>In the data type menu B13, there is now a third possible choice: “bosonic”.
+For bosonic data, the text input file contains only three columns:</p>
+<ol class="arabic simple">
+<li><p>Matsubara frequency</p></li>
+<li><p>Data (real)</p></li>
+<li><p>Error</p></li>
+</ol>
+<p>There is no column for the imaginary part, since susceptibilities are real.
+Note that the error column still has to be present, although
+the error bars cannot be used in Pade.</p>
+<p>The most visible difference of the user interface concerns frame <strong>C</strong>.
+In the line edit field C1 it is necessary to write the indices of the
+Matsubara frequencies that should be used for the construction
+of the Pade coefficients. Note that the computation time starts to considerably
+increase when using more than about 25 frequencies.
+The real-frequency grid in this case is merely the grid, at which
+the Pade approximant is evaluated. Therefore it is not in principle necessary
+to cover the whole band width, and spacing is not critical.</p>
+</div>
+<div class="section" id="tutorial">
+<h3><span class="section-number">2.2.3. </span>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h3>
+<p>As a short tutorial, we consider the same doped square-lattice Hubbard
+model as in the MaxEnt tutorial.</p>
+<p>For this choice of frequencies,</p>
+<a class="reference external image-reference" href="/images/pade_window_n085_U2_b2.png"><img alt="" src="_images/pade_window_n085_U2_b2.png" /></a>
+<p>we get this plot:</p>
+<a class="reference external image-reference" href="/images/pade_plot_n085_U2_b2.png"><img alt="" src="_images/pade_plot_n085_U2_b2.png" /></a>
+<p>Note that some Matsubara frequencies can be left out for constructing
+the Pade approximant. In the fermionic case, it however seems to be
+important to use an odd number of data points on the Matsubara axis.</p>
+<p>The output plot shows, in the top left panel, the resulting spectral function.
+In the top right panel, we show the loaded data, and the frequencies
+used for the Pade interpolation are marked by opaque red dots.</p>
+<p>The bottom right panel shows a plot with the selected Matsubara frequencies
+and the interpolation that is given by the Pade approximant.
+The Pade approximant is a rational function that can be evaluated, in principle,
+on the whole complex plane.
+Ideally, it has poles only in the lower half-plane. If your data are noisy,
+or for some reason the selection of Matsubara frequencies is not good,
+the gray lines will show some features between the interpolated red dots.
+This means that there are poles close to the positive Matsubara axis.
+Although without such poles, noisy data can hardly be interpolated,
+they will result in strange features of the spectral function,
+especially if they are close to the real axis.
+Therefore, try to find a combination of Matsubara frequencies, where this does
+not occur. Alternatively, if the data are too noisy, better use MaxEnt
+or get better data (which I recommend!).</p>
+</div>
+</div>
+<div class="section" id="maxent-for-bosonic-green-s-functions">
+<h2><span class="section-number">2.3. </span>Maxent for bosonic Green’s functions<a class="headerlink" href="#maxent-for-bosonic-green-s-functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id2">
+<h3><span class="section-number">2.3.1. </span>Introduction<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>This application is an implementation of the standard algorithm of MaxEnt for bosonic quantities. Thus it can be used for the analytic continuation of physical susceptibilities from Matsubara frequencies to real frequencies.</p>
+<p>Before launching the program, I recommend to go to your preferred working directory, e.g. where you have stored the data that you want to continue.</p>
+<p>Then you can start the program from the command line by /path/to/ana_cont/scripts/maxent_bosonic.py and the main window of the application will appear on the screen. In the following, we will explain the difference of the user interface with respect to the fermionic continuation
+application.</p>
+</div>
+<div class="section" id="id3">
+<h3><span class="section-number">2.3.2. </span>Main Window<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>The main window is very similar to the main window for fermionic continuation:</p>
+<a class="reference external image-reference" href="/images/maxent_bos_1_edited.png"><img alt="" src="_images/maxent_bos_1_edited.png" /></a>
+<p>An important difference is that on the real axis, only positive frequencies are used.
+Nevertheless the user can choose to make them equispaced or “centered”, i.e. denser at lower frequencies.</p>
+<p>Furthermore there is no option for direct read-in from w2dynamics files,
+since there is no unified format for susceptibilities.
+Instead, better export your susceptibilities to text files with three columns:</p>
+<ol class="arabic simple">
+<li><p>Matsubara frequency</p></li>
+<li><p>Value (real)</p></li>
+<li><p>Error bars.</p></li>
+</ol>
+<p>The Matsubara frequencies start at 0 and are really the values of the frequencies, not indices.
+Due to the properties of the bosonic kernel (or causality of susceptibilities) the data are purely real.</p>
+<p>The output quantity is not directly the susceptibility, but rather -Im(chi)/(omega * pi).
+Thus, in many cases you may have to multiply the result with omega. However it is more general
+to output chi/omega, since then also the value at 0 is stored. Otherwise, multiplying it
+by omega, it is always zero and the information is lost.</p>
+<p>Problur is also implemented for the bosonic continuation and basically works.
+I recommend the same workflow as in the fermionic continuation, but want to
+emphasize that there is no experience yet.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">ana_cont</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">1. Installation of ana_cont</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. GUI documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#maxent-for-fermionic-green-s-functions">2.1. Maxent for fermionic Green’s functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pade-method-for-analytic-continuation">2.2. Pade Method for analytic continuation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#maxent-for-bosonic-green-s-functions">2.3. Maxent for bosonic Green’s functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="basics.html">3. Analytic continuation with the ana_cont library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">4. Square lattice Hubbard model, <span class="math notranslate nohighlight">\(U=2\)</span>, <span class="math notranslate nohighlight">\(\beta=5\)</span>, half-filling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Strontium-vanadate">5. Strontium vanadate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Analytical-continuation-of-a-matrix-valued-function-(Kagome)">6. Analytical continuation of a matrix-valued function (Kagome)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_svo.html">7. Tutorial: Analytic continuation of SrVO<span class="math notranslate nohighlight">\(_3\)</span> self-energy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preblur_test.html">8. Preblur for fermionic functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preblur_bosonic.html">9. Preblur for bosonic continuation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="poorman_test.html">10. Maxent for matrix-valued Green’s functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_doc.html">11. API documentation of ana_cont</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="installation.html" title="previous chapter"><span class="section-number">1. </span>Installation of ana_cont</a></li>
+      <li>Next: <a href="basics.html" title="next chapter"><span class="section-number">3. </span>Analytic continuation with the ana_cont library</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Josef Kaufmann.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/gui.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -18,8 +18,6 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "tex2jax_ignore|mathjax_ignore|document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Analytic continuation with ana_cont" href="basics.html" />
-    <link rel="prev" title="Welcome to ana_cont’s documentation!" href="index.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -40,11 +38,11 @@
 <h1>ana_cont: Python package for analytic continuation<a class="headerlink" href="#ana-cont-python-package-for-analytic-continuation" title="Permalink to this headline">¶</a></h1>
 <p>Update: The Wiki now contains descriptions and tutorials for the new graphical user interface.</p>
 <p>Any questions, suggestions and bug reports will be received gratefully.
-(Mail to: josef <em>dot</em> kaufmann <em>at</em> tuwien <em>dot</em> ac <em>dot</em> at)</p>
+(Mail to: josefkaufma <em>at</em> gmail <em>dot</em> com)</p>
 <p>If you used this package to generate results for a publication, please cite
-<a class="reference external" href="https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.122.127601">this paper by Geffroy, Kaufmann et al.</a>
+<a class="reference external" href="https://arxiv.org/abs/2105.11211">this preprint by Kaufmann and Held</a>
 (this
-<a class="reference external" href="https://github.com/josefkaufmann/ana_cont/wiki/bibtex/prl_dominique.bib">bibtex file</a>),</p>
+<a class="reference external" href="https://github.com/josefkaufmann/ana_cont/wiki/bibtex/arxiv_kaufmann.bib">bibtex file</a>),</p>
 <p>where some implementation details are described in the Supplementary Material.</p>
 <div class="section" id="short-description">
 <h2>Short description<a class="headerlink" href="#short-description" title="Permalink to this headline">¶</a></h2>
@@ -69,21 +67,34 @@ are implemented.</p>
 </div>
 <div class="section" id="requirements">
 <h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
-<p>The code was checked to run with the following versions:</p>
-<ul class="simple">
-<li><p>Python 3.7</p></li>
-<li><p>numpy 1.18.1</p></li>
-<li><p>scipy 1.4.1</p></li>
-<li><p>Cython 0.29.15 (only for Pade)</p></li>
-<li><p>matplotlib 3.1.3</p></li>
-<li><p>h5py 2.10.0</p></li>
-<li><p>PyQt5 (only for GUI)</p></li>
-</ul>
+<p>The code was checked to run with the following versions:
+* python3-dev
+* Python 3.7
+* numpy 1.18.1
+* scipy 1.4.1
+* Cython 0.29.15 (only for Pade)
+* matplotlib 3.1.3
+* h5py 2.10.0
+* PyQt5 (only for GUI)</p>
 <p>It is likely that the code runs also with older package versions,
 but I cannot guarantee for that.</p>
 </div>
 <div class="section" id="installation-and-usage">
 <h2>Installation and usage<a class="headerlink" href="#installation-and-usage" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="installation-via-pip">
+<h3>Installation via pip<a class="headerlink" href="#installation-via-pip" title="Permalink to this headline">¶</a></h3>
+<p>The ana_cont library can be installed via pip:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">python3-dev</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">-m</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-U</span> <span class="pre">pyqt5</span> <span class="pre">matplotlib</span> <span class="pre">wheel</span> <span class="pre">cython</span> <span class="pre">h5py</span> <span class="pre">scipy</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-i</span> <span class="pre">https://test.pypi.org/simple/</span> <span class="pre">ana-cont</span></code></p></li>
+</ul>
+<p>This installs the <code class="docutils literal notranslate"><span class="pre">ana_cont</span></code> python library.
+The GUI scripts are also installed and
+can be called from the command line as <code class="docutils literal notranslate"><span class="pre">maxent.py</span></code>, <code class="docutils literal notranslate"><span class="pre">pade.py</span></code>, <code class="docutils literal notranslate"><span class="pre">maxent_bosonic.py</span></code>.</p>
+</div>
+<div class="section" id="installation-from-source-via-git">
+<h3>Installation from source via git<a class="headerlink" href="#installation-from-source-via-git" title="Permalink to this headline">¶</a></h3>
 <p>I recommend the following steps:</p>
 <p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/josefkaufmann/ana_cont</span></code></p>
 <p>If you want to use Pade, you have to compile:
@@ -94,6 +105,11 @@ and import the package:</p>
 <p><code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">ana_cont.continuation</span> <span class="pre">as</span> <span class="pre">cont</span></code></p>
 <p>The graphical user interface scripts can be executed as
 <code class="docutils literal notranslate"><span class="pre">/path/to/ana_cont/scripts/maxent.py</span></code></p>
+</div>
+<div class="section" id="running-tests-after-installation-from-source">
+<h3>Running tests after installation from source<a class="headerlink" href="#running-tests-after-installation-from-source" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">-m</span> <span class="pre">unittest</span> <span class="pre">tests/ana_cont_tests.py</span> <span class="pre">-v</span></code></p>
+</div>
 </div>
 </div>
 
@@ -115,26 +131,23 @@ and import the package:</p>
 
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">ana_cont: Python package for analytic continuation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#short-description">Short description</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#package-structure">Package structure</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#installation-and-usage">Installation and usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="basics.html">Analytic continuation with ana_cont</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Square lattice Hubbard model, <span class="math notranslate nohighlight">\(U=2\)</span>, <span class="math notranslate nohighlight">\(\beta=5\)</span>, half-filling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Strontium-vanadate">Strontium vanadate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Analytical-continuation-of-a-matrix-valued-function-(Kagome)">Analytical continuation of a matrix-valued function (Kagome)</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gui.html">1. GUI documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basics.html">2. Analytic continuation with the ana_cont library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">3. Square lattice Hubbard model, <span class="math notranslate nohighlight">\(U=2\)</span>, <span class="math notranslate nohighlight">\(\beta=5\)</span>, half-filling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Strontium-vanadate">4. Strontium vanadate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Analytical-continuation-of-a-matrix-valued-function-(Kagome)">5. Analytical continuation of a matrix-valued function (Kagome)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_svo.html">6. Tutorial: Analytic continuation of SrVO<span class="math notranslate nohighlight">\(_3\)</span> self-energy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preblur_test.html">7. Preblur for fermionic functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preblur_bosonic.html">8. Preblur for bosonic continuation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="poorman_test.html">9. Maxent for matrix-valued Green’s functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_doc.html">10. API documentation of ana_cont</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter">Welcome to ana_cont’s documentation!</a></li>
-      <li>Next: <a href="basics.html" title="next chapter">Analytic continuation with ana_cont</a></li>
   </ul></li>
 </ul>
 </div>

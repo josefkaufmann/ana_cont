@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction &#8212; ana_cont 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "tex2jax_ignore|mathjax_ignore|document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>This application is an implementation of the standard algorithm of MaxEnt for bosonic quantities. Thus it can be used for the analytic continuation of physical susceptibilities from Matsubara frequencies to real frequencies.</p>
+<p>Before launching the program, I recommend to go to your preferred working directory, e.g. where you have stored the data that you want to continue.</p>
+<p>Then you can start the program from the command line by /path/to/ana_cont/scripts/maxent_bosonic.py and the main window of the application will appear on the screen. In the following, we will explain the difference of the user interface with respect to the fermionic continuation
+application.</p>
+</div>
+<div class="section" id="main-window">
+<h1>Main Window<a class="headerlink" href="#main-window" title="Permalink to this headline">¶</a></h1>
+<p>The main window is very similar to the main window for fermionic continuation:</p>
+<a class="reference external image-reference" href="/images/maxent_bos_1_edited.png"><img alt="" src="_images/maxent_bos_1_edited.png" /></a>
+<p>An important difference is that on the real axis, only positive frequencies are used.
+Nevertheless the user can choose to make them equispaced or “centered”, i.e. denser at lower frequencies.</p>
+<p>Furthermore there is no option for direct read-in from w2dynamics files,
+since there is no unified format for susceptibilities.
+Instead, better export your susceptibilities to text files with three columns:</p>
+<ol class="arabic simple">
+<li><p>Matsubara frequency</p></li>
+<li><p>Value (real)</p></li>
+<li><p>Error bars.</p></li>
+</ol>
+<p>The Matsubara frequencies start at 0 and are really the values of the frequencies, not indices.
+Due to the properties of the bosonic kernel (or causality of susceptibilities) the data are purely real.</p>
+<p>The output quantity is not directly the susceptibility, but rather -Im(chi)/(omega * pi).
+Thus, in many cases you may have to multiply the result with omega. However it is more general
+to output chi/omega, since then also the value at 0 is stored. Otherwise, multiplying it
+by omega, it is always zero and the information is lost.</p>
+<p>Problur is also implemented for the bosonic continuation and basically works.
+I recommend the same workflow as in the fermionic continuation, but want to
+emphasize that there is no experience yet.</p>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">ana_cont</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gui.html">1. GUI documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basics.html">2. Analytic continuation with the ana_cont library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">3. Square lattice Hubbard model, <span class="math notranslate nohighlight">\(U=2\)</span>, <span class="math notranslate nohighlight">\(\beta=5\)</span>, half-filling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Strontium-vanadate">4. Strontium vanadate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Analytical-continuation-of-a-matrix-valued-function-(Kagome)">5. Analytical continuation of a matrix-valued function (Kagome)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_svo.html">6. Tutorial: Analytic continuation of SrVO<span class="math notranslate nohighlight">\(_3\)</span> self-energy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preblur_test.html">7. Preblur for fermionic functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preblur_bosonic.html">8. Preblur for bosonic continuation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="poorman_test.html">9. Maxent for matrix-valued Green’s functions</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Josef Kaufmann.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/3.-Bosonic-Continuation-by-MaxEnt.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -18,7 +18,7 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "tex2jax_ignore|mathjax_ignore|document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="ana_cont: Python package for analytic continuation" href="includeme.html" />
+    <link rel="next" title="1. Installation of ana_cont" href="installation.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -37,756 +37,58 @@
             
   <div class="section" id="welcome-to-ana-cont-s-documentation">
 <h1>Welcome to ana_cont’s documentation!<a class="headerlink" href="#welcome-to-ana-cont-s-documentation" title="Permalink to this headline">¶</a></h1>
+<p>Here you can find instructions for</p>
+<ul class="simple">
+<li><p>installation,</p></li>
+<li><p>usage of the graphical user interface (GUI),</p></li>
+<li><p>many examples for the usage of the library</p></li>
+<li><p>API documentation of the library.</p></li>
+</ul>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="includeme.html">ana_cont: Python package for analytic continuation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="includeme.html#short-description">Short description</a></li>
-<li class="toctree-l2"><a class="reference internal" href="includeme.html#package-structure">Package structure</a></li>
-<li class="toctree-l2"><a class="reference internal" href="includeme.html#requirements">Requirements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="includeme.html#installation-and-usage">Installation and usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">1. Installation of ana_cont</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui.html">2. GUI documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gui.html#maxent-for-fermionic-green-s-functions">2.1. Maxent for fermionic Green’s functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gui.html#pade-method-for-analytic-continuation">2.2. Pade Method for analytic continuation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gui.html#maxent-for-bosonic-green-s-functions">2.3. Maxent for bosonic Green’s functions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="basics.html">Analytic continuation with ana_cont</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="basics.html#Continuation-of-a-fermionic-Green’s-function">Continuation of a fermionic Green’s function</a></li>
-<li class="toctree-l2"><a class="reference internal" href="basics.html#Constructing-a-full-complex-valued-Green’s-function-from-a-spectrum">Constructing a full complex-valued Green’s function from a spectrum</a></li>
-<li class="toctree-l2"><a class="reference internal" href="basics.html#Continuation-of-a-bosonic-Green’s-function">Continuation of a bosonic Green’s function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basics.html">3. Analytic continuation with the ana_cont library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="basics.html#Continuation-of-a-fermionic-Green’s-function">3.1. Continuation of a fermionic Green’s function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics.html#Constructing-a-full-complex-valued-Green’s-function-from-a-spectrum">3.2. Constructing a full complex-valued Green’s function from a spectrum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics.html#Continuation-of-a-bosonic-Green’s-function">3.3. Continuation of a bosonic Green’s function</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Square lattice Hubbard model, <span class="math notranslate nohighlight">\(U=2\)</span>, <span class="math notranslate nohighlight">\(\beta=5\)</span>, half-filling</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#Analytic-continuation-of-self-energy">Analytic continuation of self-energy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#Calculate-spectrum-from-self-energy-and-DOS">Calculate spectrum from self-energy and DOS</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#Direct-analytic-continuation-of-the-Green’s-function">Direct analytic continuation of the Green’s function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">4. Square lattice Hubbard model, <span class="math notranslate nohighlight">\(U=2\)</span>, <span class="math notranslate nohighlight">\(\beta=5\)</span>, half-filling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#Analytic-continuation-of-self-energy">4.1. Analytic continuation of self-energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#Calculate-spectrum-from-self-energy-and-DOS">4.2. Calculate spectrum from self-energy and DOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#Direct-analytic-continuation-of-the-Green’s-function">4.3. Direct analytic continuation of the Green’s function</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Strontium-vanadate">Strontium vanadate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Analytical-continuation-of-a-matrix-valued-function-(Kagome)">Analytical continuation of a matrix-valued function (Kagome)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Strontium-vanadate">5. Strontium vanadate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Analytical-continuation-of-a-matrix-valued-function-(Kagome)">6. Analytical continuation of a matrix-valued function (Kagome)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_svo.html">7. Tutorial: Analytic continuation of SrVO<span class="math notranslate nohighlight">\(_3\)</span> self-energy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preblur_test.html">8. Preblur for fermionic functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preblur_bosonic.html">9. Preblur for bosonic continuation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="poorman_test.html">10. Maxent for matrix-valued Green’s functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_doc.html">11. API documentation of ana_cont</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_doc.html#module-ana_cont.continuation">11.1. Continuation module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_doc.html#module-ana_cont.solvers">11.2. Solvers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_doc.html#module-ana_cont.kernels">11.3. Kernels module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_doc.html#module-gui.gui_backend">11.4. Graphical user interface</a></li>
 </ul>
-</div>
-<div class="section" id="module-ana_cont.continuation">
-<span id="continuation-module"></span><h2>Continuation module<a class="headerlink" href="#module-ana_cont.continuation" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="ana_cont.continuation.AnalyticContinuationProblem">
-<em class="property">class </em><code class="sig-prename descclassname">ana_cont.continuation.</code><code class="sig-name descname">AnalyticContinuationProblem</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">im_axis</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">re_axis</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">im_data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">kernel_mode</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">beta</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.continuation.AnalyticContinuationProblem" title="Permalink to this definition">¶</a></dt>
-<dd><p>Specification of an analytic continuation problem.</p>
-<p>This This class is designed to hold the information that specifies the analytic continuation problem:</p>
-<ul class="simple">
-<li><p>Imaginary axis of the data</p></li>
-<li><p>Real axis on which the result is anticipated</p></li>
-<li><p>Imaginary-axis data</p></li>
-<li><p>Type of kernel (fermionic, bosonic, time, frequency)</p></li>
-<li><p>Inverse temperature beta (only necessary for time kernels)</p></li>
+</li>
 </ul>
-<p>Furthermore the class provides an interface to call the solver.</p>
-<dl class="py method">
-<dt id="ana_cont.continuation.AnalyticContinuationProblem.partial_solution">
-<code class="sig-name descname">partial_solution</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.continuation.AnalyticContinuationProblem.partial_solution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Maxent optimization at a specific value of alpha.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.continuation.AnalyticContinuationProblem.solve">
-<code class="sig-name descname">solve</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.continuation.AnalyticContinuationProblem.solve" title="Permalink to this definition">¶</a></dt>
-<dd><p>Interface function for solving the analytic continuation problem.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>method</strong> – Analytic continuation method, possible choices are ‘maxent_svd’, ‘pade’</p></li>
-<li><p><strong>kwargs</strong> – Further keyword arguments, specific to the solution method</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>OptimizationResult object</p>
-</dd>
-</dl>
-<p>This function first creates an instance of an AnalyticContinuationSolver object,
-then the respective solve function is called.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="ana_cont.continuation.GreensFunction">
-<em class="property">class </em><code class="sig-prename descclassname">ana_cont.continuation.</code><code class="sig-name descname">GreensFunction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spectrum</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">wgrid</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">kind</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.continuation.GreensFunction" title="Permalink to this definition">¶</a></dt>
-<dd><p>This class defines a GreensFunction object. The main use of this
-is to calculate a full Green’s function with real- and imaginary part
-from a spectrum.</p>
-<p>Initialize with spectral function and real-frequency grid.</p>
-<dl class="py method">
-<dt id="ana_cont.continuation.GreensFunction.kkt">
-<code class="sig-name descname">kkt</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.continuation.GreensFunction.kkt" title="Permalink to this definition">¶</a></dt>
-<dd><p>Kramers Kronig transformation</p>
-<p>Obtain full complex Green’s function from its imaginary part.</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-ana_cont.solvers">
-<span id="solvers-module"></span><h2>Solvers module<a class="headerlink" href="#module-ana_cont.solvers" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="ana_cont.solvers.AnalyticContinuationSolver">
-<em class="property">class </em><code class="sig-prename descclassname">ana_cont.solvers.</code><code class="sig-name descname">AnalyticContinuationSolver</code><a class="headerlink" href="#ana_cont.solvers.AnalyticContinuationSolver" title="Permalink to this definition">¶</a></dt>
-<dd><p>Abstract base class for solver classes.</p>
-<p>Each Solver class has to inherit from this class.
-The purpose of this is to ensure that each child class
-has a method ‘solve’ implemented.</p>
-</dd></dl>
-
-<dl class="py class">
-<dt id="ana_cont.solvers.MaxentSolverSVD">
-<em class="property">class </em><code class="sig-prename descclassname">ana_cont.solvers.</code><code class="sig-name descname">MaxentSolverSVD</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">im_axis</span></em>, <em class="sig-param"><span class="n">re_axis</span></em>, <em class="sig-param"><span class="n">im_data</span></em>, <em class="sig-param"><span class="n">kernel_mode</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">model</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">stdev</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cov</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">offdiag</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">preblur</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">blur_width</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">optimizer</span><span class="o">=</span><span class="default_value">'newton'</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.MaxentSolverSVD" title="Permalink to this definition">¶</a></dt>
-<dd><p>Maxent with singular-value decomposition.</p>
-<p>The singular-value decomposition of the kernel leads to a basis
-in which the dimensionality of the analytic continuation problem
-is much reduced. This makes computations faster and enforces some
-constraints.</p>
-<p>This class is never instantiated directly by the user, but instead by
-the solve method of continuation.AnalyticContinuationProblem.</p>
-<p>Create a Maxent solver object.</p>
-<p>Here we pass the data to the solver and do some precomputations.
-This makes the process of solving much faster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>im_axis</strong> (<em>numpy.ndarray</em>) – One-dimensional numpy array of type float
-Matsubara frequencies or imaginary time points of the input data.</p></li>
-<li><p><strong>re_axis</strong> (<em>numpy.ndarray</em>) – One-dimensional numpy array of type float
-Real-frequency grid to use for the analytic continuation.</p></li>
-<li><p><strong>im_data</strong> (<em>numpy.ndarray</em>) – One-dimensional numpy array of type float or complex
-Imaginary-axis data, e.g. Matsubara Green’s function</p></li>
-<li><p><strong>kernel_mode</strong> ({<cite>‘freq_fermionic’</cite>, <cite>‘freq_bosonic’</cite>, <cite>‘time_fermionic’</cite>, <cite>‘time_bosonic’</cite>}) – <ul>
-<li><p><cite>‘freq_fermionic’</cite> fermionic Matsubara Greens function</p></li>
-<li><p><cite>’freq_bosonic’</cite> bosonic Matsubara Greens function</p></li>
-<li><p><cite>’time_fermionic’</cite> fermionic Green’s function in imaginary time</p></li>
-<li><p><cite>’time_bosonic’</cite> bosonic Green’s function (susceptibility) in imaginary time</p></li>
-</ul>
-<p>Additionally there are less established special-purpose options
-[<cite>‘freq_bosonic_xyz’</cite>, <cite>‘freq_fermionic_phsym’</cite>, <cite>‘time_fermionic_phsym’</cite>].</p>
-</p></li>
-<li><p><strong>model</strong> (<em>numpy.ndarray</em>) – One-dimensional numpy array of type float.
-(Values must be greater or equal to zero.)
-Default model of the Maxent calculation, i.e. the entropy of the
-spectral function is computed with respect to this model.
-Thus the shape has to match <cite>re_axis</cite>.</p></li>
-<li><p><strong>stdev</strong> (<em>numpy.ndarray</em>) – One-dimensional numpy array of positive float values.
-<cite>stdev</cite> are the standard deviation values of the measured data points,
-thus they have to be larger than zero. The shape has to match <cite>im_data</cite>
-The keywords <cite>stdev</cite> and <cite>cov</cite> are mutually exclusive, i.e. only one of them
-can be used.
-For complex data (e.g. Matsubara Green’s function) the same standard deviation
-is used for both the real and imaginary part, such that the array passed to this
-keyword is taken as the standard deviation of the real part (not the absolute).</p></li>
-<li><p><strong>cov</strong> (<em>numpy.ndarray</em>) – Two-dimensional numpy array.
-<cite>cov</cite> is the covariance matrix of the input data. If it is diagonal, the diagonal
-elements are the variance of the data, i.e. the square of the standard deviation.
-The keywords <cite>stdev</cite> and <cite>cov</cite> are mutually exclusive, i.e. only one of them
-can be used.
-For complex data, the covariance matrix can be complex (see Kappl et al., PRB 102 (8), 085124)</p></li>
-<li><p><strong>offdiag</strong> (<em>bool</em><em>, </em><em>default: False</em>) – Whether the input data are offdiagonal elements of a matrix. For diagonal elements,
-the spectral function is positive, for offdiagonal ones it has positive and negative
-values, and the integral is 0.</p></li>
-<li><p><strong>preblur</strong> (<em>bool</em><em>, </em><em>default: False</em>) – Whether to use preblur in the calculation</p></li>
-<li><p><strong>blur_width</strong> (<em>float</em><em>, </em><em>default: 0.</em>) – If preblur=True, specify a width of the preblur that is larger than 0.</p></li>
-<li><p><strong>optimizer</strong> (<em>{'scipy_lm'</em><em>, </em><em>'newton'}</em><em>, </em><em>default: 'newton'</em>) – Which optimizer to use at each value of alpha to solve the minimization / root finding problem.
-Usually the custom implementation of the newton algorithm is much faster.</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>default: True</em>) – If set to False, no output is printed. This can be useful when doing a very large number
-of computations, but generally I recommend leaving it on True, to see what is happening.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt id="ana_cont.solvers.MaxentSolverSVD.backtransform">
-<code class="sig-name descname">backtransform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">A</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.MaxentSolverSVD.backtransform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Backtransformation from real to imaginary axis.</p>
-<p><span class="math notranslate nohighlight">\(G(i\omega_n) = \int d\nu \; K(i\omega_n, \nu)  A(\nu)\)</span></p>
-<p>Also at this place we return from the ‘diagonal-covariance space’
-Note: this function is not a bottleneck.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>A</strong> (<em>numpy.ndarray</em>) – Spectral function</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Back-transformed Green’s function on imaginary axis</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>np.ndarray</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.solvers.MaxentSolverSVD.bayes_conv">
-<code class="sig-name descname">bayes_conv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">A</span></em>, <em class="sig-param"><span class="n">entr</span></em>, <em class="sig-param"><span class="n">alpha</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.MaxentSolverSVD.bayes_conv" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bayesian convergence criterion for classic maxent (maximum of probablility distribution)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>A</strong> (<em>numpy.ndarray</em>) – spectral function</p></li>
-<li><p><strong>entr</strong> (<em>float</em>) – entropy</p></li>
-<li><p><strong>alpha</strong> (<em>float</em>) – weight factor of the entropy</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>ng</strong> (<em>float</em>) – “number of good data points”</p></li>
-<li><p><strong>tr</strong> (<em>float</em>) – trace of the gamma matrix</p></li>
-<li><p><strong>conv</strong> (<em>float</em>) – convergence criterion (1 -&gt; converged)</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.solvers.MaxentSolverSVD.bayes_conv_offdiag">
-<code class="sig-name descname">bayes_conv_offdiag</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">A</span></em>, <em class="sig-param"><span class="n">entr</span></em>, <em class="sig-param"><span class="n">alpha</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.MaxentSolverSVD.bayes_conv_offdiag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bayesian convergence criterion for classic maxent, offdiagonal version</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>A</strong> (<em>numpy.ndarray</em>) – spectral function</p></li>
-<li><p><strong>entr</strong> (<em>float</em>) – entropy</p></li>
-<li><p><strong>alpha</strong> (<em>float</em>) – weight factor of the entropy</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>ng</strong> (<em>float</em>) – “number of good data points”</p></li>
-<li><p><strong>tr</strong> (<em>float</em>) – trace of the gamma matrix</p></li>
-<li><p><strong>conv</strong> (<em>float</em>) – convergence criterion (1 -&gt; converged)</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.solvers.MaxentSolverSVD.chi2">
-<code class="sig-name descname">chi2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">A</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.MaxentSolverSVD.chi2" title="Permalink to this definition">¶</a></dt>
-<dd><p>compute chi-squared-deviation</p>
-<p>Compute the log-likelihood function or chi-squared-deviation of
-the spectral function:
-<span class="math notranslate nohighlight">\(\sum_n \frac{|G(i\omega_n) - \int K(i\omega_n, \nu) A(\nu)|^2}{\sigma_n^2}\)</span></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>A</strong> (<em>numpy.ndarray</em>) – Spectral function</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>chi-squared deviation</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.solvers.MaxentSolverSVD.compute_f_J_diag">
-<code class="sig-name descname">compute_f_J_diag</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">alpha</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.MaxentSolverSVD.compute_f_J_diag" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function evaluates the function whose root we want to find.</p>
-<p>The function <span class="math notranslate nohighlight">\(f_m(u)\)</span> is defined as the singular value decomposition
-of the derivative <span class="math notranslate nohighlight">\(dQ[A]/dA_m\)</span>. Since we want to minimize <span class="math notranslate nohighlight">\(Q[A]\)</span>,
-we have to find the root of the vector-valued function <span class="math notranslate nohighlight">\(f\)</span>, i.e.
-<span class="math notranslate nohighlight">\(f_m(u) = SVD(dQ/dA)_m = 0\)</span>.
-For more efficient root finding, we also need the Jacobian <span class="math notranslate nohighlight">\(J\)</span>.
-It is directly computed in singular space, <span class="math notranslate nohighlight">\(J_{mi}=df_m/du_i\)</span>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>u</strong> (<em>numpy.ndarray</em>) – singular-space vector that parametrizes the spectral function</p></li>
-<li><p><strong>alpha</strong> (<em>float</em>) – (positive) weight factor of the entropy</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>f</strong> (<em>numpy.ndarray</em>) – value of the function whose zero we want to find</p></li>
-<li><p><strong>J</strong> (<em>numpy.ndarray</em>) – Jacobian at the current position</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.solvers.MaxentSolverSVD.compute_f_J_offdiag">
-<code class="sig-name descname">compute_f_J_offdiag</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">alpha</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.MaxentSolverSVD.compute_f_J_offdiag" title="Permalink to this definition">¶</a></dt>
-<dd><p>The analogue to compute_f_J_diag for offdiagonal elements.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>u</strong> (<em>numpy.ndarray</em>) – singular-space vector that parametrizes the spectral function</p></li>
-<li><p><strong>alpha</strong> (<em>float</em>) – (positive) weight factor of the entropy</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>f</strong> (<em>numpy.ndarray</em>) – value of the function whose zero we want to find</p></li>
-<li><p><strong>J</strong> (<em>numpy.ndarray</em>) – Jacobian at the current position</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.solvers.MaxentSolverSVD.entropy_pos">
-<code class="sig-name descname">entropy_pos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">A</span></em>, <em class="sig-param"><span class="n">u</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.MaxentSolverSVD.entropy_pos" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute entropy for positive definite spectral function.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>A</strong> (<em>numpy.ndarray</em>) – Spectral function</p></li>
-<li><p><strong>u</strong> (<em>numpy.ndarray</em>) – Singular-space vector representing the same spectral function</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>entropy</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.solvers.MaxentSolverSVD.entropy_posneg">
-<code class="sig-name descname">entropy_posneg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">A</span></em>, <em class="sig-param"><span class="n">u</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.MaxentSolverSVD.entropy_posneg" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute “positive-negative entropy” for spectral function with norm 0.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>A</strong> (<em>numpy.ndarray</em>) – Spectral function</p></li>
-<li><p><strong>u</strong> (<em>numpy.ndarray</em>) – Singular-space vector representing the same spectral function</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>entropy</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.solvers.MaxentSolverSVD.error_propagation">
-<code class="sig-name descname">error_propagation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span></em>, <em class="sig-param"><span class="n">args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.MaxentSolverSVD.error_propagation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the deviation for a callable function obs.
-This feature is still experimental</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.solvers.MaxentSolverSVD.log">
-<code class="sig-name descname">log</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.MaxentSolverSVD.log" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print log messages if <cite>verbose=True</cite> was passed to the solver.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>msg</strong> (<em>str</em>) – Message to print</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.solvers.MaxentSolverSVD.maxent_optimization">
-<code class="sig-name descname">maxent_optimization</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">ustart</span></em>, <em class="sig-param"><span class="n">iterfac</span><span class="o">=</span><span class="default_value">10000000</span></em>, <em class="sig-param"><span class="n">use_bayes</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.MaxentSolverSVD.maxent_optimization" title="Permalink to this definition">¶</a></dt>
-<dd><p>optimization of maxent functional for a given value of alpha</p>
-<p>Since a priori the best value of <span class="math notranslate nohighlight">\(\alpha\)</span> is unknown,
-this function has to be called several times in order to find a good value.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>alpha</strong> (<em>float</em>) – weight factor of the entropy</p></li>
-<li><p><strong>ustart</strong> (<em>numpy.ndarray</em>) – singular-space vector used as a starting value for the optimization.
-For the first optimization, done at large alpha, we use zeros,
-which corresponds to the default model. Then we use the result of the
-previous optimization as a starting value.</p></li>
-<li><p><strong>iterfac</strong> (<em>int</em><em>, </em><em>default: 10000000</em>) – Control parameter for maximum number of iterations in
-scipy_lm, which is &lt;number of singular values&gt; * iterfac.
-It has no effect when using the newton optimizer.</p></li>
-<li><p><strong>use_bayes</strong> (<em>bool</em><em>, </em><em>default=False</em>) – Whether to use the Bayesian inference parameters for alpha.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Object that holds the results of the optimization,
-e.g. spectral function, chi-squared deviation.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#ana_cont.solvers.OptimizationResult" title="ana_cont.solvers.OptimizationResult">OptimizationResult</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.solvers.MaxentSolverSVD.posterior_probability">
-<code class="sig-name descname">posterior_probability</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">A</span></em>, <em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">entr</span></em>, <em class="sig-param"><span class="n">chisq</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.MaxentSolverSVD.posterior_probability" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bayesian a-posteriori probability for alpha after optimization of A</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>A</strong> (<em>numpy.ndarray</em>) – spectral function</p></li>
-<li><p><strong>entr</strong> (<em>float</em>) – entropy</p></li>
-<li><p><strong>alpha</strong> (<em>float</em>) – weight factor of the entropy</p></li>
-<li><p><strong>chisq</strong> (<em>float</em>) – chi-squared deviation</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Probability</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.solvers.MaxentSolverSVD.singular_to_realspace_diag">
-<code class="sig-name descname">singular_to_realspace_diag</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.MaxentSolverSVD.singular_to_realspace_diag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Go from singular to real space.</p>
-<p>Transform the singular space vector u into real-frequency space (spectral function)
-by <span class="math notranslate nohighlight">\(A(\omega) = D(\omega) e^{V u}\)</span>, where <span class="math notranslate nohighlight">\(D\)</span> is the default model
-and <span class="math notranslate nohighlight">\(V\)</span> is the matrix from the SVD.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>u</strong> (<em>numpy.ndarray</em>) – singular-space vector that parametrizes the spectral function</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Spectral function <span class="math notranslate nohighlight">\(A\)</span> obtained from <cite>u</cite></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>numpy.ndarray</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.solvers.MaxentSolverSVD.singular_to_realspace_offdiag">
-<code class="sig-name descname">singular_to_realspace_offdiag</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.MaxentSolverSVD.singular_to_realspace_offdiag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Go from singular to real space.</p>
-<p>Transform the singular space vector u into real-frequency
-space in the case of an offdiagonal element.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>u</strong> (<em>numpy.ndarray</em>) – singular-space vector that parametrizes the spectral function</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Spectral function <span class="math notranslate nohighlight">\(A\)</span> obtained from <cite>u</cite></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>numpy.ndarray</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.solvers.MaxentSolverSVD.solve">
-<code class="sig-name descname">solve</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.MaxentSolverSVD.solve" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrapper function for solve, which calls the chosen
-method of alpha_determination.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.solvers.MaxentSolverSVD.solve_bryan">
-<code class="sig-name descname">solve_bryan</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">alphastart</span><span class="o">=</span><span class="default_value">500</span></em>, <em class="sig-param"><span class="n">alphadiv</span><span class="o">=</span><span class="default_value">1.1</span></em>, <em class="sig-param"><span class="n">interactive</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.MaxentSolverSVD.solve_bryan" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bryan’s method of determining the optimal spectrum.</p>
-<p>Bryan’s maxent calculates an average of spectral functions,
-weighted by their Bayesian probability</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>alphastart</strong> (<em>float</em><em>, </em><em>default=500</em>) – Starting value of alpha. This is the largest value of alpha,
-it is decreased during the calculation.</p></li>
-<li><p><strong>alphadiv</strong> (<em>float</em><em>, </em><em>default=1.1</em>) – After each optimization, the current alpha is divided by this number.
-Hence, the number has to be larger than 1.</p></li>
-<li><p><strong>interactive</strong> (<em>bool</em><em>, </em><em>default=False</em>) – Whether to show a plot of the probability. (Needs matplotlib)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><em>OptimizationResult</em> – Contains the weighted average of all results</p></li>
-<li><p><em>list</em> – List of OptimizationResult objects for all used values of alpha</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.solvers.MaxentSolverSVD.solve_chi2kink">
-<code class="sig-name descname">solve_chi2kink</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">alpha_start</span><span class="o">=</span><span class="default_value">1000000000.0</span></em>, <em class="sig-param"><span class="n">alpha_end</span><span class="o">=</span><span class="default_value">0.001</span></em>, <em class="sig-param"><span class="n">alpha_div</span><span class="o">=</span><span class="default_value">10.0</span></em>, <em class="sig-param"><span class="n">fit_position</span><span class="o">=</span><span class="default_value">2.5</span></em>, <em class="sig-param"><span class="n">interactive</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.MaxentSolverSVD.solve_chi2kink" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determine optimal alpha by searching for the kink in log(chi2) (log(alpha))</p>
-<p>We start with an optimization at a large value of alpha (<cite>alpha_start</cite>),
-where we should get only the default model. Then, alpha is decreased
-step-by-step, where <span class="math notranslate nohighlight">\(\alpha_{n+1} = \alpha_n / \alpha_{div}\)</span>, until the minimal
-value of alpha_end is reached.
-Then, we fit a function
-<span class="math notranslate nohighlight">\(\phi(x; a, b, c, d) = a + b / [1 + exp(-d*(x-c))]\)</span>,
-from which the optimal alpha is determined by
-x_opt = c - <cite>fit_position</cite> / d; alpha_opt = 10^x_opt.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>alpha_start</strong> (<em>float</em><em>, </em><em>default=1e9</em>) – Value of alpha where to start the procedure.
-This is the largest value of alpha, it is subsequently decreased
-in the algorithm.</p></li>
-<li><p><strong>alpha_end</strong> (<em>float</em><em>, </em><em>default=1e-3</em>) – Last (smallest) value of alpha that is considered in the algorithm</p></li>
-<li><p><strong>alpha_div</strong> (<em>float</em><em>, </em><em>default=10.</em>) – After each optimization, alpha is divided by alpha_div.
-Thus it has to be larger than 1. The default value of 10 is
-a good compromise of function and speed. You can take
-smaller values if you are unsure or want to make fancy plots.</p></li>
-<li><p><strong>fit_position</strong> (<em>float</em><em>, </em><em>default=2.5</em>) – Control parameter for under/overfitting.
-In my experience, good values are usually between 2 and 2.5.
-Smaller values lead to underfitting, which is sometimes desirable.
-Larger values lead to overfitting, which should be avoided.</p></li>
-<li><p><strong>interactive</strong> (<em>bool</em><em>, </em><em>default=False</em>) – Decide whether to show a plot of chi2 vs alpha.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><em>OptimizationResult</em> – Result of the optimization at “best” alpha value</p></li>
-<li><p><em>list</em> – List of OptimizationResult objects for all used values of alpha</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.solvers.MaxentSolverSVD.solve_classic">
-<code class="sig-name descname">solve_classic</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.MaxentSolverSVD.solve_classic" title="Permalink to this definition">¶</a></dt>
-<dd><p>Classic maxent alpha determination.</p>
-<p>Classic maxent uses Bayes statistics to approximately determine
-the most probable value of alpha
-We start at a large value of alpha, where the optimization yields basically the default model,
-therefore u_opt is only a few steps away from ustart=0 (=default model)
-Then we gradually decrease alpha, step by step moving away from the default model towards data fitting.
-Using u_opt as ustart for the next (smaller) alpha brings a great speedup into this procedure.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><ul class="simple">
-<li><p><em>OptimizationResult</em> – Result of the optimization at “best” alpha value</p></li>
-<li><p><em>list</em> – List of OptimizationResult objects for all used values of alpha</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.solvers.MaxentSolverSVD.solve_historic">
-<code class="sig-name descname">solve_historic</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.MaxentSolverSVD.solve_historic" title="Permalink to this definition">¶</a></dt>
-<dd><p>Historic Maxent: choose alpha in a way that chi^2 pprox N</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><ul class="simple">
-<li><p><em>OptimizationResult</em> – Result of the optimization at “best” alpha value</p></li>
-<li><p><em>list</em> – List of OptimizationResult objects for all used values of alpha</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="ana_cont.solvers.NewtonOptimizer">
-<em class="property">class </em><code class="sig-prename descclassname">ana_cont.solvers.</code><code class="sig-name descname">NewtonOptimizer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">opt_size</span></em>, <em class="sig-param"><span class="n">max_hist</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">max_iter</span><span class="o">=</span><span class="default_value">20000</span></em>, <em class="sig-param"><span class="n">initial_guess</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.NewtonOptimizer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Newton root finding.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>opt_size</strong> – number of variables (integer)</p></li>
-<li><p><strong>max_hist</strong> – maximal history for mixing (integer)</p></li>
-<li><p><strong>max_iter</strong> – maximum number of iterations for root finding</p></li>
-<li><p><strong>initial_guess</strong> – initial guess for the root finding.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt id="ana_cont.solvers.NewtonOptimizer.__call__">
-<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">function_and_jacobian</span></em>, <em class="sig-param"><span class="n">alpha</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.NewtonOptimizer.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Main function of Newton optimization.</p>
-<p>This function implements the self-consistent iteration of the root finding.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>sol.x is the result
-sol.nfev is the number of function evaluations</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>collections.namedtuple</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.solvers.NewtonOptimizer.get_proposal">
-<code class="sig-name descname">get_proposal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mixing</span><span class="o">=</span><span class="default_value">0.5</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.NewtonOptimizer.get_proposal" title="Permalink to this definition">¶</a></dt>
-<dd><p>Propose a new solution by linear mixing.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.solvers.NewtonOptimizer.iteration_function">
-<code class="sig-name descname">iteration_function</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">proposal</span></em>, <em class="sig-param"><span class="n">function_vector</span></em>, <em class="sig-param"><span class="n">jacobian_matrix</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.NewtonOptimizer.iteration_function" title="Permalink to this definition">¶</a></dt>
-<dd><p>The function, whose fixed point we are searching.</p>
-<p>This function generates the iteration procedure in the Newton root finding.
-Basically, it computes the “result” from the “proposal”.
-It has the form result = proposal + increment, but
-since the increment may be large, we apply a reduction of step width in such cases.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="ana_cont.solvers.OptimizationResult">
-<em class="property">class </em><code class="sig-prename descclassname">ana_cont.solvers.</code><code class="sig-name descname">OptimizationResult</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u_opt</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">A_opt</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">chi2</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">backtransform</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">entropy</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_good</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">probability</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">convergence</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">trace</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">Q</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">norm</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">blur_width</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">numerator</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">denominator</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">numerator_function</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">denominator_function</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">check</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ivcheck</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">g_ret</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.OptimizationResult" title="Permalink to this definition">¶</a></dt>
-<dd><p>Object for holding the result of an optimization.</p>
-<p>This class has no methods except the constructor,
-it is thus essentially a collection of output numbers.</p>
-<p>All member variables have None as default value, different solvers
-override different variables. A_opt is always set, since it
-is the main result of analytic continuation.</p>
-</dd></dl>
-
-<dl class="py class">
-<dt id="ana_cont.solvers.PadeSolver">
-<em class="property">class </em><code class="sig-prename descclassname">ana_cont.solvers.</code><code class="sig-name descname">PadeSolver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">im_axis</span></em>, <em class="sig-param"><span class="n">re_axis</span></em>, <em class="sig-param"><span class="n">im_data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.PadeSolver" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pade solver</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>im_axis</strong> (<em>numpy.ndarray</em>) – Matsubara frequencies which are used for the continuation</p></li>
-<li><p><strong>re_axis</strong> (<em>numpy.ndarray</em>) – Real-frequency points at which the Pade interpolant is evaluated</p></li>
-<li><p><strong>im_data</strong> (Green’s function values at the given points <cite>im_axis</cite>) – </p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt id="ana_cont.solvers.PadeSolver.check">
-<code class="sig-name descname">check</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">im_axis_fine</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.PadeSolver.check" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sanity check for Pade approximant</p>
-<p>Evaluate the Pade approximant on the imaginary axis,
-however not only at Matsubara frequencies, but on a
-dense grid. If the approximant is good, then this
-should yield a smooth interpolating curve on the Matsubara
-axis. On the other hand, little ‘spikes’ are a hint
-for pole-zero pairs close to the imaginary axis. This
-is usually a result of noise and a different choice of
-Matsubara frequencies may help.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>im_axis_fine</strong> (<em>numpy.ndarray</em><em>, </em><em>default=None</em>) – Imaginary-axis points where the approximant is
-evaluated for checking. If not specified,
-an array of length 500 is generated, which goes
-up to twice the maximum frequency that was used
-for constructing the approximant.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Values of the Pade approximant at the points
-of <cite>im_axis_fine</cite>.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>numpy.ndarray</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.solvers.PadeSolver.solve">
-<code class="sig-name descname">solve</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">show_plot</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.solvers.PadeSolver.solve" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the Pade approximation on the real axis.</p>
-<p>The main numerically heavy computation is done in the Cython module
-<cite>pade.pyx</cite>. Here we just call the functions.
-In the Pade method, the numerator and denominator approximants
-are generated separately, and then the division is done.
-As an additional feature we add the callable <cite>numerator_function</cite>
-and <cite>denominator_function</cite> to the OptimizationResult object.</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-ana_cont.kernels">
-<span id="kernels-module"></span><h2>Kernels module<a class="headerlink" href="#module-ana_cont.kernels" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="ana_cont.kernels.Kernel">
-<em class="property">class </em><code class="sig-prename descclassname">ana_cont.kernels.</code><code class="sig-name descname">Kernel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kind</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">re_axis</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">im_axis</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.kernels.Kernel" title="Permalink to this definition">¶</a></dt>
-<dd><p>This class handles the kernel of the analytic continuation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>kind</strong> (<em>str</em><em>, </em><em>default=None</em>) – Which kind of kernel to use. Possible options:
-‘freq_bosonic’, ‘time_bosonic’, ‘freq_bosonic_xyz’,
-‘freq_fermionic’, ‘time_fermionic’, ‘freq_fermionic_phsym’,
-‘time_fermionic_phsym’</p></li>
-<li><p><strong>re_axis</strong> (<em>numpy.ndarray</em><em>, </em><em>default=None</em>) – real-frequency axis to generate the kernel matrix</p></li>
-<li><p><strong>im_axis</strong> (<em>numpy.ndarray</em><em>, </em><em>default=None</em>) – imaginary axis (time, Matsubara frequency)
-to generate the kernel matrix</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt id="ana_cont.kernels.Kernel.blur">
-<code class="sig-name descname">blur</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hidden_spectrum</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.kernels.Kernel.blur" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert hidden spectral function to spectral function.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.kernels.Kernel.convolve_kernel">
-<code class="sig-name descname">convolve_kernel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.kernels.Kernel.convolve_kernel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convolve bosonic or fermionic kernel with a Gaussian.</p>
-<p>The Gaussian is <span class="math notranslate nohighlight">\(g(x) = \frac{1}{b \sqrt{2 \pi}} exp(-x^2/(2b^2))\)</span>.
-In the fermionic case, the convolution can be written as
-<span class="math notranslate nohighlight">\(K_{preblur}(i\nu_n, \omega) = \int_{-5b}^{5b} dx\; \frac{g(x)}{i\nu_n - x - \omega}\)</span></p>
-<p>In the bosonic case, the convolution can be written as
-<span class="math notranslate nohighlight">\(K_{preblur}(i\omega_n, \nu) = \frac{1}{2} \int_{-5b}^{5b} dx\; g(x) [\frac{(x+\nu)^2 }{ (x+\nu)^2 + \omega_n^2} + \frac{(x-\nu)^2 }{ (x-\nu)^2 + \omega_n^2}]\)</span></p>
-<p>Integration over the Gaussian from <span class="math notranslate nohighlight">\(-5b\)</span> to <span class="math notranslate nohighlight">\(5b\)</span> is certainly sufficient.
-Thus the Gaussian has to be computed only once and integration by scipy.integrate.simps
-gives very accurate results even for tiny values of b.</p>
-<p>Note: More direct calculation by, e.g., scipy.integrate.quad is possible but unstable
-and extremely slow.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.kernels.Kernel.kernel_matrix">
-<code class="sig-name descname">kernel_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.kernels.Kernel.kernel_matrix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the kernel matrix.
-If you want to implement another kernel,
-you just have to add another ‘elif’ here.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.kernels.Kernel.preblur">
-<code class="sig-name descname">preblur</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">blur_width</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.kernels.Kernel.preblur" title="Permalink to this definition">¶</a></dt>
-<dd><p>Preblur for the kernel, if applicable.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.kernels.Kernel.real_matrix">
-<code class="sig-name descname">real_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.kernels.Kernel.real_matrix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return real and imaginary part one after another.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="ana_cont.kernels.Kernel.rotate_to_cov_eb">
-<code class="sig-name descname">rotate_to_cov_eb</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ucov</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.kernels.Kernel.rotate_to_cov_eb" title="Permalink to this definition">¶</a></dt>
-<dd><p>Rotate first axis of kernel to eigenbasis of covariance matrix.</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-</div>
-<div class="section" id="gui-documentation">
-<h1>GUI documentation<a class="headerlink" href="#gui-documentation" title="Permalink to this headline">¶</a></h1>
 </div>
 <div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
+</div>
 </div>
 
 
@@ -808,18 +110,24 @@ you just have to add another ‘elif’ here.</p>
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="includeme.html">ana_cont: Python package for analytic continuation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="basics.html">Analytic continuation with ana_cont</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Square lattice Hubbard model, <span class="math notranslate nohighlight">\(U=2\)</span>, <span class="math notranslate nohighlight">\(\beta=5\)</span>, half-filling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Strontium-vanadate">Strontium vanadate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Analytical-continuation-of-a-matrix-valued-function-(Kagome)">Analytical continuation of a matrix-valued function (Kagome)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">1. Installation of ana_cont</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui.html">2. GUI documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basics.html">3. Analytic continuation with the ana_cont library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">4. Square lattice Hubbard model, <span class="math notranslate nohighlight">\(U=2\)</span>, <span class="math notranslate nohighlight">\(\beta=5\)</span>, half-filling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Strontium-vanadate">5. Strontium vanadate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Analytical-continuation-of-a-matrix-valued-function-(Kagome)">6. Analytical continuation of a matrix-valued function (Kagome)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_svo.html">7. Tutorial: Analytic continuation of SrVO<span class="math notranslate nohighlight">\(_3\)</span> self-energy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preblur_test.html">8. Preblur for fermionic functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preblur_bosonic.html">9. Preblur for bosonic continuation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="poorman_test.html">10. Maxent for matrix-valued Green’s functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_doc.html">11. API documentation of ana_cont</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="#">Documentation overview</a><ul>
-      <li>Next: <a href="includeme.html" title="next chapter">ana_cont: Python package for analytic continuation</a></li>
+      <li>Next: <a href="installation.html" title="next chapter"><span class="section-number">1. </span>Installation of ana_cont</a></li>
   </ul></li>
 </ul>
 </div>

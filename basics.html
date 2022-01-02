@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analytic continuation with ana_cont &#8212; ana_cont 1.0 documentation</title>
+    <title>3. Analytic continuation with the ana_cont library &#8212; ana_cont 1.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -18,8 +18,8 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "tex2jax_ignore|mathjax_ignore|document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Square lattice Hubbard model, \(U=2\), \(\beta=5\), half-filling" href="tutorial.html" />
-    <link rel="prev" title="ana_cont: Python package for analytic continuation" href="includeme.html" />
+    <link rel="next" title="4. Square lattice Hubbard model, \(U=2\), \(\beta=5\), half-filling" href="tutorial.html" />
+    <link rel="prev" title="2. GUI documentation" href="gui.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -284,8 +284,8 @@ div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
-<div class="section" id="Analytic-continuation-with-ana_cont">
-<h1>Analytic continuation with ana_cont<a class="headerlink" href="#Analytic-continuation-with-ana_cont" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="Analytic-continuation-with-the-ana_cont-library">
+<h1><span class="section-number">3. </span>Analytic continuation with the ana_cont library<a class="headerlink" href="#Analytic-continuation-with-the-ana_cont-library" title="Permalink to this headline">¶</a></h1>
 <p>There is no general-purpose main program of ana_cont. Therefore the user has to write a script according to his needs. This is very simple and some examples are presented in this notebook.</p>
 <p>First we have to import some libraries.</p>
 <div class="nbinput nblast docutils container">
@@ -311,7 +311,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <div class="section" id="Continuation-of-a-fermionic-Green’s-function">
-<h2>Continuation of a fermionic Green’s function<a class="headerlink" href="#Continuation-of-a-fermionic-Green’s-function" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">3.1. </span>Continuation of a fermionic Green’s function<a class="headerlink" href="#Continuation-of-a-fermionic-Green’s-function" title="Permalink to this headline">¶</a></h2>
 <p>A fermionic Green’s function <span class="math notranslate nohighlight">\(G(z)\)</span> has complex values, and its values on the Matsubara frequencies are related to the spectral function <span class="math notranslate nohighlight">\(A(w)\)</span> by</p>
 <div class="math notranslate nohighlight">
 \[G(i\omega_n) = \int_{-\infty}^\infty \frac{A(\omega)}{i\omega_n - \omega}.\]</div>
@@ -320,7 +320,7 @@ div.rendered_html tbody tr:hover {
 <p>Here we consider the continuation from fermionic Matsubara frequencies to real frequencies. It is of course also possible to continue from imaginary time to real frequencies, but this has two disadvantages: First, if data are obtained from CT-QMC, they need to be collected in imaginary-time bins, which reduces accuracy in steep regions. (The binned value does not in general coincide with the actual value at the bin center.) Fourier-transformed data can be obtained directly by NFFT, without any
 binning error. Second, the Matsubara-representation is more compact, meaning that much fewer Matsubara frequencies than imaginary-time bins are needed. This makes the linear-algebra operations cheaper and thus the continuation faster. For the sake of completeness let it be mentioned that the package continues <span class="math notranslate nohighlight">\(G(-\tau)\)</span> for positive values of <span class="math notranslate nohighlight">\(\tau\)</span>, i.e. positive values.</p>
 <div class="section" id="Generate-test-data">
-<h3>Generate test data<a class="headerlink" href="#Generate-test-data" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">3.1.1. </span>Generate test data<a class="headerlink" href="#Generate-test-data" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
@@ -366,7 +366,7 @@ binning error. Second, the Matsubara-representation is more compact, meaning tha
 </div>
 </div>
 <div class="section" id="Create-the-continuation-problem">
-<h3>Create the continuation problem<a class="headerlink" href="#Create-the-continuation-problem" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">3.1.2. </span>Create the continuation problem<a class="headerlink" href="#Create-the-continuation-problem" title="Permalink to this headline">¶</a></h3>
 <p>The first important part of the analytic continuation script is the creation of an <code class="docutils literal notranslate"><span class="pre">AnalyticContinuationProblem</span></code> object. If the analytic continuation is done by the Maximum entropy method, we need the following input: * Matsubara frequency grid (<code class="docutils literal notranslate"><span class="pre">im_axis</span></code>). Only positive Matsubara frequencies should be used for the continuation. The number of frequencies to be used depends on temperature, but one should use only the region that contains physical information, i.e. the low-frequency region.
 The behaviour in the high-frequency region is trivial and encoded in the kernel. * Real frequency grid (<code class="docutils literal notranslate"><span class="pre">re_axis</span></code>). The real frequency grid must cover the whole bandwidth of the spectrum (ideally a bit more). It does not need to be equispaced. On the contrary, it is often of advantage to make it denser in regions, where the spectral function is expected to have a complicated structure. * Imaginary axis data (<code class="docutils literal notranslate"><span class="pre">im_data</span></code>). The Green’s function data belonging to the Matsubara frequencies given
 above. If you continue a self-energy, make sure that you subtracted the Hartree term. You might also like to normalize it by its first moment. * Kind of the Green’s function (<code class="docutils literal notranslate"><span class="pre">kernel_mode</span></code>). If you want to continue a fermionic Green’s function or self energy from Matsubara frequencies, use <code class="docutils literal notranslate"><span class="pre">kernel_mode='freq_fermionic'</span></code></p>
@@ -383,7 +383,7 @@ above. If you continue a self-energy, make sure that you subtracted the Hartree 
 </div>
 </div>
 <div class="section" id="Solve-the-continuation-problem">
-<h3>Solve the continuation problem<a class="headerlink" href="#Solve-the-continuation-problem" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">3.1.3. </span>Solve the continuation problem<a class="headerlink" href="#Solve-the-continuation-problem" title="Permalink to this headline">¶</a></h3>
 <div class="line-block">
 <div class="line">Now we can actually solve the problem. For this we use the maximum entropy method with singular value decomposition, <code class="docutils literal notranslate"><span class="pre">method='maxent_svd'</span></code>. This algorithm needs the following additional information: * Alpha determination algorithm. It is recommended to use <code class="docutils literal notranslate"><span class="pre">alpha_determination='chi2kink'</span></code>, since the “classic” and “Bryan” algorithms in practice frequently lead to overfitting. * Error estimate: passed to the solver through the keyword <code class="docutils literal notranslate"><span class="pre">stdev</span></code>. It must have the same shape as <code class="docutils literal notranslate"><span class="pre">im_axis</span></code>.</div>
 <div class="line">* Default model: passed to the solver through the keyword <code class="docutils literal notranslate"><span class="pre">model</span></code>. For a first try, use a flat default model. However, you can use an arbitrarily creative model. By experience a function that strongly decays in the high-frequency region can be useful. It is also possible to re-use a spectrum that was obtained from continuation with strong underfitting.</div>
@@ -422,13 +422,13 @@ log10(alpha) = 0.00,    chi2 = 9.911e+00,   S = -1.144e+00,   nfev = 75,   norm 
 log10(alpha) = -1.00,   chi2 = 9.686e+00,   S = -1.546e+00,   nfev = 33,   norm = 0.999
 log10(alpha) = -2.00,   chi2 = 9.612e+00,   S = -2.573e+00,   nfev = 74,   norm = 0.999
 log10(alpha) = -3.00,   chi2 = 9.602e+00,   S = -3.731e+00,   nfev = 77,   norm = 0.999
-Optimal log alpha 2.171526733569218
-log10(alpha) = 2.17,    chi2 = 1.598e+01,   S = -1.018e+00,   nfev = 77,   norm = 1.002
+Optimal log alpha 2.1715267252423462
+log10(alpha) = 2.17,    chi2 = 1.598e+01,   S = -1.018e+00,   nfev = 16,   norm = 1.002
 </pre></div></div>
 </div>
 </div>
 <div class="section" id="Plot-the-result">
-<h3>Plot the result<a class="headerlink" href="#Plot-the-result" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">3.1.4. </span>Plot the result<a class="headerlink" href="#Plot-the-result" title="Permalink to this headline">¶</a></h3>
 <p>Now we can plot the result of the continuation. It is highly recommended to look at two kinds of plots. First, one should look at the backtransform and compare it to the original data. (Plotting one over another, or the difference.) The backtransform should be a good fit, but of course you should not try to fit noise. Second, one should check, if the result looks reasonably. In the case of noise-fitting, peaks become sharp and hight, and even additional peaks can appear. Another typical symptom
 is that spectral weight is shifted to the borders of the real-frequency interval.</p>
 <div class="nbinput docutils container">
@@ -469,7 +469,7 @@ is that spectral weight is shifted to the borders of the real-frequency interval
 </div>
 </div>
 <div class="section" id="Constructing-a-full-complex-valued-Green’s-function-from-a-spectrum">
-<h2>Constructing a full complex-valued Green’s function from a spectrum<a class="headerlink" href="#Constructing-a-full-complex-valued-Green’s-function-from-a-spectrum" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">3.2. </span>Constructing a full complex-valued Green’s function from a spectrum<a class="headerlink" href="#Constructing-a-full-complex-valued-Green’s-function-from-a-spectrum" title="Permalink to this headline">¶</a></h2>
 <p>Especially when one continues a self-energy, one usually wants not only its spectrum, but rather the full Green’s function. The spectrum is related to the <em>imaginary</em> part of the retarded Green’s function:</p>
 <div class="math notranslate nohighlight">
 \[A(\omega) = -\frac{1}{\pi} \mathrm{Im} G(\omega)\]</div>
@@ -492,7 +492,7 @@ is that spectral weight is shifted to the borders of the real-frequency interval
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-/home/josef/Programs/ana_cont/ana_cont/continuation.py:215: RuntimeWarning: divide by zero encountered in true_divide
+/home/josef/Programs/ana_cont/ana_cont/continuation.py:153: RuntimeWarning: divide by zero encountered in true_divide
   m = self.dw[:,None] * self.spectrum[:,None]\
 </pre></div></div>
 </div>
@@ -520,7 +520,7 @@ is that spectral weight is shifted to the borders of the real-frequency interval
 </div>
 </div>
 <div class="section" id="Continuation-of-a-bosonic-Green’s-function">
-<h2>Continuation of a bosonic Green’s function<a class="headerlink" href="#Continuation-of-a-bosonic-Green’s-function" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">3.3. </span>Continuation of a bosonic Green’s function<a class="headerlink" href="#Continuation-of-a-bosonic-Green’s-function" title="Permalink to this headline">¶</a></h2>
 <p>The continuation of a bosonic Green’s function (response function) works very similar to the fermionic case. It is arguably even simpler. There are howvever a few points to consider: * Trivial but a common source of mistakes: you have to use bosonic Matsubara frequencies. * The implemented kernel assumes that bosonic Green’s functions are purely real on the imaginary axis. * Only positive real frequencies must be used, as the symmetry of bosonic spectra is encoded in the kernel. * At
 <span class="math notranslate nohighlight">\(\omega = i\omega_0 = 0\)</span>, the kernel diverges. This is avoided by defining the spectral function as done below. We nevertheless get a 0/0 warning, but the respective value is set manually, so don’t worry.</p>
 <p>The problem of the last point is mitigated by defining the spectrum as <span class="math notranslate nohighlight">\(S(\omega) = \frac{2}{\pi} \frac{Im G(\omega)}{\omega}\)</span>, where <span class="math notranslate nohighlight">\(G\)</span> is the actual response function. This leads to the relation</p>
@@ -528,7 +528,7 @@ is that spectral weight is shifted to the borders of the real-frequency interval
 \[\chi(i\omega_n) = \int_0^\infty d\omega \frac{\omega^2}{\omega^2+\omega_n^2} S(\omega)\]</div>
 <p>Apart from the differences just mentioned, the continuation workflow is the same as in the fermionic case. Therefore, it is recommended to read the above section about fermionic continuation first. In the following only the comments only address differences in the bosonic case.</p>
 <div class="section" id="id1">
-<h3>Generate test data<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">3.3.1. </span>Generate test data<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
@@ -583,7 +583,7 @@ is that spectral weight is shifted to the borders of the real-frequency interval
 </div>
 </div>
 <div class="section" id="Set-the-problem">
-<h3>Set the problem<a class="headerlink" href="#Set-the-problem" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">3.3.2. </span>Set the problem<a class="headerlink" href="#Set-the-problem" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Use only positive frequencies</p></li>
 <li><p>Use bosonic Matsubara frequencies</p></li>
@@ -602,7 +602,7 @@ is that spectral weight is shifted to the borders of the real-frequency interval
 </div>
 </div>
 <div class="section" id="Solve-the-problem">
-<h3>Solve the problem<a class="headerlink" href="#Solve-the-problem" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">3.3.3. </span>Solve the problem<a class="headerlink" href="#Solve-the-problem" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
@@ -620,7 +620,7 @@ is that spectral weight is shifted to the borders of the real-frequency interval
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-/home/josef/Programs/ana_cont/ana_cont/kernels.py:25: RuntimeWarning: invalid value encountered in true_divide
+/home/josef/Programs/ana_cont/ana_cont/kernels.py:42: RuntimeWarning: invalid value encountered in true_divide
   kernel = (self.re_axis ** 2)[None, :] \
 </pre></div></div>
 </div>
@@ -646,13 +646,13 @@ log10(alpha) = 0.00,    chi2 = 4.163e+00,   S = -7.789e-01,   nfev = 27,   norm 
 log10(alpha) = -1.00,   chi2 = 3.828e+00,   S = -1.391e+00,   nfev = 30,   norm = 1.000
 log10(alpha) = -2.00,   chi2 = 3.742e+00,   S = -2.537e+00,   nfev = 33,   norm = 1.000
 log10(alpha) = -3.00,   chi2 = 3.733e+00,   S = -3.708e+00,   nfev = 36,   norm = 1.000
-Optimal log alpha 2.3312800437988215
-log10(alpha) = 2.33,    chi2 = 8.742e+00,   S = -6.429e-01,   nfev = 32,   norm = 1.000
+Optimal log alpha 2.331280045009786
+log10(alpha) = 2.33,    chi2 = 8.742e+00,   S = -6.429e-01,   nfev = 17,   norm = 1.000
 </pre></div></div>
 </div>
 </div>
 <div class="section" id="Plot-the-results">
-<h3>Plot the results<a class="headerlink" href="#Plot-the-results" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">3.3.4. </span>Plot the results<a class="headerlink" href="#Plot-the-results" title="Permalink to this headline">¶</a></h3>
 <p>Remember that the code calculates the <em>spectrum</em>. To get the response function on the real axis, multiply the spectrum by <span class="math notranslate nohighlight">\(\omega\)</span>!</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
@@ -720,24 +720,30 @@ log10(alpha) = 2.33,    chi2 = 8.742e+00,   S = -6.429e-01,   nfev = 32,   norm 
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="includeme.html">ana_cont: Python package for analytic continuation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Analytic continuation with ana_cont</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#Continuation-of-a-fermionic-Green’s-function">Continuation of a fermionic Green’s function</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Constructing-a-full-complex-valued-Green’s-function-from-a-spectrum">Constructing a full complex-valued Green’s function from a spectrum</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Continuation-of-a-bosonic-Green’s-function">Continuation of a bosonic Green’s function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">1. Installation of ana_cont</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui.html">2. GUI documentation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. Analytic continuation with the ana_cont library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Continuation-of-a-fermionic-Green’s-function">3.1. Continuation of a fermionic Green’s function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Constructing-a-full-complex-valued-Green’s-function-from-a-spectrum">3.2. Constructing a full complex-valued Green’s function from a spectrum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Continuation-of-a-bosonic-Green’s-function">3.3. Continuation of a bosonic Green’s function</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Square lattice Hubbard model, <span class="math notranslate nohighlight">\(U=2\)</span>, <span class="math notranslate nohighlight">\(\beta=5\)</span>, half-filling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Strontium-vanadate">Strontium vanadate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Analytical-continuation-of-a-matrix-valued-function-(Kagome)">Analytical continuation of a matrix-valued function (Kagome)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">4. Square lattice Hubbard model, <span class="math notranslate nohighlight">\(U=2\)</span>, <span class="math notranslate nohighlight">\(\beta=5\)</span>, half-filling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Strontium-vanadate">5. Strontium vanadate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Analytical-continuation-of-a-matrix-valued-function-(Kagome)">6. Analytical continuation of a matrix-valued function (Kagome)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_svo.html">7. Tutorial: Analytic continuation of SrVO<span class="math notranslate nohighlight">\(_3\)</span> self-energy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preblur_test.html">8. Preblur for fermionic functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preblur_bosonic.html">9. Preblur for bosonic continuation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="poorman_test.html">10. Maxent for matrix-valued Green’s functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_doc.html">11. API documentation of ana_cont</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="includeme.html" title="previous chapter">ana_cont: Python package for analytic continuation</a></li>
-      <li>Next: <a href="tutorial.html" title="next chapter">Square lattice Hubbard model, <span class="math notranslate nohighlight">\(U=2\)</span>, <span class="math notranslate nohighlight">\(\beta=5\)</span>, half-filling</a></li>
+      <li>Previous: <a href="gui.html" title="previous chapter"><span class="section-number">2. </span>GUI documentation</a></li>
+      <li>Next: <a href="tutorial.html" title="next chapter"><span class="section-number">4. </span>Square lattice Hubbard model, <span class="math notranslate nohighlight">\(U=2\)</span>, <span class="math notranslate nohighlight">\(\beta=5\)</span>, half-filling</a></li>
   </ul></li>
 </ul>
 </div>

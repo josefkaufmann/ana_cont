@@ -1,0 +1,602 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>9. Preblur for bosonic continuation &#8212; ana_cont 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "tex2jax_ignore|mathjax_ignore|document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="10. Maxent for matrix-valued Green’s functions" href="poorman_test.html" />
+    <link rel="prev" title="8. Preblur for fermionic functions" href="preblur_test.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<div class="section" id="Preblur-for-bosonic-continuation">
+<h1><span class="section-number">9. </span>Preblur for bosonic continuation<a class="headerlink" href="#Preblur-for-bosonic-continuation" title="Permalink to this headline">¶</a></h1>
+<p>Demo notebook that shows that preblur for bosonic functions is correctly implemented and has the desired effect.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;HOME&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/Programs/ana_cont&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">ana_cont</span> <span class="kn">import</span> <span class="n">continuation</span> <span class="k">as</span> <span class="n">cont</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">nw_full</span> <span class="o">=</span> <span class="mi">801</span>
+<span class="n">w_full</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">8.</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">nw_full</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">spectrum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">w_full</span> <span class="o">-</span> <span class="mf">2.</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">w_full</span> <span class="o">+</span> <span class="mf">2.</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span>
+<span class="n">spectrum</span> <span class="o">/=</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">spectrum</span><span class="p">,</span> <span class="n">w_full</span><span class="p">)</span>
+
+<span class="n">beta</span> <span class="o">=</span> <span class="mf">20.</span>
+<span class="n">niw</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">iw</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">niw</span><span class="p">)</span>
+<span class="n">kernel</span> <span class="o">=</span> <span class="p">(</span><span class="n">w_full</span><span class="o">**</span><span class="mi">2</span><span class="p">)[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">/</span> <span class="p">((</span><span class="n">w_full</span><span class="o">**</span><span class="mi">2</span><span class="p">)[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="p">(</span><span class="n">iw</span><span class="o">**</span><span class="mi">2</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">])</span>
+<span class="n">kernel</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+<span class="n">chi_exact</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">kernel</span> <span class="o">*</span> <span class="n">spectrum</span><span class="p">,</span> <span class="n">w_full</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">4712</span><span class="p">)</span>
+<span class="n">noise_unscaled</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">niw</span><span class="p">)</span>
+<span class="n">noise_amplitude</span> <span class="o">=</span> <span class="mf">1e-3</span>
+<span class="n">chi</span> <span class="o">=</span> <span class="n">chi_exact</span> <span class="o">+</span> <span class="n">noise_amplitude</span> <span class="o">*</span> <span class="n">noise_unscaled</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w_full</span><span class="p">,</span> <span class="n">spectrum</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">chi</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+&lt;ipython-input-2-462089601d22&gt;:9: RuntimeWarning: invalid value encountered in true_divide
+  kernel = (w_full**2)[None, :] / ((w_full**2)[None, :] + (iw**2)[:, None])
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/preblur_bosonic_2_1.png" src="_images/preblur_bosonic_2_1.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">nw</span> <span class="o">=</span> <span class="mi">801</span>
+<span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">8.</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">nw</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">iw</span><span class="p">,</span> <span class="n">re_axis</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">im_data</span><span class="o">=</span><span class="n">chi</span><span class="p">,</span> <span class="n">kernel_mode</span><span class="o">=</span><span class="s1">&#39;freq_bosonic&#39;</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+<span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">iw</span><span class="p">)</span> <span class="o">*</span> <span class="n">noise_amplitude</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">sol_noblur</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">probl</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;maxent_svd&#39;</span><span class="p">,</span> <span class="n">alpha_determination</span><span class="o">=</span><span class="s1">&#39;chi2kink&#39;</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;newton&#39;</span><span class="p">,</span>
+                    <span class="n">stdev</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+                    <span class="n">preblur</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">blur_width</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+                    <span class="n">alpha_start</span><span class="o">=</span><span class="mf">1e12</span><span class="p">,</span> <span class="n">alpha_end</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">alpha_div</span><span class="o">=</span><span class="mf">5.</span><span class="p">,</span>
+                    <span class="n">interactive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fit_position</span><span class="o">=</span><span class="mf">2.5</span><span class="p">)</span>
+<span class="n">sol_preblur</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">probl</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;maxent_svd&#39;</span><span class="p">,</span> <span class="n">alpha_determination</span><span class="o">=</span><span class="s1">&#39;chi2kink&#39;</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;newton&#39;</span><span class="p">,</span>
+                    <span class="n">stdev</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+                    <span class="n">preblur</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blur_width</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+                    <span class="n">alpha_start</span><span class="o">=</span><span class="mf">1e12</span><span class="p">,</span> <span class="n">alpha_end</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">alpha_div</span><span class="o">=</span><span class="mf">5.</span><span class="p">,</span>
+                    <span class="n">interactive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fit_position</span><span class="o">=</span><span class="mf">2.5</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w_full</span><span class="p">,</span> <span class="n">spectrum</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">sol_noblur</span><span class="o">.</span><span class="n">A_opt</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;no blur&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">sol_preblur</span><span class="o">.</span><span class="n">A_opt</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;preblur&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">chi</span> <span class="o">-</span> <span class="n">sol_noblur</span><span class="o">.</span><span class="n">backtransform</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;no blur&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">chi</span> <span class="o">-</span> <span class="n">sol_preblur</span><span class="o">.</span><span class="n">backtransform</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;preblur&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/josef/Programs/ana_cont/ana_cont/kernels.py:25: RuntimeWarning: invalid value encountered in true_divide
+  kernel = (self.re_axis ** 2)[None, :] \
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+801 data points on real axis
+20 data points on imaginary axis
+16 significant singular values
+Precomputation of coefficient matrices...
+log10(alpha) = 12.00,   chi2 = 3.044e+06,   S = -1.304e-11,   nfev = 1,   norm = 1.000
+log10(alpha) = 11.30,   chi2 = 3.044e+06,   S = -3.259e-10,   nfev = 5,   norm = 1.000
+log10(alpha) = 10.60,   chi2 = 3.043e+06,   S = -8.145e-09,   nfev = 7,   norm = 1.000
+log10(alpha) = 9.90,    chi2 = 3.038e+06,   S = -2.032e-07,   nfev = 9,   norm = 0.999
+log10(alpha) = 9.20,    chi2 = 3.012e+06,   S = -5.027e-06,   nfev = 12,   norm = 0.997
+log10(alpha) = 8.51,    chi2 = 2.889e+06,   S = -1.194e-04,   nfev = 14,   norm = 0.986
+log10(alpha) = 7.81,    chi2 = 2.391e+06,   S = -2.365e-03,   nfev = 16,   norm = 0.936
+log10(alpha) = 7.11,    chi2 = 1.225e+06,   S = -2.615e-02,   nfev = 18,   norm = 0.794
+log10(alpha) = 6.41,    chi2 = 2.801e+05,   S = -1.073e-01,   nfev = 19,   norm = 0.604
+log10(alpha) = 5.71,    chi2 = 4.677e+04,   S = -1.952e-01,   nfev = 19,   norm = 0.508
+log10(alpha) = 5.01,    chi2 = 1.016e+04,   S = -2.678e-01,   nfev = 19,   norm = 0.507
+log10(alpha) = 4.31,    chi2 = 1.938e+03,   S = -3.498e-01,   nfev = 29,   norm = 0.509
+log10(alpha) = 3.61,    chi2 = 2.674e+02,   S = -4.294e-01,   nfev = 30,   norm = 0.502
+log10(alpha) = 2.91,    chi2 = 5.381e+01,   S = -4.774e-01,   nfev = 21,   norm = 0.500
+log10(alpha) = 2.21,    chi2 = 3.279e+01,   S = -5.016e-01,   nfev = 21,   norm = 0.499
+log10(alpha) = 1.52,    chi2 = 2.875e+01,   S = -5.289e-01,   nfev = 23,   norm = 0.499
+log10(alpha) = 0.82,    chi2 = 2.682e+01,   S = -5.940e-01,   nfev = 25,   norm = 0.499
+log10(alpha) = 0.12,    chi2 = 2.621e+01,   S = -6.902e-01,   nfev = 26,   norm = 0.499
+log10(alpha) = -0.58,   chi2 = 2.604e+01,   S = -8.330e-01,   nfev = 28,   norm = 0.499
+log10(alpha) = -1.28,   chi2 = 2.597e+01,   S = -1.118e+00,   nfev = 30,   norm = 0.499
+log10(alpha) = -1.98,   chi2 = 2.595e+01,   S = -1.509e+00,   nfev = 32,   norm = 0.499
+Fit parameters [1.35524588 5.17828922 4.99108766 1.02207038]
+Optimal log alpha 2.5450721630650377
+log10(alpha) = 2.55,    chi2 = 3.776e+01,   S = -4.915e-01,   nfev = 29,   norm = 0.499
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/preblur_bosonic_4_2.png" src="_images/preblur_bosonic_4_2.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/josef/Programs/ana_cont/ana_cont/kernels.py:25: RuntimeWarning: invalid value encountered in true_divide
+  kernel = (self.re_axis ** 2)[None, :] \
+/home/josef/Programs/ana_cont/ana_cont/kernels.py:93: RuntimeWarning: invalid value encountered in true_divide
+  integrand_1 = self.gaussian_numeric[None, None, :] * (self.w_integration[None, None, :] + self.re_axis[None, :, None]) ** 2 \
+/home/josef/Programs/ana_cont/ana_cont/kernels.py:96: RuntimeWarning: invalid value encountered in true_divide
+  integrand_2 = self.gaussian_numeric[None, None, :] * (self.w_integration[None, None, :] - self.re_axis[None, :, None]) ** 2 \
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+801 data points on real axis
+20 data points on imaginary axis
+13 significant singular values
+Precomputation of coefficient matrices...
+log10(alpha) = 12.00,   chi2 = 3.059e+06,   S = -1.293e-11,   nfev = 1,   norm = 1.000
+log10(alpha) = 11.30,   chi2 = 3.058e+06,   S = -3.231e-10,   nfev = 5,   norm = 1.000
+log10(alpha) = 10.60,   chi2 = 3.057e+06,   S = -8.075e-09,   nfev = 7,   norm = 1.000
+log10(alpha) = 9.90,    chi2 = 3.052e+06,   S = -2.015e-07,   nfev = 9,   norm = 0.999
+log10(alpha) = 9.20,    chi2 = 3.027e+06,   S = -4.984e-06,   nfev = 12,   norm = 0.997
+log10(alpha) = 8.51,    chi2 = 2.905e+06,   S = -1.184e-04,   nfev = 14,   norm = 0.985
+log10(alpha) = 7.81,    chi2 = 2.409e+06,   S = -2.352e-03,   nfev = 16,   norm = 0.936
+log10(alpha) = 7.11,    chi2 = 1.243e+06,   S = -2.618e-02,   nfev = 18,   norm = 0.792
+log10(alpha) = 6.41,    chi2 = 2.884e+05,   S = -1.082e-01,   nfev = 19,   norm = 0.598
+log10(alpha) = 5.71,    chi2 = 5.028e+04,   S = -1.981e-01,   nfev = 19,   norm = 0.500
+log10(alpha) = 5.01,    chi2 = 1.194e+04,   S = -2.746e-01,   nfev = 19,   norm = 0.504
+log10(alpha) = 4.31,    chi2 = 3.214e+03,   S = -3.624e-01,   nfev = 20,   norm = 0.517
+log10(alpha) = 3.61,    chi2 = 7.017e+02,   S = -4.926e-01,   nfev = 21,   norm = 0.511
+log10(alpha) = 2.91,    chi2 = 1.122e+02,   S = -6.332e-01,   nfev = 22,   norm = 0.504
+log10(alpha) = 2.21,    chi2 = 3.749e+01,   S = -7.160e-01,   nfev = 21,   norm = 0.500
+log10(alpha) = 1.52,    chi2 = 3.191e+01,   S = -7.460e-01,   nfev = 37,   norm = 0.499
+log10(alpha) = 0.82,    chi2 = 3.129e+01,   S = -7.662e-01,   nfev = 25,   norm = 0.499
+log10(alpha) = 0.12,    chi2 = 3.095e+01,   S = -8.286e-01,   nfev = 27,   norm = 0.499
+log10(alpha) = -0.58,   chi2 = 3.071e+01,   S = -1.042e+00,   nfev = 29,   norm = 0.499
+log10(alpha) = -1.28,   chi2 = 3.060e+01,   S = -1.464e+00,   nfev = 31,   norm = 0.499
+log10(alpha) = -1.98,   chi2 = 3.058e+01,   S = -1.875e+00,   nfev = 33,   norm = 0.499
+Fit parameters [1.40031347 5.1554417  4.8762637  0.92190143]
+Optimal log alpha 2.164477055704584
+log10(alpha) = 2.16,    chi2 = 3.643e+01,   S = -7.194e-01,   nfev = 46,   norm = 0.500
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/preblur_bosonic_4_5.png" src="_images/preblur_bosonic_4_5.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/preblur_bosonic_4_6.png" src="_images/preblur_bosonic_4_6.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">ana_cont</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">1. Installation of ana_cont</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui.html">2. GUI documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basics.html">3. Analytic continuation with the ana_cont library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">4. Square lattice Hubbard model, <span class="math notranslate nohighlight">\(U=2\)</span>, <span class="math notranslate nohighlight">\(\beta=5\)</span>, half-filling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Strontium-vanadate">5. Strontium vanadate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html#Analytical-continuation-of-a-matrix-valued-function-(Kagome)">6. Analytical continuation of a matrix-valued function (Kagome)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_svo.html">7. Tutorial: Analytic continuation of SrVO<span class="math notranslate nohighlight">\(_3\)</span> self-energy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preblur_test.html">8. Preblur for fermionic functions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">9. Preblur for bosonic continuation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="poorman_test.html">10. Maxent for matrix-valued Green’s functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_doc.html">11. API documentation of ana_cont</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="preblur_test.html" title="previous chapter"><span class="section-number">8. </span>Preblur for fermionic functions</a></li>
+      <li>Next: <a href="poorman_test.html" title="next chapter"><span class="section-number">10. </span>Maxent for matrix-valued Green’s functions</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Josef Kaufmann.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/preblur_bosonic.ipynb.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
