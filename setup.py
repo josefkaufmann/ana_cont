@@ -5,7 +5,7 @@ from Cython.Build import cythonize
 
 cythonize("ana_cont/pade.pyx")
 setup(name='ana_cont',
-      version='0.8',
+      version='1.0',
       description='Analytic continuation package',
       author='Josef Kaufmann',
       author_email='josefkaufma@gmail.com',
