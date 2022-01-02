@@ -8,6 +8,19 @@ class Kernel(object):
 
     def __init__(self, kind=None, re_axis=None, im_axis=None):
         """
+        The kernel matrix is calculated from the real-frequency vector `re_axis`
+        and the imaginary frequency or time vector `im_axis`.
+        It is important to note that the Kernel does not know the inverse temperature
+        beta. In case of the frequency kernels ('freq_fermionic' or 'freq_bosonic')
+        the temperature is implicitly contained through the Matsubara frequencies.
+        In case of the time kernels ('time_fermionic' or 'time_bosonic') the `im_axis`
+        list has to be rescaled such that the temperature would be 1. Usually this is done
+        by `imag_time = imag_time / beta`.
+
+        For regular users of the library this is no problem, since the Kernel class is only
+        instantiated inside the AnalyticContinuationProblem class, where the rescaling is done
+        automatically. (Also the results are scaled back automatically there.)
+
         Parameters
         ----------
         kind : str, default=None
