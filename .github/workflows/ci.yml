@@ -22,6 +22,4 @@ jobs:
               pip install -r requirements.txt
               python3 setup.py build_ext --inplace
           - name: Run tests
-            run: |
-              cd tests
-              python3 -m unittest ana_cont_tests.py -v
+            run: python3 -m unittest tests/ana_cont_tests.py -v
