@@ -92,7 +92,7 @@ class Kernel(object):
         :math:`K_{preblur}(i\\nu_n, \\omega) = \\int_{-5b}^{5b} dx\\; \\frac{g(x)}{i\\nu_n - x - \\omega}`
 
         In the bosonic case, the convolution can be written as
-        :math:`K_{preblur}(i\\omega_n, \\nu) = \\frac{1}{2} \\int_{-5b}^{5b} dx\\; g(x) [\\frac{(x+\\nu)^2 }{ ((x+\\nu)^2 + \\omega_n^2)} + \\frac{(x-\\nu)^2 }{ ((x-\\nu)^2 + \\omega_n^2)}]`
+        :math:`K_{preblur}(i\\omega_n, \\nu) = \\frac{1}{2} \\int_{-5b}^{5b} dx\\; g(x) [\\frac{(x+\\nu)^2 }{ (x+\\nu)^2 + \\omega_n^2} + \\frac{(x-\\nu)^2 }{ (x-\\nu)^2 + \\omega_n^2}]`
 
         Integration over the Gaussian from :math:`-5b` to :math:`5b` is certainly sufficient.
         Thus the Gaussian has to be computed only once and integration by scipy.integrate.simps

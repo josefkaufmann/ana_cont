@@ -4,12 +4,12 @@ ana_cont: Python package for analytic continuation
 Update: The Wiki now contains descriptions and tutorials for the new graphical user interface.
 
 Any questions, suggestions and bug reports will be received gratefully. 
-(Mail to: josef *dot* kaufmann *at* tuwien *dot* ac *dot* at)
+(Mail to: josefkaufma *at* gmail *dot* com)
 
 If you used this package to generate results for a publication, please cite 
-`this paper by Geffroy, Kaufmann et al. <https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.122.127601>`_
+`this preprint by Kaufmann and Held <https://arxiv.org/abs/2105.11211>`_
 (this
-`bibtex file <https://github.com/josefkaufmann/ana_cont/wiki/bibtex/prl_dominique.bib>`_),
+`bibtex file <https://github.com/josefkaufmann/ana_cont/wiki/bibtex/arxiv_kaufmann.bib>`_),
 
 
 where some implementation details are described in the Supplementary Material. 
@@ -38,7 +38,7 @@ Package structure
 Requirements
 ------------
 The code was checked to run with the following versions:
-
+* python3-dev
 * Python 3.7
 * numpy 1.18.1
 * scipy 1.4.1
@@ -53,6 +53,24 @@ but I cannot guarantee for that.
 
 Installation and usage
 ----------------------
+
+
+Installation via pip
+~~~~~~~~~~~~~~~~~~~~
+
+The ana_cont library can be installed via pip:
+
+* ``sudo apt install python3-dev``
+* ``python3 -m pip install -U pyqt5 matplotlib wheel cython h5py scipy``
+* ``pip install -i https://test.pypi.org/simple/ ana-cont``
+
+This installs the ``ana_cont`` python library.
+The GUI scripts are also installed and
+can be called from the command line as ``maxent.py``, ``pade.py``, ``maxent_bosonic.py``.
+
+
+Installation from source via git
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 I recommend the following steps:
 
@@ -70,3 +88,8 @@ and import the package:
 
 The graphical user interface scripts can be executed as
 ``/path/to/ana_cont/scripts/maxent.py``
+
+Running tests after installation from source
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``python3 -m unittest tests/ana_cont_tests.py -v``
