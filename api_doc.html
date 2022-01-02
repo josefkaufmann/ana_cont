@@ -686,6 +686,17 @@ and <cite>denominator_function</cite> to the OptimizationResult object.</p>
 <dt id="ana_cont.kernels.Kernel">
 <em class="property">class </em><code class="sig-prename descclassname">ana_cont.kernels.</code><code class="sig-name descname">Kernel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kind</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">re_axis</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">im_axis</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.kernels.Kernel" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class handles the kernel of the analytic continuation.</p>
+<p>The kernel matrix is calculated from the real-frequency vector <cite>re_axis</cite>
+and the imaginary frequency or time vector <cite>im_axis</cite>.
+It is important to note that the Kernel does not know the inverse temperature
+beta. In case of the frequency kernels (‘freq_fermionic’ or ‘freq_bosonic’)
+the temperature is implicitly contained through the Matsubara frequencies.
+In case of the time kernels (‘time_fermionic’ or ‘time_bosonic’) the <cite>im_axis</cite>
+list has to be rescaled such that the temperature would be 1. Usually this is done
+by <cite>imag_time = imag_time / beta</cite>.</p>
+<p>For regular users of the library this is no problem, since the Kernel class is only
+instantiated inside the AnalyticContinuationProblem class, where the rescaling is done
+automatically. (Also the results are scaled back automatically there.)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
