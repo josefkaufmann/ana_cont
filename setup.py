@@ -5,7 +5,7 @@ from Cython.Build import cythonize
 
 cythonize("ana_cont/pade.pyx")
 setup(name='ana_cont',
-      version='0.8',
+      version='1.0',
       description='Analytic continuation package',
       author='Josef Kaufmann',
       author_email='josefkaufma@gmail.com',
@@ -20,5 +20,7 @@ setup(name='ana_cont',
       include_package_data=True,
       zip_safe=False,
       setup_requires=['Cython'],
-      install_requires=['numpy', 'scipy'])
+      install_requires=['numpy', 'scipy', 'Cython', 'h5py', 'matplotlib', 'PyQt5'],
+      scripts=['scripts/maxent.py', 'scripts/pade.py', 'scripts/maxent_bosonic.py']
+      )
 

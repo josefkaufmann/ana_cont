@@ -38,6 +38,10 @@ sol, _ = probl.solve(method='maxent_svd', alpha_determination='chi2kink', optimi
                      model=model, stdev=err, interactive=True, alpha_start=1e12, alpha_end=1e-2,
                      preblur=True, blur_width=0.5)
 
+np.save("A_opt_maxent_fermionic", sol.A_opt)
+np.save("backtransform_maxent_fermionic", sol.backtransform)
+np.save("chi2_maxent_fermionic", sol.chi2)
+
 # plot the results
 fig, ax = plt.subplots(ncols=3, nrows=1, figsize=(15, 5))
 ax[0].plot(w, spec, color='gray', label='real spectrum')

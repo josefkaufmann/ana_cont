@@ -37,6 +37,9 @@ sol = probl.solve(method='pade')
 check_axis = np.linspace(0., 1.25 * iw[mats_ind[-1]], num=500)
 check = probl.solver.check(im_axis_fine=check_axis)
 
+np.save("A_opt_pade", sol.A_opt)
+np.save("check_pade", check)
+
 # plot the results
 fig, ax = plt.subplots(ncols=2, nrows=1, figsize=(12, 5))
 ax[0].plot(w, spec, color='gray', label='real spectrum')

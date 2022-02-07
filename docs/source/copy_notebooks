@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cp ../../doc/*.ipynb .
+cp ../../doc/tutorial/tutorial.ipynb .
