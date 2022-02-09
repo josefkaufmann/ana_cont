@@ -72,8 +72,29 @@ class Kernel(object):
         elif self.kind == 'freq_fermionic':
             kernel = 1. / (1j * self.im_axis[:, None] - self.re_axis[None, :])
         elif self.kind == 'time_fermionic':
-            kernel = np.exp(-self.im_axis[:, None] * self.re_axis[None, :]) \
-                          / (1. + np.exp(-self.re_axis[None, :]))
+            def time_kernel(τ, ω):
+                """ 
+                Kernel for fermions in imaginary time.
+                Fixes problem for ω << 0
+                
+                Parameters:
+                τ (float): imaginary time rescaled as τ/β in [0,1]
+                ω (float): real frequency rescaled as ω*β 
+
+                Returns:
+                float: exp(-τ ω) /  (1 + exp(-ω))
+               """    
+                if np.exp(-ω) > 1.0E8:
+                    return np.exp(-(τ-1)*ω)
+                else:
+                    return (np.exp(-τ * ω) /  (1. + np.exp(-ω)))
+            time_kernel_vect = np.vectorize(time_kernel)
+         
+            kernel = time_kernel_vect(self.im_axis[:,None], self.re_axis[None,:])
+
+            # OLD version has problems for very small ω  << 0!
+            #kernel = np.exp(-self.im_axis[:, None] * self.re_axis[None, :]) \
+            #              / (1. + np.exp(-self.re_axis[None, :]))
         elif self.kind == 'freq_fermionic_phsym':  # in this case, the data must be purely real (the imaginary part!)
             print('Warning: phsym kernels do not give good results in this implementation. ')
             kernel = -2. * self.im_axis[:, None]\

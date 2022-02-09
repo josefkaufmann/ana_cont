@@ -1,0 +1,12 @@
+ana_cont.egg-info/
+.ipynb_checkpoints/
+pade.c
+pade.*.so
+build/
+dist/
+doc/.ipynb_checkpoints/
+doc/tutorial/.ipynb_checkpoints/
+doc/tutorial_ana_cont/
+gui/__pycache__/
+ 
+
