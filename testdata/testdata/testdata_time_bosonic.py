@@ -33,7 +33,7 @@ for i,tau in enumerate(taugrid):
     integrand[0]=0.
     chi_tau[i]=np.trapz(integrand,wgrid)
 
-chi_iw=np.zeros_like(iwgrid,dtype=np.complex)
+chi_iw=np.zeros_like(iwgrid, dtype=complex)
 for i,iw in enumerate(iwgrid):
     chi_iw[i]=np.trapz(chi_tau*np.exp(1j*taugrid*iw),taugrid)
 

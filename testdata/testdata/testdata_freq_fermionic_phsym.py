@@ -16,7 +16,7 @@ niw=100
 beta=10.
 wgrid=np.linspace(0,5,nw)
 iwgrid=np.pi/beta*(2*np.arange(niw)+1)
-giw=np.zeros_like(iwgrid,dtype=np.complex)
+giw=np.zeros_like(iwgrid, dtype=complex)
 sigma=0.01
 
 xm=1.

@@ -16,7 +16,7 @@ niw=100
 beta=10.
 wgrid=np.linspace(-5,5,nw)
 iwgrid=np.pi/beta*(2*np.arange(niw)+1)
-giw=np.zeros_like(iwgrid,dtype=np.complex)
+giw=np.zeros_like(iwgrid, dtype=complex)
 sigma=0.0001
 
 aw=gauss_peak(-1.,0.2,1.,wgrid)+gauss_peak(1.,0.2,1.,wgrid)

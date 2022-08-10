@@ -16,7 +16,7 @@ def noise(sigma,iwgrid):
 wgrid=np.linspace(0.,15.,1001)
 beta=10.
 iwgrid=2*np.pi/beta*np.arange(250)
-chi_iw=np.zeros_like(iwgrid,dtype=np.complex)
+chi_iw=np.zeros_like(iwgrid, dtype=complex)
 sigma=0.0001
 
 aw=gauss_peak(0.2,0.2,1.,wgrid)+gauss_peak(3.,0.5,1.,wgrid)#+gauss_peak(9,0.5,1.,wgrid)

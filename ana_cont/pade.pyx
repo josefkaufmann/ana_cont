@@ -12,7 +12,7 @@ import sys
 def compute_coefficients(zi,ui):
   cdef int i,j,n
   n=len(zi)
-  g=np.zeros((n,n),dtype=np.complex)
+  g=np.zeros((n,n),dtype=complex)
   g[:,0]=ui
   for i in range(n):
     for j in range(1,i+1):

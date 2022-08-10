@@ -16,7 +16,7 @@ ntau=1000
 beta=1.
 wgrid=np.linspace(-5/beta,5/beta,nw)
 taugrid=np.linspace(0.,beta,num=ntau,endpoint=True)
-chi_tau=np.zeros_like(taugrid,dtype=np.complex)
+chi_tau=np.zeros_like(taugrid, dtype=complex)
 sigma=0.0001
 
 aw=gauss_peak(-1,0.2,1.,wgrid)+gauss_peak(1.,0.2,1.,wgrid)
