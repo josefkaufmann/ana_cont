@@ -8,7 +8,7 @@ and the ``ana_cont`` library:
 
 * ``sudo apt install python3-dev``
 * ``python3 -m pip install -U pyqt5 matplotlib wheel cython h5py scipy``
-* ``pip install -i https://test.pypi.org/simple/ ana-cont``
+* ``python3 -m pip install ana_cont``
 
 This installs the ``ana_cont`` python library.
 The GUI scripts are also installed and
