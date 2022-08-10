@@ -21,8 +21,33 @@ class AnalyticContinuationProblem(object):
     """
     def __init__(self, im_axis=None, re_axis=None,
                  im_data=None, kernel_mode=None, beta=None):
+        """
+        Create instance of AnalyticContinuationProblem
+
+        Parameters
+        ----------
+        im_axis : numpy.ndarray
+                  One-dimensional numpy array of type float
+                  Matsubara frequencies or imaginary time points of the input data.
+        re_axis : numpy.ndarray
+                  One-dimensional numpy array of type float
+                  Real-frequency grid to use for the analytic continuation.
+        im_data : numpy.ndarray
+                  One-dimensional numpy array of type float or complex
+                  Imaginary-axis data, e.g. Matsubara Green's function
+        kernel_mode : {`'freq_fermionic'`, `'freq_bosonic'`, `'time_fermionic'`, `'time_bosonic'`}
+                  * `'freq_fermionic'` fermionic Matsubara Greens function
+                  * `'freq_bosonic'` bosonic Matsubara Greens function
+                  * `'time_fermionic'` fermionic Green's function in imaginary time
+                  * `'time_bosonic'` bosonic Green's function (susceptibility) in imaginary time
+        beta :    float
+                  Inverse temperature (only necessary for time kernels)
+        """
         self.kernel_mode = kernel_mode
-        self.im_axis = im_axis
+        if np.allclose(im_axis.imag, np.zeros_like(im_axis, dtype=float)):
+            self.im_axis = im_axis
+        else:
+            raise ValueError("Parameter im_axis takes only the imaginary part of the imaginary axis (i.e. only real values)")
         self.re_axis = re_axis
         self.im_data = im_data
         if self.kernel_mode == 'freq_bosonic':
@@ -118,7 +143,18 @@ class GreensFunction(object):
 
     def __init__(self, spectrum = None, wgrid = None, kind = ''):
         """Initialize with spectral function and real-frequency grid.
+
+        Parameters
+        ----------
+        spectrum : np.ndarray
+                   numpy array containing the spectral function
+        wgrid :    np.ndarray
+                   one-dimensional numpy array of type float
+                   real-frequency values corresponding to the `spectrum`
+        kind :     {`'fermionic'`, `'bosonic'`}
+                   specify if the Green's function is fermionic or bosonic.
         """
+
         self.spectrum = spectrum
         self.wgrid = wgrid
         self.wmin = self.wgrid[0]

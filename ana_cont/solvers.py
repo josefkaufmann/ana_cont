@@ -219,7 +219,10 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         self.verbose = verbose
 
         self.kernel_mode = kernel_mode
-        self.im_axis = im_axis
+        if np.allclose(im_axis.imag, np.zeros_like(im_axis, dtype=float)):
+            self.im_axis = im_axis
+        else:
+            raise ValueError("Parameter im_axis takes only the imaginary part of the imaginary axis (i.e. only real values)")
         self.re_axis = re_axis
         self.im_data = im_data
         self.offdiag = offdiag
