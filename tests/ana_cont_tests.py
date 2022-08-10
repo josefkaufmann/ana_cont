@@ -105,7 +105,7 @@ class TestMaxentFermionic(unittest.TestCase):
         self.assertTrue(np.allclose(self.backtransform_reference, self.sol.backtransform))
 
     def test_chi2(self):
-        self.assertAlmostEqual(self.chi2_reference, self.sol.chi2, places=6)
+        self.assertAlmostEqual(self.chi2_reference, self.sol.chi2, places=4)
 
 
 class TestPade(unittest.TestCase):
@@ -195,7 +195,7 @@ class TestMaxentBosonic(unittest.TestCase):
         self.assertTrue(np.allclose(self.backtransform_reference, self.sol.backtransform))
 
     def test_chi2(self):
-        self.assertAlmostEqual(self.chi2_reference, self.sol.chi2, places=6)
+        self.assertAlmostEqual(self.chi2_reference, self.sol.chi2, places=4)
 
 
 
