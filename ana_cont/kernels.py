@@ -147,10 +147,11 @@ class Kernel(object):
                         / (1j * self.im_axis[:, None, None] - self.re_axis[None, :, None] - self.w_integration[None, None, :])
         elif self.kind == 'freq_bosonic':
             WhereIsiwn0 = np.where(self.im_axis==0.0)[0]
-            integrand_1 = self.gaussian_numeric[None, None, :] * (self.w_integration[None, None, :] + self.re_axis[None, :, None]) ** 2 \
-                          / ((self.w_integration[None, None, :] + self.re_axis[None, :, None]) ** 2 + (self.im_axis[:, None, None]) ** 2)
-            integrand_2 = self.gaussian_numeric[None, None, :] * (self.w_integration[None, None, :] - self.re_axis[None, :, None]) ** 2 \
-                          / ((self.w_integration[None, None, :] - self.re_axis[None, :, None]) ** 2 + (self.im_axis[:, None, None]) ** 2)
+            with np.errstate(invalid="ignore"):
+                integrand_1 = self.gaussian_numeric[None, None, :] * (self.w_integration[None, None, :] + self.re_axis[None, :, None]) ** 2 \
+                              / ((self.w_integration[None, None, :] + self.re_axis[None, :, None]) ** 2 + (self.im_axis[:, None, None]) ** 2)
+                integrand_2 = self.gaussian_numeric[None, None, :] * (self.w_integration[None, None, :] - self.re_axis[None, :, None]) ** 2 \
+                              / ((self.w_integration[None, None, :] - self.re_axis[None, :, None]) ** 2 + (self.im_axis[:, None, None]) ** 2)
             if len(WhereIsiwn0) > 0:  # analytically with de l'Hospital
                 integrand_1[WhereIsiwn0] = self.gaussian_numeric[None, None, :]
                 integrand_2[WhereIsiwn0] = self.gaussian_numeric[None, None, :]
