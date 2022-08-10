@@ -52,18 +52,20 @@ class Kernel(object):
         you just have to add another 'elif' here. """
 
         if self.kind == 'freq_bosonic':
-            kernel = (self.re_axis ** 2)[None, :] \
-                     / ((self.re_axis ** 2)[None, :]
-                        + (self.im_axis ** 2)[:, None])
+            with np.errstate(invalid="ignore"):
+                kernel = (self.re_axis ** 2)[None, :] \
+                         / ((self.re_axis ** 2)[None, :]
+                            + (self.im_axis ** 2)[:, None])
             WhereIsiwn0 = np.where(self.im_axis==0.0)[0]
             WhereIsw0 = np.where(self.re_axis==0.0)[0]
             if len(WhereIsiwn0==1) and len(WhereIsw0==1):
                 kernel[WhereIsiwn0, WhereIsw0] = 1.0 # analytically with de l'Hospital
         elif self.kind == 'time_bosonic':
-            kernel = 0.5 * self.re_axis[None, :] * (
-                    np.exp(-self.re_axis[None, :] * self.im_axis[:, None])
-                    + np.exp(-self.re_axis[None, :] * (1. - self.im_axis[:, None]))) / (
-                                  1. - np.exp(-self.re_axis[None, :]))
+            with np.errstate(invalid="ignore"):
+                kernel = 0.5 * self.re_axis[None, :] * (
+                        np.exp(-self.re_axis[None, :] * self.im_axis[:, None])
+                        + np.exp(-self.re_axis[None, :] * (1. - self.im_axis[:, None]))) / (
+                                      1. - np.exp(-self.re_axis[None, :]))
             kernel[:, 0] = 1.  # analytically with de l'Hospital
         elif self.kind == 'freq_bosonic_xyz':
             kernel = -self.im_axis[:, None] / ((self.re_axis**2)[None, :] + (self.im_axis**2)[:, None])

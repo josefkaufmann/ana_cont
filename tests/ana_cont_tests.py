@@ -164,7 +164,8 @@ class TestMaxentBosonic(unittest.TestCase):
         rng = np.random.RandomState(1234)
         noise = rng.normal(0., noise_amplitude, iw.shape[0])
 
-        kernel = (w_real ** 2)[None, :] / ((iw ** 2)[:, None] + (w_real ** 2)[None, :])
+        with np.errstate(invalid="ignore"):
+            kernel = (w_real ** 2)[None, :] / ((iw ** 2)[:, None] + (w_real ** 2)[None, :])
         kernel[0, 0] = 1.
         gf_bos = np.trapz(kernel * spec_real[None, :], w_real, axis=1) + noise
         norm = gf_bos[0]

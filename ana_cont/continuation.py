@@ -9,11 +9,11 @@ else:
 class AnalyticContinuationProblem(object):
     """Specification of an analytic continuation problem.
 
-    This This class is designed to hold the information that specifies the analytic continuation problem:
+    This class is designed to hold the information that specifies the analytic continuation problem:
 
     * Imaginary axis of the data
     * Real axis on which the result is anticipated
-    * Imaginary-axis data
+    * Imaginary-axis data (real-valued array)
     * Type of kernel (fermionic, bosonic, time, frequency)
     * Inverse temperature beta (only necessary for time kernels)
 
@@ -72,7 +72,6 @@ class AnalyticContinuationProblem(object):
                 kernel_mode = self.kernel_mode, 
                 **kwargs)
             sol = self.solver.solve(**kwargs)
-            # TODO implement a postprocessing method, where the following should be done more carefully
             if self.kernel_mode == 'time_fermionic':
                 sol[0].A_opt *= self.beta
             elif self.kernel_mode == 'time_bosonic':
@@ -139,19 +138,21 @@ class GreensFunction(object):
         if self.kind == 'fermionic_phsym' or self.kind == 'symmetric':
             if self.wmin < 0.:
                 print('warning: wmin<0 not permitted for fermionic_phsym greens functions.')
-
-            m = 2. * self.dw[:,None] * self.wgrid[:,None] * self.spectrum[:,None] \
-                / (self.wgrid[None,:]**2 - self.wgrid[:,None]**2)
+            with np.errstate(divide="ignore"):
+                m = 2. * self.dw[:,None] * self.wgrid[:,None] * self.spectrum[:,None] \
+                    / (self.wgrid[None,:]**2 - self.wgrid[:,None]**2)
 
         elif self.kind == 'bosonic' or self.kind == 'antisymmetric':
             if self.wmin < 0.:
                 print('warning: wmin<0 not permitted for bosonic (antisymmetric) spectrum.')
-            m = 2. * self.dw[:,None] * self.wgrid[None,:] * self.spectrum[:,None]\
-                /(self.wgrid[None,:]**2 - self.wgrid[:,None]**2)
+            with np.errstate(divide="ignore"):
+                m = 2. * self.dw[:,None] * self.wgrid[None,:] * self.spectrum[:,None]\
+                    /(self.wgrid[None,:]**2 - self.wgrid[:,None]**2)
         
         elif self.kind == 'fermionic' or self.kind == 'general':
-            m = self.dw[:,None] * self.spectrum[:,None]\
-                /(self.wgrid[None,:]-self.wgrid[:,None])
+            with np.errstate(divide="ignore"):
+                m = self.dw[:,None] * self.spectrum[:,None]\
+                    /(self.wgrid[None,:]-self.wgrid[:,None])
 
         else:
             raise ValueError("Unknown kind of Greens function.")
