@@ -881,7 +881,7 @@
     "model /= np.trapz(model, w) / 9.  # for U=6 and half-filling, the norm is 9.\n",
     "iw = np.pi / beta * (2. * np.arange(niw) + 1.)\n",
     "err = np.ones_like(iw) * 2e-3\n",
-    "sw_diag = np.zeros((nw, 3, 3), dtype=np.complex)\n",
+    "sw_diag = np.zeros((nw, 3, 3), dtype=complex)\n",
     "\n",
     "for i in [0, 1, 2]:  # we have 3 eigenmodes\n",
     "    # specify the problem\n",
