@@ -322,14 +322,14 @@ div.rendered_html tbody tr:hover {
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># define the problem</span>
 <span class="n">niw</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># number of Matsubara frequencies</span>
-<span class="n">iw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">niw</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>  <span class="c1"># fermionic Matsubara frequencies</span>
+<span class="n">wn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">niw</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>  <span class="c1"># fermionic Matsubara frequencies</span>
 
 <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">20.</span><span class="p">,</span> <span class="mf">20.</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">501</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># real-frequency grid</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>  <span class="c1"># flat default model</span>
 <span class="n">model</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>  <span class="c1"># normalization, not strictly necessary</span>
 
 <span class="c1"># the problem is defined by: imaginary grid, real grid, data, kernel type</span>
-<span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">iw</span><span class="p">,</span>  <span class="c1"># imaginary grid</span>
+<span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">wn</span><span class="p">,</span>  <span class="c1"># imaginary grid</span>
                                          <span class="n">re_axis</span><span class="o">=</span><span class="n">w</span><span class="p">,</span>  <span class="c1"># real grid</span>
                                          <span class="n">im_data</span><span class="o">=</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">siw</span><span class="o">.</span><span class="n">imag</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span>  <span class="c1"># data</span>
                                          <span class="n">kernel_mode</span><span class="o">=</span><span class="s1">&#39;freq_fermionic&#39;</span><span class="p">)</span>  <span class="c1"># kernel type</span>
@@ -404,12 +404,12 @@ log10(alpha) = 2.63,    chi2 = 5.803e+01,   S = -8.241e-01,   nfev = 17,   norm 
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\omega$&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw</span><span class="o">.</span><span class="n">imag</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">siw</span><span class="o">.</span><span class="n">imag</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$i\omega_n$&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="p">(</span><span class="n">siw</span><span class="p">[:</span><span class="n">niw</span><span class="p">]</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">err</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="o">-</span><span class="n">err</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="p">(</span><span class="n">siw</span><span class="p">[:</span><span class="n">niw</span><span class="p">]</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">err</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="o">-</span><span class="n">err</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$i\omega_n$&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -464,10 +464,10 @@ log10(alpha) = 2.63,    chi2 = 5.803e+01,   S = -8.241e-01,   nfev = 17,   norm 
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bw</span><span class="p">)):</span>
-    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="p">(</span><span class="n">siw</span><span class="p">[:</span><span class="n">niw</span><span class="p">]</span> <span class="o">-</span> <span class="n">bt_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="p">(</span><span class="n">siw</span><span class="p">[:</span><span class="n">niw</span><span class="p">]</span> <span class="o">-</span> <span class="n">bt_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span>
                <span class="n">label</span><span class="o">=</span><span class="s1">&#39;b=</span><span class="si">{}</span><span class="s1">, min $\chi^2$=</span><span class="si">{:.1f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bw</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">chi_list</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">err</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="o">-</span><span class="n">err</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">err</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="o">-</span><span class="n">err</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -481,7 +481,7 @@ log10(alpha) = 2.63,    chi2 = 5.803e+01,   S = -8.241e-01,   nfev = 17,   norm 
 <img alt="_images/tutorial_8_0.png" src="_images/tutorial_8_0.png" />
 </div>
 </div>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
@@ -490,15 +490,6 @@ log10(alpha) = 2.63,    chi2 = 5.803e+01,   S = -8.241e-01,   nfev = 17,   norm 
 <span class="n">sw</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">GreensFunction</span><span class="p">(</span><span class="n">spectrum</span><span class="o">=</span><span class="n">spec_list</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">wgrid</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;fermionic&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">kkt</span><span class="p">()</span> <span class="o">+</span> <span class="mf">1.</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-../../ana_cont/continuation.py:153: RuntimeWarning: divide by zero encountered in true_divide
-  m = self.dw[:,None] * self.spectrum[:,None]\
-</pre></div></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
@@ -726,14 +717,14 @@ log10(alpha) = -1.10,   chi2 = 2.173e-04,   S = -9.721e-01,   nfev = 11,   norm 
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">niw</span> <span class="o">=</span> <span class="mi">300</span>
-<span class="n">iw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">niw</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>
+<span class="n">wn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">niw</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>
 
 <span class="c1"># here we want a non-equispaced grid to cover a larger interval</span>
 <span class="n">w</span> <span class="o">=</span> <span class="mi">30</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.1</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">501</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.1</span><span class="p">)</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">w</span> <span class="o">/</span> <span class="mi">20</span><span class="p">)</span><span class="o">**</span><span class="mi">6</span><span class="p">)</span>  <span class="c1"># smooth cut-off at |w| &gt; 20</span>
 <span class="n">model</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="mf">4.77</span>  <span class="c1"># normalization, not strictly necessary</span>
 
-<span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">iw</span><span class="p">,</span>
+<span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">wn</span><span class="p">,</span>
                                          <span class="n">re_axis</span><span class="o">=</span><span class="n">w</span><span class="p">,</span>
                                          <span class="n">im_data</span><span class="o">=</span><span class="n">siw</span><span class="p">[:</span><span class="n">niw</span><span class="p">]</span><span class="o">-</span><span class="n">hartree</span><span class="p">,</span>
                                          <span class="n">kernel_mode</span><span class="o">=</span><span class="s1">&#39;freq_fermionic&#39;</span><span class="p">)</span>
@@ -804,11 +795,11 @@ log10(alpha) = 2.51,    chi2 = 3.032e+02,   S = -5.284e+00,   nfev = 36,   norm 
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw</span><span class="o">.</span><span class="n">imag</span><span class="p">[:</span><span class="n">niw</span><span class="p">])</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="p">(</span><span class="n">siw</span><span class="p">[:</span><span class="n">niw</span><span class="p">]</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">err</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="o">-</span><span class="n">err</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">siw</span><span class="o">.</span><span class="n">imag</span><span class="p">[:</span><span class="n">niw</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="p">(</span><span class="n">siw</span><span class="p">[:</span><span class="n">niw</span><span class="p">]</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">err</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="o">-</span><span class="n">err</span><span class="p">[:</span><span class="n">niw</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
@@ -839,7 +830,7 @@ basis 2. Direct * Continue the diagonal elements in original basis (standard pro
 <span class="n">hartree</span> <span class="o">=</span> <span class="mf">3.</span>  <span class="c1"># for U=6 and half-filling</span>
 <span class="n">beta</span> <span class="o">=</span> <span class="mf">3.</span>
 <span class="n">niw</span> <span class="o">=</span> <span class="n">siw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">iw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">niw</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>
+<span class="n">wn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">niw</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -855,10 +846,10 @@ basis 2. Direct * Continue the diagonal elements in original basis (standard pro
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span>
     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span>
-        <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;original&#39;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw_projected</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw_projected</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;projected&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;original&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">siw_projected</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">siw_projected</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;projected&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
@@ -881,13 +872,13 @@ basis 2. Direct * Continue the diagonal elements in original basis (standard pro
 <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">20.</span><span class="p">,</span> <span class="mf">20.</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">nw</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
 <span class="n">model</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="mf">9.</span>  <span class="c1"># for U=6 and half-filling, the norm is 9.</span>
-<span class="n">iw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">niw</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>
-<span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">iw</span><span class="p">)</span> <span class="o">*</span> <span class="mf">2e-3</span>
+<span class="n">wn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">niw</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>
+<span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">wn</span><span class="p">)</span> <span class="o">*</span> <span class="mf">2e-3</span>
 <span class="n">sw_diag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nw</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span>  <span class="c1"># we have 3 eigenmodes</span>
     <span class="c1"># specify the problem</span>
-    <span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">iw</span><span class="p">,</span>
+    <span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">wn</span><span class="p">,</span>
                                              <span class="n">re_axis</span><span class="o">=</span><span class="n">w</span><span class="p">,</span>
                                              <span class="n">im_data</span><span class="o">=</span><span class="n">siw_projected</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">hartree</span><span class="p">,</span>  <span class="c1"># subtract Hartree term</span>
                                              <span class="n">kernel_mode</span><span class="o">=</span><span class="s1">&#39;freq_fermionic&#39;</span><span class="p">)</span>
@@ -906,12 +897,12 @@ basis 2. Direct * Continue the diagonal elements in original basis (standard pro
     <span class="c1"># plot</span>
     <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
     <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">A_opt</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw_projected</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">real</span> <span class="o">-</span> <span class="n">hartree</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw_projected</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="p">(</span><span class="n">siw_projected</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">hartree</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="p">(</span><span class="n">siw_projected</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">hartree</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">siw_projected</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">real</span> <span class="o">-</span> <span class="n">hartree</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">siw_projected</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="p">(</span><span class="n">siw_projected</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">hartree</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="p">(</span><span class="n">siw_projected</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">hartree</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
 <span class="c1"># go back to original basis</span>
@@ -956,17 +947,8 @@ log10(alpha) = 1.13,    chi2 = 3.146e+01,   S = -8.320e+00,   nfev = 14,   norm 
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-../../ana_cont/continuation.py:153: RuntimeWarning: divide by zero encountered in true_divide
-  m = self.dw[:,None] * self.spectrum[:,None]\
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_29_3.png" src="_images/tutorial_29_3.png" />
+<img alt="_images/tutorial_29_2.png" src="_images/tutorial_29_2.png" />
 </div>
 </div>
 <div class="nboutput docutils container">
@@ -1000,23 +982,14 @@ log10(alpha) = 1.07,    chi2 = 2.901e+01,   S = -8.015e+00,   nfev = 12,   norm 
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_29_5.png" src="_images/tutorial_29_5.png" />
+<img alt="_images/tutorial_29_4.png" src="_images/tutorial_29_4.png" />
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-../../ana_cont/continuation.py:153: RuntimeWarning: divide by zero encountered in true_divide
-  m = self.dw[:,None] * self.spectrum[:,None]\
-</pre></div></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_29_7.png" src="_images/tutorial_29_7.png" />
+<img alt="_images/tutorial_29_5.png" src="_images/tutorial_29_5.png" />
 </div>
 </div>
 <div class="nboutput docutils container">
@@ -1050,23 +1023,14 @@ log10(alpha) = 1.10,    chi2 = 3.094e+01,   S = -8.265e+00,   nfev = 13,   norm 
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_29_9.png" src="_images/tutorial_29_9.png" />
+<img alt="_images/tutorial_29_7.png" src="_images/tutorial_29_7.png" />
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-../../ana_cont/continuation.py:153: RuntimeWarning: divide by zero encountered in true_divide
-  m = self.dw[:,None] * self.spectrum[:,None]\
-</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_29_11.png" src="_images/tutorial_29_11.png" />
+<img alt="_images/tutorial_29_8.png" src="_images/tutorial_29_8.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1082,7 +1046,7 @@ log10(alpha) = 1.10,    chi2 = 3.094e+01,   S = -8.265e+00,   nfev = 13,   norm 
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Diagonal element </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
 
     <span class="c1"># specify the problem</span>
-    <span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">iw</span><span class="p">,</span>
+    <span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">wn</span><span class="p">,</span>
                                              <span class="n">re_axis</span><span class="o">=</span><span class="n">w</span><span class="p">,</span>
                                              <span class="n">im_data</span><span class="o">=</span><span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">hartree</span><span class="p">,</span>  <span class="c1"># subtract Hartree term</span>
                                              <span class="n">kernel_mode</span><span class="o">=</span><span class="s1">&#39;freq_fermionic&#39;</span><span class="p">)</span>
@@ -1101,12 +1065,12 @@ log10(alpha) = 1.10,    chi2 = 3.094e+01,   S = -8.265e+00,   nfev = 13,   norm 
     <span class="c1"># plot</span>
     <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
     <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">A_opt</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">real</span> <span class="o">-</span> <span class="n">hartree</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="p">(</span><span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">hartree</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="p">(</span><span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">hartree</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">real</span> <span class="o">-</span> <span class="n">hartree</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="p">(</span><span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">hartree</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="p">(</span><span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">hartree</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
 <span class="c1"># now loop over the offdiagonal elements</span>
@@ -1119,7 +1083,7 @@ log10(alpha) = 1.10,    chi2 = 3.094e+01,   S = -8.265e+00,   nfev = 13,   norm 
         <span class="n">offdiag_model</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sw_full</span><span class="o">.</span><span class="n">imag</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">sw_full</span><span class="o">.</span><span class="n">imag</span><span class="p">[:,</span> <span class="n">j</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>  <span class="c1"># &quot;poorman&#39;s method&quot; Kraberger et al.</span>
 
         <span class="c1"># specify the problem</span>
-        <span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">iw</span><span class="p">,</span>
+        <span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">wn</span><span class="p">,</span>
                                                  <span class="n">re_axis</span><span class="o">=</span><span class="n">w</span><span class="p">,</span>
                                                  <span class="n">im_data</span><span class="o">=</span><span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span>  <span class="c1"># no Hartree term here!</span>
                                                  <span class="n">kernel_mode</span><span class="o">=</span><span class="s1">&#39;freq_fermionic&#39;</span><span class="p">)</span>
@@ -1142,12 +1106,12 @@ log10(alpha) = 1.10,    chi2 = 3.094e+01,   S = -8.265e+00,   nfev = 13,   norm 
         <span class="c1"># plot</span>
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
         <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">A_opt</span><span class="p">)</span>
-        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
-        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
-        <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="p">(</span><span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
-        <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="p">(</span><span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="p">(</span><span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="p">(</span><span class="n">siw</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">backtransform</span><span class="p">)</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1190,17 +1154,8 @@ log10(alpha) = 1.07,    chi2 = 2.697e+01,   S = -7.796e+00,   nfev = 12,   norm 
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-../../ana_cont/continuation.py:153: RuntimeWarning: divide by zero encountered in true_divide
-  m = self.dw[:,None] * self.spectrum[:,None]\
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_30_3.png" src="_images/tutorial_30_3.png" />
+<img alt="_images/tutorial_30_2.png" src="_images/tutorial_30_2.png" />
 </div>
 </div>
 <div class="nboutput docutils container">
@@ -1235,23 +1190,14 @@ log10(alpha) = 1.07,    chi2 = 2.704e+01,   S = -7.798e+00,   nfev = 12,   norm 
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_30_5.png" src="_images/tutorial_30_5.png" />
+<img alt="_images/tutorial_30_4.png" src="_images/tutorial_30_4.png" />
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-../../ana_cont/continuation.py:153: RuntimeWarning: divide by zero encountered in true_divide
-  m = self.dw[:,None] * self.spectrum[:,None]\
-</pre></div></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_30_7.png" src="_images/tutorial_30_7.png" />
+<img alt="_images/tutorial_30_5.png" src="_images/tutorial_30_5.png" />
 </div>
 </div>
 <div class="nboutput docutils container">
@@ -1286,23 +1232,14 @@ log10(alpha) = 1.06,    chi2 = 2.687e+01,   S = -7.797e+00,   nfev = 12,   norm 
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_30_9.png" src="_images/tutorial_30_9.png" />
+<img alt="_images/tutorial_30_7.png" src="_images/tutorial_30_7.png" />
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-../../ana_cont/continuation.py:153: RuntimeWarning: divide by zero encountered in true_divide
-  m = self.dw[:,None] * self.spectrum[:,None]\
-</pre></div></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_30_11.png" src="_images/tutorial_30_11.png" />
+<img alt="_images/tutorial_30_8.png" src="_images/tutorial_30_8.png" />
 </div>
 </div>
 <div class="nboutput docutils container">
@@ -1341,23 +1278,14 @@ log10(alpha) = 2.50,    chi2 = 3.918e+00,   S = -3.943e-02,   nfev = 12,   norm 
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_30_13.png" src="_images/tutorial_30_13.png" />
+<img alt="_images/tutorial_30_10.png" src="_images/tutorial_30_10.png" />
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-../../ana_cont/continuation.py:153: RuntimeWarning: divide by zero encountered in true_divide
-  m = self.dw[:,None] * self.spectrum[:,None]\
-</pre></div></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_30_15.png" src="_images/tutorial_30_15.png" />
+<img alt="_images/tutorial_30_11.png" src="_images/tutorial_30_11.png" />
 </div>
 </div>
 <div class="nboutput docutils container">
@@ -1396,23 +1324,14 @@ log10(alpha) = 1.41,    chi2 = 1.628e+00,   S = -6.305e-02,   nfev = 12,   norm 
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_30_17.png" src="_images/tutorial_30_17.png" />
+<img alt="_images/tutorial_30_13.png" src="_images/tutorial_30_13.png" />
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-../../ana_cont/continuation.py:153: RuntimeWarning: divide by zero encountered in true_divide
-  m = self.dw[:,None] * self.spectrum[:,None]\
-</pre></div></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_30_19.png" src="_images/tutorial_30_19.png" />
+<img alt="_images/tutorial_30_14.png" src="_images/tutorial_30_14.png" />
 </div>
 </div>
 <div class="nboutput docutils container">
@@ -1451,23 +1370,14 @@ log10(alpha) = 2.49,    chi2 = 3.578e+00,   S = -4.934e-02,   nfev = 12,   norm 
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_30_21.png" src="_images/tutorial_30_21.png" />
+<img alt="_images/tutorial_30_16.png" src="_images/tutorial_30_16.png" />
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-../../ana_cont/continuation.py:153: RuntimeWarning: divide by zero encountered in true_divide
-  m = self.dw[:,None] * self.spectrum[:,None]\
-</pre></div></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_30_23.png" src="_images/tutorial_30_23.png" />
+<img alt="_images/tutorial_30_17.png" src="_images/tutorial_30_17.png" />
 </div>
 </div>
 <div class="nboutput docutils container">
@@ -1506,23 +1416,14 @@ log10(alpha) = 1.71,    chi2 = 2.324e+00,   S = -5.737e-02,   nfev = 20,   norm 
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_30_25.png" src="_images/tutorial_30_25.png" />
+<img alt="_images/tutorial_30_19.png" src="_images/tutorial_30_19.png" />
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-../../ana_cont/continuation.py:153: RuntimeWarning: divide by zero encountered in true_divide
-  m = self.dw[:,None] * self.spectrum[:,None]\
-</pre></div></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_30_27.png" src="_images/tutorial_30_27.png" />
+<img alt="_images/tutorial_30_20.png" src="_images/tutorial_30_20.png" />
 </div>
 </div>
 <div class="nboutput docutils container">
@@ -1561,23 +1462,14 @@ log10(alpha) = 1.43,    chi2 = 1.560e+00,   S = -7.192e-02,   nfev = 12,   norm 
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_30_29.png" src="_images/tutorial_30_29.png" />
+<img alt="_images/tutorial_30_22.png" src="_images/tutorial_30_22.png" />
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-../../ana_cont/continuation.py:153: RuntimeWarning: divide by zero encountered in true_divide
-  m = self.dw[:,None] * self.spectrum[:,None]\
-</pre></div></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_30_31.png" src="_images/tutorial_30_31.png" />
+<img alt="_images/tutorial_30_23.png" src="_images/tutorial_30_23.png" />
 </div>
 </div>
 <div class="nboutput docutils container">
@@ -1616,23 +1508,14 @@ log10(alpha) = 1.73,    chi2 = 2.224e+00,   S = -7.102e-02,   nfev = 25,   norm 
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_30_33.png" src="_images/tutorial_30_33.png" />
+<img alt="_images/tutorial_30_25.png" src="_images/tutorial_30_25.png" />
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-../../ana_cont/continuation.py:153: RuntimeWarning: divide by zero encountered in true_divide
-  m = self.dw[:,None] * self.spectrum[:,None]\
-</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_30_35.png" src="_images/tutorial_30_35.png" />
+<img alt="_images/tutorial_30_26.png" src="_images/tutorial_30_26.png" />
 </div>
 </div>
 <div class="nbinput docutils container">

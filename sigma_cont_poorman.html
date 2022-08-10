@@ -287,13 +287,13 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span></span><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">h5py</span>
 <span class="o">%</span><span class="k">matplotlib</span> inline
 
-<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;/home/josef/Projects/ana_cont_offdiag&#39;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;HOME&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/Programs/ana_cont&#39;</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">ana_cont</span> <span class="kn">import</span> <span class="n">continuation</span> <span class="k">as</span> <span class="n">cont</span>
 </pre></div>
 </div>
@@ -321,41 +321,63 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-[[ 3.07701521e+000 -3.57758950e-001 -2.57631506e-134  7.34372271e-134]
- [-3.57758950e-001  3.92767686e+000  8.18214316e-134  9.03383479e-134]
- [-2.57631506e-134  8.18214316e-134  3.07281864e+000  3.69826955e-001]
- [ 7.34372271e-134  9.03383479e-134  3.69826955e-001  3.93201167e+000]]
-[[ 0.00000000e+000 -6.10601401e-003  9.95714789e-134  1.46221491e-134]
- [ 6.10601401e-003  0.00000000e+000 -3.13486025e-135 -3.23761927e-133]
- [-9.95714789e-134  3.13486025e-135  0.00000000e+000  1.61150603e-003]
- [-1.46221491e-134  3.23761927e-133 -1.61150603e-003  0.00000000e+000]]
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">OSError</span>                                   Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-2-09e6e0197479&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
+<span class="ansi-green-fg">----&gt; 1</span><span class="ansi-red-fg"> </span>f <span class="ansi-blue-fg">=</span> h5py<span class="ansi-blue-fg">.</span>File<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">&#39;/home/josef/Downloads/sigma_cont.h5&#39;</span><span class="ansi-blue-fg">,</span><span class="ansi-blue-fg">&#39;r&#39;</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">      2</span> tail_0 <span class="ansi-blue-fg">=</span> f<span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;current_sigma/site_0/tail_0/value&#39;</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">]</span>
+<span class="ansi-green-intense-fg ansi-bold">      3</span> tail_1 <span class="ansi-blue-fg">=</span> f<span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;current_sigma/site_0/tail_1/value&#39;</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">]</span>
+<span class="ansi-green-intense-fg ansi-bold">      4</span> niw <span class="ansi-blue-fg">=</span> <span class="ansi-cyan-fg">20</span>
+<span class="ansi-green-intense-fg ansi-bold">      5</span> n_orb <span class="ansi-blue-fg">=</span> <span class="ansi-cyan-fg">4</span>
+
+<span class="ansi-green-fg">~/anaconda3/lib/python3.8/site-packages/h5py/_hl/files.py</span> in <span class="ansi-cyan-fg">__init__</span><span class="ansi-blue-fg">(self, name, mode, driver, libver, userblock_size, swmr, rdcc_nslots, rdcc_nbytes, rdcc_w0, track_order, **kwds)</span>
+<span class="ansi-green-intense-fg ansi-bold">    404</span>             <span class="ansi-green-fg">with</span> phil<span class="ansi-blue-fg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">    405</span>                 fapl <span class="ansi-blue-fg">=</span> make_fapl<span class="ansi-blue-fg">(</span>driver<span class="ansi-blue-fg">,</span> libver<span class="ansi-blue-fg">,</span> rdcc_nslots<span class="ansi-blue-fg">,</span> rdcc_nbytes<span class="ansi-blue-fg">,</span> rdcc_w0<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">**</span>kwds<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-fg">--&gt; 406</span><span class="ansi-red-fg">                 fid = make_fid(name, mode, userblock_size,
+</span><span class="ansi-green-intense-fg ansi-bold">    407</span>                                fapl<span class="ansi-blue-fg">,</span> fcpl<span class="ansi-blue-fg">=</span>make_fcpl<span class="ansi-blue-fg">(</span>track_order<span class="ansi-blue-fg">=</span>track_order<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    408</span>                                swmr=swmr)
+
+<span class="ansi-green-fg">~/anaconda3/lib/python3.8/site-packages/h5py/_hl/files.py</span> in <span class="ansi-cyan-fg">make_fid</span><span class="ansi-blue-fg">(name, mode, userblock_size, fapl, fcpl, swmr)</span>
+<span class="ansi-green-intense-fg ansi-bold">    171</span>         <span class="ansi-green-fg">if</span> swmr <span class="ansi-green-fg">and</span> swmr_support<span class="ansi-blue-fg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">    172</span>             flags <span class="ansi-blue-fg">|=</span> h5f<span class="ansi-blue-fg">.</span>ACC_SWMR_READ
+<span class="ansi-green-fg">--&gt; 173</span><span class="ansi-red-fg">         </span>fid <span class="ansi-blue-fg">=</span> h5f<span class="ansi-blue-fg">.</span>open<span class="ansi-blue-fg">(</span>name<span class="ansi-blue-fg">,</span> flags<span class="ansi-blue-fg">,</span> fapl<span class="ansi-blue-fg">=</span>fapl<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    174</span>     <span class="ansi-green-fg">elif</span> mode <span class="ansi-blue-fg">==</span> <span class="ansi-blue-fg">&#39;r+&#39;</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">    175</span>         fid <span class="ansi-blue-fg">=</span> h5f<span class="ansi-blue-fg">.</span>open<span class="ansi-blue-fg">(</span>name<span class="ansi-blue-fg">,</span> h5f<span class="ansi-blue-fg">.</span>ACC_RDWR<span class="ansi-blue-fg">,</span> fapl<span class="ansi-blue-fg">=</span>fapl<span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">h5py/_objects.pyx</span> in <span class="ansi-cyan-fg">h5py._objects.with_phil.wrapper</span><span class="ansi-blue-fg">()</span>
+
+<span class="ansi-green-fg">h5py/_objects.pyx</span> in <span class="ansi-cyan-fg">h5py._objects.with_phil.wrapper</span><span class="ansi-blue-fg">()</span>
+
+<span class="ansi-green-fg">h5py/h5f.pyx</span> in <span class="ansi-cyan-fg">h5py.h5f.open</span><span class="ansi-blue-fg">()</span>
+
+<span class="ansi-red-fg">OSError</span>: Unable to open file (unable to open file: name = &#39;/home/josef/Downloads/sigma_cont.h5&#39;, errno = 2, error message = &#39;No such file or directory&#39;, flags = 0, o_flags = 0)
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">beta</span> <span class="o">=</span> <span class="mf">20.</span>
-<span class="n">iw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">niw</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>
+<span class="n">wn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">niw</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>
 <span class="c1">#wgrid = np.linspace(-15., 15., num=1001, endpoint=True)</span>
 <span class="n">wgrid</span> <span class="o">=</span> <span class="mf">20.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">1001</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.5</span><span class="p">)</span>
 <span class="n">n_orb</span> <span class="o">=</span> <span class="mi">4</span>
 <span class="n">model_diag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">wgrid</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="mi">8</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
 <span class="n">model_diag</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">model_diag</span><span class="p">,</span> <span class="n">wgrid</span><span class="p">)</span>
 <span class="n">errfac</span> <span class="o">=</span> <span class="mf">0.005</span>
-<span class="n">err</span> <span class="o">=</span> <span class="mf">0.002</span> <span class="o">+</span> <span class="n">errfac</span> <span class="o">*</span> <span class="n">iw</span><span class="o">**</span><span class="mf">2.</span><span class="o">/</span><span class="n">iw</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">err</span> <span class="o">=</span> <span class="mf">0.002</span> <span class="o">+</span> <span class="n">errfac</span> <span class="o">*</span> <span class="n">wn</span><span class="o">**</span><span class="mf">2.</span><span class="o">/</span><span class="n">wn</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">sol_diag</span><span class="o">=</span><span class="p">[]</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_orb</span><span class="p">):</span>
-    <span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">iw</span><span class="p">,</span> <span class="n">re_axis</span><span class="o">=</span><span class="n">wgrid</span><span class="p">,</span> <span class="n">im_data</span><span class="o">=</span><span class="n">siw</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">],</span> <span class="n">kernel_mode</span><span class="o">=</span><span class="s1">&#39;freq_fermionic&#39;</span><span class="p">)</span>
+    <span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">wn</span><span class="p">,</span> <span class="n">re_axis</span><span class="o">=</span><span class="n">wgrid</span><span class="p">,</span> <span class="n">im_data</span><span class="o">=</span><span class="n">siw</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">],</span> <span class="n">kernel_mode</span><span class="o">=</span><span class="s1">&#39;freq_fermionic&#39;</span><span class="p">)</span>
     <span class="n">sol_diag</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
         <span class="n">probl</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;maxent_svd&#39;</span><span class="p">,</span>
                     <span class="n">model</span><span class="o">=</span><span class="n">model_diag</span><span class="p">,</span>
@@ -366,98 +388,8 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-spectral points: 1001
-data points on imaginary axis: 40
-significant singular values: 33
-U (40, 33)
-V (1001, 33)
-Xi (33,)
-Precomputation of coefficient matrices
-Solving...
-log10(alpha)=5.0000     chi2=1.2781e+04 S=-5.1245e-02   tr=1.5035       conv=0.000147,  nfev=6, norm=0.9734330576172616
-log10(alpha)=4.0000     chi2=1.4021e+03 S=-2.0553e-01   tr=3.1773       conv=0.000773,  nfev=7, norm=0.9929455056439241
-log10(alpha)=3.0000     chi2=1.1759e+02 S=-3.6065e-01   tr=5.2933       conv=0.00734,   nfev=9, norm=1.024717439821001
-log10(alpha)=2.0000     chi2=2.0058e+01 S=-4.7197e-01   tr=7.2876       conv=0.0772,    nfev=50,        norm=1.0518405335495757
-log10(alpha)=1.0000     chi2=9.5092e+00 S=-5.2460e-01   tr=9.1285       conv=0.87,      nfev=178,       norm=1.0578874046384867
-log10(alpha)=0.0000     chi2=9.4061e+00 S=-5.4116e-01   tr=10.8394      conv=10.0,      nfev=833,       norm=1.0548990041585238
-prediction for optimal alpha: 8.770383632550427 log10(alphaOpt)= 0.9430185906129931
-log10(alpha)=0.9430     chi2=9.4239e+00 S=-5.2608e-01   tr=9.2276       conv=1.0,       nfev=32,        norm=1.0576478299547032
-log10(alpha)=0.9431     chi2=9.4239e+00 S=-5.2608e-01   tr=9.2275       conv=1.0,       nfev=3, norm=1.0576480417369925
-log10(alpha)=0.9430     chi2=9.4238e+00 S=-5.2608e-01   tr=9.2276       conv=1.0,       nfev=3, norm=1.0576477949425667
-final optimal alpha: 8.770222144878524 log10(alpha_opt)= 0.9430105939444977
-log10(alpha)=0.9430     chi2=9.4238e+00 S=-5.2608e-01   tr=9.2276       conv=1.0,       nfev=2, norm=1.0576477949472503
-spectral points: 1001
-data points on imaginary axis: 40
-significant singular values: 33
-U (40, 33)
-V (1001, 33)
-Xi (33,)
-Precomputation of coefficient matrices
-Solving...
-log10(alpha)=5.0000     chi2=1.6835e+04 S=-7.2357e-02   tr=1.5110       conv=0.000104,  nfev=6, norm=1.0045079588603663
-log10(alpha)=4.0000     chi2=1.4840e+03 S=-2.7519e-01   tr=3.0397       conv=0.000552,  nfev=8, norm=1.0741086994171718
-log10(alpha)=3.0000     chi2=7.2187e+01 S=-4.2955e-01   tr=5.2505       conv=0.00611,   nfev=9, norm=1.1334231492523565
-log10(alpha)=2.0000     chi2=1.3990e+01 S=-4.9147e-01   tr=7.3051       conv=0.0743,    nfev=45,        norm=1.1515260487143943
-log10(alpha)=1.0000     chi2=7.4423e+00 S=-5.3702e-01   tr=9.0739       conv=0.845,     nfev=317,       norm=1.121060616794459
-log10(alpha)=0.0000     chi2=5.0411e+00 S=-6.3052e-01   tr=10.6771      conv=8.47,      nfev=1514,      norm=1.0704217326768934
-prediction for optimal alpha: 8.449724278766524 log10(alphaOpt)= 0.9268425378060361
-log10(alpha)=0.9268     chi2=7.2510e+00 S=-5.4266e-01   tr=9.1854       conv=1.0,       nfev=53,        norm=1.1174877868150204
-log10(alpha)=0.9269     chi2=7.2512e+00 S=-5.4266e-01   tr=9.1853       conv=1.0,       nfev=3, norm=1.1174901838891809
-log10(alpha)=0.9275     chi2=7.2527e+00 S=-5.4261e-01   tr=9.1843       conv=1.0,       nfev=4, norm=1.1175218227131722
-log10(alpha)=0.9275     chi2=7.2527e+00 S=-5.4261e-01   tr=9.1843       conv=1.0,       nfev=3, norm=1.1175218724810918
-final optimal alpha: 8.463172603331893 log10(alpha_opt)= 0.9275331982435974
-log10(alpha)=0.9275     chi2=7.2527e+00 S=-5.4261e-01   tr=9.1843       conv=1.0,       nfev=2, norm=1.1175218725540146
-spectral points: 1001
-data points on imaginary axis: 40
-significant singular values: 33
-U (40, 33)
-V (1001, 33)
-Xi (33,)
-Precomputation of coefficient matrices
-Solving...
-log10(alpha)=5.0000     chi2=1.2760e+04 S=-5.1240e-02   tr=1.5035       conv=0.000147,  nfev=6, norm=0.9733168663603687
-log10(alpha)=4.0000     chi2=1.4007e+03 S=-2.0513e-01   tr=3.1759       conv=0.000774,  nfev=8, norm=0.9921298996734302
-log10(alpha)=3.0000     chi2=1.1962e+02 S=-3.6007e-01   tr=5.2945       conv=0.00735,   nfev=9, norm=1.0230007843851254
-log10(alpha)=2.0000     chi2=2.0087e+01 S=-4.7445e-01   tr=7.2887       conv=0.0768,    nfev=58,        norm=1.0478317016670569
-log10(alpha)=1.0000     chi2=1.0496e+01 S=-5.3225e-01   tr=9.1026       conv=0.855,     nfev=160,       norm=1.0432561806063527
-log10(alpha)=0.0000     chi2=8.9395e+00 S=-5.5718e-01   tr=10.8016      conv=9.69,      nfev=1327,      norm=1.0129822061529077
-prediction for optimal alpha: 8.620409924289554 log10(alphaOpt)= 0.9355279182172912
-log10(alpha)=0.9355     chi2=1.0449e+01 S=-5.3418e-01   tr=9.2140       conv=1.0,       nfev=37,        norm=1.0418251926447
-log10(alpha)=0.9356     chi2=1.0449e+01 S=-5.3418e-01   tr=9.2139       conv=1.0,       nfev=3, norm=1.0418263017918796
-log10(alpha)=0.9357     chi2=1.0449e+01 S=-5.3418e-01   tr=9.2136       conv=1.0,       nfev=3, norm=1.0418295055977151
-log10(alpha)=0.9357     chi2=1.0449e+01 S=-5.3418e-01   tr=9.2136       conv=1.0,       nfev=3, norm=1.0418295070298933
-final optimal alpha: 8.624152934550537 log10(alpha_opt)= 0.9357164493782012
-log10(alpha)=0.9357     chi2=1.0449e+01 S=-5.3418e-01   tr=9.2136       conv=1.0,       nfev=2, norm=1.0418295070303663
-spectral points: 1001
-data points on imaginary axis: 40
-significant singular values: 33
-U (40, 33)
-V (1001, 33)
-Xi (33,)
-Precomputation of coefficient matrices
-Solving...
-log10(alpha)=5.0000     chi2=1.6486e+04 S=-7.1620e-02   tr=1.5136       conv=0.000106,  nfev=6, norm=1.004842175566643
-log10(alpha)=4.0000     chi2=1.4103e+03 S=-2.6990e-01   tr=3.0440       conv=0.000564,  nfev=8, norm=1.0727392557118682
-log10(alpha)=3.0000     chi2=6.5512e+01 S=-4.1484e-01   tr=5.2563       conv=0.00634,   nfev=9, norm=1.1259922781149478
-log10(alpha)=2.0000     chi2=1.4850e+01 S=-4.6872e-01   tr=7.3071       conv=0.0779,    nfev=44,        norm=1.1306146233435483
-log10(alpha)=1.0000     chi2=9.1830e+00 S=-5.2731e-01   tr=9.0260       conv=0.856,     nfev=313,       norm=1.0770489759184905
-log10(alpha)=0.0000     chi2=6.5274e+00 S=-6.6891e-01   tr=10.5576      conv=7.89,      nfev=1590,      norm=0.9978333458785626
-prediction for optimal alpha: 8.509942157869958 log10(alphaOpt)= 0.9299266081923117
-log10(alpha)=0.9299     chi2=9.0317e+00 S=-5.3505e-01   tr=9.1267       conv=1.0,       nfev=63,        norm=1.0717342252768474
-log10(alpha)=0.9300     chi2=9.0318e+00 S=-5.3505e-01   tr=9.1267       conv=1.0,       nfev=3, norm=1.0717379366253015
-log10(alpha)=0.9309     chi2=9.0337e+00 S=-5.3494e-01   tr=9.1253       conv=1.0,       nfev=4, norm=1.0718096074817787
-log10(alpha)=0.9309     chi2=9.0337e+00 S=-5.3494e-01   tr=9.1253       conv=1.0,       nfev=3, norm=1.0718097652750695
-final optimal alpha: 8.529321505266616 log10(alpha_opt)= 0.9309144850668738
-log10(alpha)=0.9309     chi2=9.0337e+00 S=-5.3494e-01   tr=9.1253       conv=1.0,       nfev=3, norm=1.0718097656064705
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -466,30 +398,16 @@ log10(alpha)=0.9309     chi2=9.0337e+00 S=-5.3494e-01   tr=9.1253       conv=1.0
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_orb</span><span class="p">):</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">err</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol_diag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">err</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol_diag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">siw</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">err</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">sol_diag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">siw</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">err</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">sol_diag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/sigma_cont_poorman_4_0.png" src="_images/sigma_cont_poorman_4_0.png" />
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/sigma_cont_poorman_4_1.png" src="_images/sigma_cont_poorman_4_1.png" />
-</div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -500,7 +418,7 @@ log10(alpha)=0.9309     chi2=9.0337e+00 S=-5.3494e-01   tr=9.1253       conv=1.0
         <span class="n">s</span> <span class="o">=</span> <span class="n">siw</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">&gt;</span><span class="mf">0.00001</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">s</span><span class="p">)):</span>
             <span class="n">model</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sol_diag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">A_opt</span> <span class="o">*</span> <span class="n">sol_diag</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">A_opt</span><span class="p">)</span>
-            <span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">iw</span><span class="p">,</span> <span class="n">re_axis</span><span class="o">=</span><span class="n">wgrid</span><span class="p">,</span> <span class="n">im_data</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">kernel_mode</span><span class="o">=</span><span class="s1">&#39;freq_fermionic&#39;</span><span class="p">)</span>
+            <span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">wn</span><span class="p">,</span> <span class="n">re_axis</span><span class="o">=</span><span class="n">wgrid</span><span class="p">,</span> <span class="n">im_data</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">kernel_mode</span><span class="o">=</span><span class="s1">&#39;freq_fermionic&#39;</span><span class="p">)</span>
             <span class="n">sol_offd</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
             <span class="n">probl</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;maxent_svd&#39;</span><span class="p">,</span>
                         <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
@@ -512,57 +430,8 @@ log10(alpha)=0.9309     chi2=9.0337e+00 S=-5.3494e-01   tr=9.1253       conv=1.0
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-spectral points: 1001
-data points on imaginary axis: 40
-significant singular values: 33
-U (40, 33)
-V (1001, 33)
-Xi (33,)
-Precomputation of coefficient matrices
-Solving...
-log10(alpha)=5.0000     chi2=4.2574e+02 S=-8.7749e-04   tr=1.4708       conv=0.00838,   nfev=4, norm=0.02019629973793531
-log10(alpha)=4.0000     chi2=8.6548e+01 S=-6.4110e-03   tr=3.6628       conv=0.0286,    nfev=6, norm=0.04951737507350307
-log10(alpha)=3.0000     chi2=7.8731e+00 S=-1.6561e-02   tr=5.8930       conv=0.178,     nfev=10,        norm=0.07759943758901643
-log10(alpha)=2.0000     chi2=3.6319e+00 S=-2.2357e-02   tr=7.9115       conv=1.77,      nfev=24,        norm=0.09048498120021867
-prediction for optimal alpha: 177.18046504192972 log10(alphaOpt)= 2.24841583723403
-log10(alpha)=2.2484     chi2=3.8485e+00 S=-2.1485e-02   tr=7.4308       conv=0.976,     nfev=5, norm=0.08857130752069953
-log10(alpha)=2.2485     chi2=3.8486e+00 S=-2.1485e-02   tr=7.4307       conv=0.976,     nfev=3, norm=0.08857091584978968
-log10(alpha)=2.2380     chi2=3.8407e+00 S=-2.1526e-02   tr=7.4513       conv=1.0,       nfev=4, norm=0.08866427267997387
-log10(alpha)=2.2382     chi2=3.8409e+00 S=-2.1525e-02   tr=7.4508       conv=1.0,       nfev=3, norm=0.08866197774752041
-log10(alpha)=2.2382     chi2=3.8409e+00 S=-2.1525e-02   tr=7.4508       conv=1.0,       nfev=3, norm=0.08866203269544783
-log10(alpha)=2.2382     chi2=3.8409e+00 S=-2.1525e-02   tr=7.4508       conv=1.0,       nfev=3, norm=0.08866203272843952
-final optimal alpha: 173.07466648995612 log10(alpha_opt)= 2.2382335034109544
-log10(alpha)=2.2382     chi2=3.8409e+00 S=-2.1525e-02   tr=7.4508       conv=1.0,       nfev=2, norm=0.08866203272843905
-spectral points: 1001
-data points on imaginary axis: 40
-significant singular values: 33
-U (40, 33)
-V (1001, 33)
-Xi (33,)
-Precomputation of coefficient matrices
-Solving...
-log10(alpha)=5.0000     chi2=1.3992e+02 S=-1.7671e-04   tr=1.4568       conv=0.0412,    nfev=4, norm=-0.006627371452169109
-log10(alpha)=4.0000     chi2=3.7768e+01 S=-2.0063e-03   tr=3.6383       conv=0.0907,    nfev=6, norm=-0.01376891622820896
-log10(alpha)=3.0000     chi2=4.7216e+00 S=-6.2598e-03   tr=5.8582       conv=0.468,     nfev=8, norm=-0.015435203463153836
-log10(alpha)=2.0000     chi2=3.1406e+00 S=-9.7528e-03   tr=7.8808       conv=4.04,      nfev=12,        norm=-0.008108885418126724
-prediction for optimal alpha: 444.33963950083614 log10(alphaOpt)= 2.6477150583423152
-log10(alpha)=2.6477     chi2=3.2904e+00 S=-7.6920e-03   tr=6.5913       conv=0.964,     nfev=5, norm=-0.013628133834085985
-log10(alpha)=2.6478     chi2=3.2905e+00 S=-7.6918e-03   tr=6.5912       conv=0.964,     nfev=3, norm=-0.013628429427209786
-log10(alpha)=2.6300     chi2=3.2663e+00 S=-7.7566e-03   tr=6.6277       conv=1.0,       nfev=4, norm=-0.013506660828755235
-log10(alpha)=2.6307     chi2=3.2672e+00 S=-7.7540e-03   tr=6.6262       conv=1.0,       nfev=3, norm=-0.013511691603693018
-log10(alpha)=2.6307     chi2=3.2672e+00 S=-7.7541e-03   tr=6.6263       conv=1.0,       nfev=3, norm=-0.013511497641899843
-log10(alpha)=2.6307     chi2=3.2672e+00 S=-7.7541e-03   tr=6.6263       conv=1.0,       nfev=3, norm=-0.013511497328437497
-final optimal alpha: 427.2764523324309 log10(alpha_opt)= 2.630708959037927
-log10(alpha)=2.6307     chi2=3.2672e+00 S=-7.7541e-03   tr=6.6263       conv=1.0,       nfev=2, norm=-0.013511497328457814
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -579,15 +448,8 @@ log10(alpha)=2.6307     chi2=3.2672e+00 S=-7.7541e-03   tr=6.6263       conv=1.0
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/sigma_cont_poorman_6_0.png" src="_images/sigma_cont_poorman_6_0.png" />
-</div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -604,40 +466,26 @@ log10(alpha)=2.6307     chi2=3.2672e+00 S=-7.7541e-03   tr=6.6263       conv=1.0
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/sigma_cont_poorman_7_0.png" src="_images/sigma_cont_poorman_7_0.png" />
-</div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="n">n_orb</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="n">n_orb</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">))</span>
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_orb</span><span class="p">):</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">err</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol_diag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">err</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol_diag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">siw</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">err</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">sol_diag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">siw</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">err</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">sol_diag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">sol_offd</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">err</span><span class="p">)</span>
-            <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol_offd</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
-            <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">siw</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">err</span><span class="p">)</span>
-            <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">sol_offd</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">siw</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">err</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">sol_offd</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">siw</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">err</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">sol_offd</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">backtransform</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/sigma_cont_poorman_8_0.png" src="_images/sigma_cont_poorman_8_0.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">

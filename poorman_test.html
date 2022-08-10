@@ -310,7 +310,7 @@ div.rendered_html tbody tr:hover {
 <span></span><span class="n">true_w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">5.</span><span class="p">,</span><span class="mf">5.</span><span class="p">,</span><span class="n">num</span><span class="o">=</span><span class="mi">5001</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">beta</span> <span class="o">=</span> <span class="mf">40.</span>
 <span class="n">niw</span> <span class="o">=</span> <span class="mi">20</span>
-<span class="n">iw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">niw</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>
+<span class="n">wn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">niw</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">gauss_peak</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">width</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">true_w</span><span class="o">-</span><span class="n">center</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">width</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">width</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
 <span class="n">true_spec_1</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">gauss_peak</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span> <span class="o">+</span> <span class="n">gauss_peak</span><span class="p">(</span><span class="mf">2.</span><span class="p">,</span><span class="mf">0.7</span><span class="p">))</span>
@@ -335,10 +335,10 @@ div.rendered_html tbody tr:hover {
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
 
-<span class="n">kernel</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">iw</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">true_w</span><span class="p">[</span><span class="kc">None</span><span class="p">,:])</span>
+<span class="n">kernel</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">wn</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">true_w</span><span class="p">[</span><span class="kc">None</span><span class="p">,:])</span>
 <span class="n">giw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">kernel</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">,:,:]</span><span class="o">*</span><span class="n">true_spec_rot</span><span class="p">[:,:,</span><span class="kc">None</span><span class="p">,:],</span> <span class="n">true_w</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">giw</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">giw</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">giw</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">giw</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -368,7 +368,7 @@ div.rendered_html tbody tr:hover {
 <span class="n">model_diag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="n">wgrid</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">model_diag</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">model_diag</span><span class="p">,</span> <span class="n">wgrid</span><span class="p">)</span>
 <span class="n">errfac</span> <span class="o">=</span> <span class="mf">0.00001</span>
-<span class="n">err</span> <span class="o">=</span> <span class="n">errfac</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">iw</span><span class="p">)</span>
+<span class="n">err</span> <span class="o">=</span> <span class="n">errfac</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">wn</span><span class="p">)</span>
 <span class="c1">#perfect_model = np.abs(np.interp(wgrid, true_w, true_spec))</span>
 </pre></div>
 </div>
@@ -378,11 +378,11 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">probl_00</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">iw</span><span class="p">,</span> <span class="n">re_axis</span><span class="o">=</span><span class="n">wgrid</span><span class="p">,</span>
+<span></span><span class="n">probl_00</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">wn</span><span class="p">,</span> <span class="n">re_axis</span><span class="o">=</span><span class="n">wgrid</span><span class="p">,</span>
                                             <span class="n">im_data</span><span class="o">=</span><span class="n">giw</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">kernel_mode</span><span class="o">=</span><span class="s1">&#39;freq_fermionic&#39;</span><span class="p">)</span>
-<span class="n">probl_11</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">iw</span><span class="p">,</span> <span class="n">re_axis</span><span class="o">=</span><span class="n">wgrid</span><span class="p">,</span>
+<span class="n">probl_11</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">wn</span><span class="p">,</span> <span class="n">re_axis</span><span class="o">=</span><span class="n">wgrid</span><span class="p">,</span>
                                             <span class="n">im_data</span><span class="o">=</span><span class="n">giw</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">kernel_mode</span><span class="o">=</span><span class="s1">&#39;freq_fermionic&#39;</span><span class="p">)</span>
-<span class="n">probl_01</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">iw</span><span class="p">,</span> <span class="n">re_axis</span><span class="o">=</span><span class="n">wgrid</span><span class="p">,</span>
+<span class="n">probl_01</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">wn</span><span class="p">,</span> <span class="n">re_axis</span><span class="o">=</span><span class="n">wgrid</span><span class="p">,</span>
                                             <span class="n">im_data</span><span class="o">=</span><span class="n">giw</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">kernel_mode</span><span class="o">=</span><span class="s1">&#39;freq_fermionic&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -441,25 +441,16 @@ log10(alpha) = -7.00,   chi2 = 1.969e-09,   S = -1.381e+00,   nfev = 1,   norm =
 log10(alpha) = -8.00,   chi2 = 1.929e-09,   S = -1.381e+00,   nfev = 1,   norm = 1.000
 log10(alpha) = -9.00,   chi2 = 1.929e-09,   S = -1.381e+00,   nfev = 1,   norm = 1.000
 log10(alpha) = -10.00,  chi2 = 1.929e-09,   S = -1.381e+00,   nfev = 1,   norm = 1.000
-Fit parameters [-9.77015827 21.41371482  3.12901761  0.28476624]
-Optimal log alpha -3.8942868217887487
-log10(alpha) = -3.89,   chi2 = 3.898e-09,   S = -1.381e+00,   nfev = 36,   norm = 1.000
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/josef/Programs/ana_cont/ana_cont/solvers.py:462: RuntimeWarning: invalid value encountered in log
-  eig_sum = np.sum(np.log(alpha / (alpha + lam)))
+Fit parameters [-9.77015836 21.41371487  3.12901759  0.28476624]
+Optimal log alpha -3.8942867665688183
+log10(alpha) = -3.89,   chi2 = 4.106e-09,   S = -1.381e+00,   nfev = 39,   norm = 1.000
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/poorman_test_5_2.png" src="_images/poorman_test_5_2.png" />
+<img alt="_images/poorman_test_5_1.png" src="_images/poorman_test_5_1.png" />
 </div>
 </div>
 <div class="nboutput docutils container">
@@ -500,25 +491,16 @@ log10(alpha) = -7.00,   chi2 = 2.207e-09,   S = -1.387e+00,   nfev = 3,   norm =
 log10(alpha) = -8.00,   chi2 = 2.198e-09,   S = -1.387e+00,   nfev = 1,   norm = 1.000
 log10(alpha) = -9.00,   chi2 = 2.198e-09,   S = -1.387e+00,   nfev = 1,   norm = 1.000
 log10(alpha) = -10.00,  chi2 = 2.198e-09,   S = -1.387e+00,   nfev = 1,   norm = 1.000
-Fit parameters [-9.62078498 21.21741151  3.26551679  0.29376997]
-Optimal log alpha -3.5425310968910524
-log10(alpha) = -3.54,   chi2 = 2.181e-08,   S = -1.386e+00,   nfev = 69,   norm = 1.000
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/josef/Programs/ana_cont/ana_cont/solvers.py:462: RuntimeWarning: invalid value encountered in log
-  eig_sum = np.sum(np.log(alpha / (alpha + lam)))
+Fit parameters [-9.62078515 21.21741168  3.26551673  0.29376997]
+Optimal log alpha -3.542531165072654
+log10(alpha) = -3.54,   chi2 = 2.176e-08,   S = -1.386e+00,   nfev = 57,   norm = 1.000
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/poorman_test_5_5.png" src="_images/poorman_test_5_5.png" />
+<img alt="_images/poorman_test_5_3.png" src="_images/poorman_test_5_3.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -589,32 +571,32 @@ log10(alpha) = 11.00,   chi2 = 1.050e+09,   S = -8.125e-04,   nfev = 17,   norm 
 log10(alpha) = 10.00,   chi2 = 2.152e+08,   S = -1.669e-02,   nfev = 27,   norm = -0.001
 log10(alpha) = 9.00,    chi2 = 6.829e+06,   S = -3.987e-02,   nfev = 31,   norm = -0.001
 log10(alpha) = 8.00,    chi2 = 1.440e+05,   S = -4.670e-02,   nfev = 28,   norm = 0.000
-log10(alpha) = 7.00,    chi2 = 2.594e+03,   S = -4.806e-02,   nfev = 24,   norm = 0.000
-log10(alpha) = 6.00,    chi2 = 7.590e+01,   S = -4.832e-02,   nfev = 18,   norm = -0.000
-log10(alpha) = 5.00,    chi2 = 1.752e+00,   S = -4.840e-02,   nfev = 18,   norm = 0.000
-log10(alpha) = 4.00,    chi2 = 3.787e-02,   S = -4.841e-02,   nfev = 14,   norm = 0.000
-log10(alpha) = 3.00,    chi2 = 2.672e-03,   S = -4.842e-02,   nfev = 14,   norm = -0.000
-log10(alpha) = 2.00,    chi2 = 2.722e-04,   S = -4.842e-02,   nfev = 13,   norm = -0.000
-log10(alpha) = 1.00,    chi2 = 8.741e-06,   S = -4.842e-02,   nfev = 14,   norm = -0.000
-log10(alpha) = 0.00,    chi2 = 2.494e-06,   S = -4.842e-02,   nfev = 12,   norm = 0.000
-log10(alpha) = -1.00,   chi2 = 7.059e-07,   S = -4.843e-02,   nfev = 19,   norm = 0.000
-log10(alpha) = -2.00,   chi2 = 1.992e-07,   S = -4.844e-02,   nfev = 15,   norm = 0.000
-log10(alpha) = -3.00,   chi2 = 9.291e-09,   S = -4.846e-02,   nfev = 18,   norm = 0.000
-log10(alpha) = -4.00,   chi2 = 1.750e-10,   S = -4.847e-02,   nfev = 18,   norm = 0.000
-log10(alpha) = -5.00,   chi2 = 2.463e-11,   S = -4.847e-02,   nfev = 16,   norm = 0.000
-log10(alpha) = -6.00,   chi2 = 2.275e-11,   S = -4.847e-02,   nfev = 5,   norm = 0.000
-log10(alpha) = -7.00,   chi2 = 2.277e-11,   S = -4.847e-02,   nfev = 1,   norm = 0.000
-log10(alpha) = -8.00,   chi2 = 2.261e-11,   S = -4.847e-02,   nfev = 1,   norm = 0.000
-log10(alpha) = -9.00,   chi2 = 2.261e-11,   S = -4.847e-02,   nfev = 1,   norm = 0.000
-log10(alpha) = -10.00,  chi2 = 2.261e-11,   S = -4.847e-02,   nfev = 1,   norm = 0.000
-log10(alpha) = -11.00,  chi2 = 2.261e-11,   S = -4.847e-02,   nfev = 1,   norm = 0.000
-log10(alpha) = -12.00,  chi2 = 2.261e-11,   S = -4.847e-02,   nfev = 1,   norm = 0.000
-log10(alpha) = -13.00,  chi2 = 2.261e-11,   S = -4.847e-02,   nfev = 1,   norm = 0.000
-log10(alpha) = -14.00,  chi2 = 2.261e-11,   S = -4.847e-02,   nfev = 1,   norm = 0.000
-log10(alpha) = -15.00,  chi2 = 2.261e-11,   S = -4.847e-02,   nfev = 1,   norm = 0.000
-Fit parameters [-10.98950037  22.08255213   4.48939578   0.28390436]
-Optimal log alpha -4.316386474513998
-log10(alpha) = -4.32,   chi2 = 6.202e-11,   S = -4.847e-02,   nfev = 9,   norm = 0.000
+log10(alpha) = 7.00,    chi2 = 2.595e+03,   S = -4.806e-02,   nfev = 24,   norm = 0.000
+log10(alpha) = 6.00,    chi2 = 7.595e+01,   S = -4.832e-02,   nfev = 18,   norm = -0.000
+log10(alpha) = 5.00,    chi2 = 1.753e+00,   S = -4.840e-02,   nfev = 18,   norm = 0.000
+log10(alpha) = 4.00,    chi2 = 3.800e-02,   S = -4.841e-02,   nfev = 14,   norm = 0.000
+log10(alpha) = 3.00,    chi2 = 2.703e-03,   S = -4.842e-02,   nfev = 14,   norm = -0.000
+log10(alpha) = 2.00,    chi2 = 2.762e-04,   S = -4.842e-02,   nfev = 13,   norm = -0.000
+log10(alpha) = 1.00,    chi2 = 9.035e-06,   S = -4.842e-02,   nfev = 13,   norm = -0.000
+log10(alpha) = 0.00,    chi2 = 2.630e-06,   S = -4.843e-02,   nfev = 12,   norm = 0.000
+log10(alpha) = -1.00,   chi2 = 7.289e-07,   S = -4.843e-02,   nfev = 19,   norm = 0.000
+log10(alpha) = -2.00,   chi2 = 2.025e-07,   S = -4.844e-02,   nfev = 15,   norm = 0.000
+log10(alpha) = -3.00,   chi2 = 9.426e-09,   S = -4.846e-02,   nfev = 18,   norm = 0.000
+log10(alpha) = -4.00,   chi2 = 1.758e-10,   S = -4.847e-02,   nfev = 16,   norm = 0.000
+log10(alpha) = -5.00,   chi2 = 2.416e-11,   S = -4.847e-02,   nfev = 16,   norm = 0.000
+log10(alpha) = -6.00,   chi2 = 2.226e-11,   S = -4.847e-02,   nfev = 5,   norm = 0.000
+log10(alpha) = -7.00,   chi2 = 2.234e-11,   S = -4.847e-02,   nfev = 1,   norm = 0.000
+log10(alpha) = -8.00,   chi2 = 2.218e-11,   S = -4.847e-02,   nfev = 1,   norm = 0.000
+log10(alpha) = -9.00,   chi2 = 2.218e-11,   S = -4.847e-02,   nfev = 1,   norm = 0.000
+log10(alpha) = -10.00,  chi2 = 2.218e-11,   S = -4.847e-02,   nfev = 1,   norm = 0.000
+log10(alpha) = -11.00,  chi2 = 2.218e-11,   S = -4.847e-02,   nfev = 1,   norm = 0.000
+log10(alpha) = -12.00,  chi2 = 2.218e-11,   S = -4.847e-02,   nfev = 1,   norm = 0.000
+log10(alpha) = -13.00,  chi2 = 2.218e-11,   S = -4.847e-02,   nfev = 1,   norm = 0.000
+log10(alpha) = -14.00,  chi2 = 2.218e-11,   S = -4.847e-02,   nfev = 1,   norm = 0.000
+log10(alpha) = -15.00,  chi2 = 2.218e-11,   S = -4.847e-02,   nfev = 1,   norm = 0.000
+Fit parameters [-11.00254549  22.10493514   4.48412579   0.28317217]
+Optimal log alpha -4.344425497997804
+log10(alpha) = -4.34,   chi2 = 5.710e-11,   S = -4.847e-02,   nfev = 10,   norm = 0.000
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">

@@ -52,6 +52,27 @@
 <li><p>Inverse temperature beta (only necessary for time kernels)</p></li>
 </ul>
 <p>Furthermore the class provides an interface to call the solver.</p>
+<p>Create instance of AnalyticContinuationProblem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>im_axis</strong> (<em>numpy.ndarray</em>) – One-dimensional numpy array of type float
+Matsubara frequencies or imaginary time points of the input data.</p></li>
+<li><p><strong>re_axis</strong> (<em>numpy.ndarray</em>) – One-dimensional numpy array of type float
+Real-frequency grid to use for the analytic continuation.</p></li>
+<li><p><strong>im_data</strong> (<em>numpy.ndarray</em>) – One-dimensional numpy array of type float or complex
+Imaginary-axis data, e.g. Matsubara Green’s function</p></li>
+<li><p><strong>kernel_mode</strong> ({<cite>‘freq_fermionic’</cite>, <cite>‘freq_bosonic’</cite>, <cite>‘time_fermionic’</cite>, <cite>‘time_bosonic’</cite>}) – <ul>
+<li><p><cite>‘freq_fermionic’</cite> fermionic Matsubara Greens function</p></li>
+<li><p><cite>’freq_bosonic’</cite> bosonic Matsubara Greens function</p></li>
+<li><p><cite>’time_fermionic’</cite> fermionic Green’s function in imaginary time</p></li>
+<li><p><cite>’time_bosonic’</cite> bosonic Green’s function (susceptibility) in imaginary time</p></li>
+</ul>
+</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – Inverse temperature (only necessary for time kernels)</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="ana_cont.continuation.AnalyticContinuationProblem.partial_solution">
 <code class="sig-name descname">partial_solution</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.continuation.AnalyticContinuationProblem.partial_solution" title="Permalink to this definition">¶</a></dt>
@@ -86,6 +107,16 @@ then the respective solve function is called.</p>
 is to calculate a full Green’s function with real- and imaginary part
 from a spectrum.</p>
 <p>Initialize with spectral function and real-frequency grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spectrum</strong> (<em>np.ndarray</em>) – numpy array containing the spectral function</p></li>
+<li><p><strong>wgrid</strong> (<em>np.ndarray</em>) – one-dimensional numpy array of type float
+real-frequency values corresponding to the <cite>spectrum</cite></p></li>
+<li><p><strong>kind</strong> ({<cite>‘fermionic’</cite>, <cite>‘bosonic’</cite>}) – specify if the Green’s function is fermionic or bosonic.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="ana_cont.continuation.GreensFunction.kkt">
 <code class="sig-name descname">kkt</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ana_cont.continuation.GreensFunction.kkt" title="Permalink to this definition">¶</a></dt>

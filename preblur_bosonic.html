@@ -313,8 +313,9 @@ div.rendered_html tbody tr:hover {
 
 <span class="n">beta</span> <span class="o">=</span> <span class="mf">20.</span>
 <span class="n">niw</span> <span class="o">=</span> <span class="mi">20</span>
-<span class="n">iw</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">niw</span><span class="p">)</span>
-<span class="n">kernel</span> <span class="o">=</span> <span class="p">(</span><span class="n">w_full</span><span class="o">**</span><span class="mi">2</span><span class="p">)[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">/</span> <span class="p">((</span><span class="n">w_full</span><span class="o">**</span><span class="mi">2</span><span class="p">)[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="p">(</span><span class="n">iw</span><span class="o">**</span><span class="mi">2</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">])</span>
+<span class="n">wn</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">niw</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">invalid</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">):</span>
+    <span class="n">kernel</span> <span class="o">=</span> <span class="p">(</span><span class="n">w_full</span><span class="o">**</span><span class="mi">2</span><span class="p">)[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">/</span> <span class="p">((</span><span class="n">w_full</span><span class="o">**</span><span class="mi">2</span><span class="p">)[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="p">(</span><span class="n">wn</span><span class="o">**</span><span class="mi">2</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">])</span>
 <span class="n">kernel</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
 <span class="n">chi_exact</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">kernel</span> <span class="o">*</span> <span class="n">spectrum</span><span class="p">,</span> <span class="n">w_full</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">4712</span><span class="p">)</span>
@@ -324,25 +325,16 @@ div.rendered_html tbody tr:hover {
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w_full</span><span class="p">,</span> <span class="n">spectrum</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">chi</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">chi</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-&lt;ipython-input-2-462089601d22&gt;:9: RuntimeWarning: invalid value encountered in true_divide
-  kernel = (w_full**2)[None, :] / ((w_full**2)[None, :] + (iw**2)[:, None])
-</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/preblur_bosonic_2_1.png" src="_images/preblur_bosonic_2_1.png" />
+<img alt="_images/preblur_bosonic_2_0.png" src="_images/preblur_bosonic_2_0.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -352,10 +344,10 @@ div.rendered_html tbody tr:hover {
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">nw</span> <span class="o">=</span> <span class="mi">801</span>
 <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">8.</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">nw</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">iw</span><span class="p">,</span> <span class="n">re_axis</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">im_data</span><span class="o">=</span><span class="n">chi</span><span class="p">,</span> <span class="n">kernel_mode</span><span class="o">=</span><span class="s1">&#39;freq_bosonic&#39;</span><span class="p">)</span>
+<span class="n">probl</span> <span class="o">=</span> <span class="n">cont</span><span class="o">.</span><span class="n">AnalyticContinuationProblem</span><span class="p">(</span><span class="n">im_axis</span><span class="o">=</span><span class="n">wn</span><span class="p">,</span> <span class="n">re_axis</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">im_data</span><span class="o">=</span><span class="n">chi</span><span class="p">,</span> <span class="n">kernel_mode</span><span class="o">=</span><span class="s1">&#39;freq_bosonic&#39;</span><span class="p">)</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
 <span class="n">model</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
-<span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">iw</span><span class="p">)</span> <span class="o">*</span> <span class="n">noise_amplitude</span>
+<span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">wn</span><span class="p">)</span> <span class="o">*</span> <span class="n">noise_amplitude</span>
 </pre></div>
 </div>
 </div>
@@ -380,21 +372,12 @@ div.rendered_html tbody tr:hover {
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">sol_preblur</span><span class="o">.</span><span class="n">A_opt</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;preblur&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">chi</span> <span class="o">-</span> <span class="n">sol_noblur</span><span class="o">.</span><span class="n">backtransform</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;no blur&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iw</span><span class="p">,</span> <span class="n">chi</span> <span class="o">-</span> <span class="n">sol_preblur</span><span class="o">.</span><span class="n">backtransform</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;preblur&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">chi</span> <span class="o">-</span> <span class="n">sol_noblur</span><span class="o">.</span><span class="n">backtransform</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;no blur&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span> <span class="n">chi</span> <span class="o">-</span> <span class="n">sol_preblur</span><span class="o">.</span><span class="n">backtransform</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;preblur&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/josef/Programs/ana_cont/ana_cont/kernels.py:25: RuntimeWarning: invalid value encountered in true_divide
-  kernel = (self.re_axis ** 2)[None, :] \
-</pre></div></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -426,30 +409,17 @@ log10(alpha) = 0.12,    chi2 = 2.621e+01,   S = -6.902e-01,   nfev = 26,   norm 
 log10(alpha) = -0.58,   chi2 = 2.604e+01,   S = -8.330e-01,   nfev = 28,   norm = 0.499
 log10(alpha) = -1.28,   chi2 = 2.597e+01,   S = -1.118e+00,   nfev = 30,   norm = 0.499
 log10(alpha) = -1.98,   chi2 = 2.595e+01,   S = -1.509e+00,   nfev = 32,   norm = 0.499
-Fit parameters [1.35524588 5.17828922 4.99108766 1.02207038]
-Optimal log alpha 2.5450721630650377
-log10(alpha) = 2.55,    chi2 = 3.776e+01,   S = -4.915e-01,   nfev = 29,   norm = 0.499
+Fit parameters [1.35524589 5.17828922 4.99108767 1.02207039]
+Optimal log alpha 2.5450721793257154
+log10(alpha) = 2.55,    chi2 = 3.776e+01,   S = -4.915e-01,   nfev = 17,   norm = 0.499
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/preblur_bosonic_4_2.png" src="_images/preblur_bosonic_4_2.png" />
+<img alt="_images/preblur_bosonic_4_1.png" src="_images/preblur_bosonic_4_1.png" />
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/josef/Programs/ana_cont/ana_cont/kernels.py:25: RuntimeWarning: invalid value encountered in true_divide
-  kernel = (self.re_axis ** 2)[None, :] \
-/home/josef/Programs/ana_cont/ana_cont/kernels.py:93: RuntimeWarning: invalid value encountered in true_divide
-  integrand_1 = self.gaussian_numeric[None, None, :] * (self.w_integration[None, None, :] + self.re_axis[None, :, None]) ** 2 \
-/home/josef/Programs/ana_cont/ana_cont/kernels.py:96: RuntimeWarning: invalid value encountered in true_divide
-  integrand_2 = self.gaussian_numeric[None, None, :] * (self.w_integration[None, None, :] - self.re_axis[None, :, None]) ** 2 \
-</pre></div></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -481,23 +451,23 @@ log10(alpha) = 0.12,    chi2 = 3.095e+01,   S = -8.286e-01,   nfev = 27,   norm 
 log10(alpha) = -0.58,   chi2 = 3.071e+01,   S = -1.042e+00,   nfev = 29,   norm = 0.499
 log10(alpha) = -1.28,   chi2 = 3.060e+01,   S = -1.464e+00,   nfev = 31,   norm = 0.499
 log10(alpha) = -1.98,   chi2 = 3.058e+01,   S = -1.875e+00,   nfev = 33,   norm = 0.499
-Fit parameters [1.40031347 5.1554417  4.8762637  0.92190143]
-Optimal log alpha 2.164477055704584
-log10(alpha) = 2.16,    chi2 = 3.643e+01,   S = -7.194e-01,   nfev = 46,   norm = 0.500
+Fit parameters [1.40031346 5.15544171 4.8762637  0.92190143]
+Optimal log alpha 2.1644770449810373
+log10(alpha) = 2.16,    chi2 = 3.643e+01,   S = -7.194e-01,   nfev = 15,   norm = 0.500
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/preblur_bosonic_4_5.png" src="_images/preblur_bosonic_4_5.png" />
+<img alt="_images/preblur_bosonic_4_3.png" src="_images/preblur_bosonic_4_3.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/preblur_bosonic_4_6.png" src="_images/preblur_bosonic_4_6.png" />
+<img alt="_images/preblur_bosonic_4_4.png" src="_images/preblur_bosonic_4_4.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
