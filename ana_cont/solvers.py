@@ -826,7 +826,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
 
         ustart = optarr[-2].u_opt
         alpha_opt = opt.newton(root_fun, alpha_opt, tol=1e-6, args=(ustart,))
-        self.log('final optimal alpha: {}, log10(alpha_opt) = '.format(alpha_opt, np.log10(alpha_opt)))
+        self.log('final optimal alpha: {}, log10(alpha_opt) = {}'.format(alpha_opt, np.log10(alpha_opt)))
 
         sol = self.maxent_optimization(alpha_opt, ustart, iterfac=250000, use_bayes=True)
         self.alpha_opt = alpha_opt
