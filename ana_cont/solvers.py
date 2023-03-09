@@ -698,7 +698,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
             if not self.offdiag:
                 prob = self.posterior_probability(A_opt, alpha, entr, chisq)
                 # result.probability = prob
-                result_dict.update({"prob": prob})
+                result_dict.update({"probability": prob})
 
         self.log('log10(alpha) = {:3.2f},\tchi2 = {:4.3e},   S = {:4.3e},   nfev = {},   norm = {:4.3f}'.format(
             np.log10(alpha), chisq, entr, sol.nfev, norm))
