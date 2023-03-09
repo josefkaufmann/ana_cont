@@ -90,22 +90,43 @@ class TestMaxentFermionic(unittest.TestCase):
                                                  im_data=giw, kernel_mode='freq_fermionic')
 
         # solve the problem
-        self.sol, _ = probl.solve(method='maxent_svd', alpha_determination='chi2kink', optimizer='newton',
+        self.sol_chi2kink, _ = probl.solve(method='maxent_svd', alpha_determination='chi2kink', optimizer='newton',
+                             model=model, stdev=err, interactive=False, alpha_start=1e12, alpha_end=1e-2,
+                             preblur=True, blur_width=0.5, verbose=False)
+        self.sol_classic, _ = probl.solve(method='maxent_svd', alpha_determination='classic', optimizer='newton',
                              model=model, stdev=err, interactive=False, alpha_start=1e12, alpha_end=1e-2,
                              preblur=True, blur_width=0.5, verbose=False)
 
-        self.A_opt_reference = np.load("tests/A_opt_maxent_fermionic.npy")
-        self.backtransform_reference = np.load("tests/backtransform_maxent_fermionic.npy")
-        self.chi2_reference = np.load("tests/chi2_maxent_fermionic.npy")
+        self.reference_chi2kink = {"spectrum": np.load("tests/reference_data/chi2kink/A_opt_maxent_fermionic.npy"),
+                                   "backtransform": np.load("tests/reference_data/chi2kink/backtransform_maxent_fermionic.npy"),
+                                   "chi2": np.load("tests/reference_data/chi2kink/chi2_maxent_fermionic.npy")}
+        self.reference_classic = {"spectrum": np.load("tests/reference_data/classic/A_opt_maxent_fermionic.npy"),
+                                   "backtransform": np.load("tests/reference_data/classic/backtransform_maxent_fermionic.npy"),
+                                   "chi2": np.load("tests/reference_data/classic/chi2_maxent_fermionic.npy")}
+        # self.A_opt_reference = np.load("tests/A_opt_maxent_fermionic.npy")
+        # self.backtransform_reference = np.load("tests/backtransform_maxent_fermionic.npy")
+        # self.chi2_reference = np.load("tests/chi2_maxent_fermionic.npy")
 
-    def test_continuation(self):
-        self.assertTrue(np.allclose(self.sol.A_opt, self.A_opt_reference))
 
-    def test_backtransform(self):
-        self.assertTrue(np.allclose(self.backtransform_reference, self.sol.backtransform))
+    def test_continuation_chi2kink(self):
+        self.assertTrue(np.allclose(self.sol_chi2kink.A_opt, self.reference_chi2kink["spectrum"]))
 
-    def test_chi2(self):
-        self.assertAlmostEqual(self.chi2_reference, self.sol.chi2, places=4)
+    def test_continuation_classic(self):
+        self.assertTrue(np.allclose(self.sol_classic.A_opt, self.reference_classic["spectrum"]))
+
+    def test_backtransform_chi2kink(self):
+        self.assertTrue(np.allclose(self.reference_chi2kink["backtransform"], self.sol_chi2kink.backtransform))
+
+    def test_backtransform_classic(self):
+        self.assertTrue(np.allclose(self.reference_classic["backtransform"], self.sol_classic.backtransform))
+
+
+    def test_chi2_chi2kink(self):
+        self.assertAlmostEqual(self.reference_chi2kink["chi2"], self.sol_chi2kink.chi2, places=4)
+
+    def test_chi2_classic(self):
+        self.assertAlmostEqual(self.reference_classic["chi2"], self.sol_classic.chi2, places=4)
+
 
 
 class TestPade(unittest.TestCase):
@@ -140,8 +161,8 @@ class TestPade(unittest.TestCase):
         check_axis = np.linspace(0., 1.25 * iw[mats_ind[-1]], num=500)
         self.check = probl.solver.check(im_axis_fine=check_axis)
 
-        self.A_opt_reference = np.load("tests/A_opt_pade.npy")
-        self.check_reference = np.load("tests/check_pade.npy")
+        self.A_opt_reference = np.load("tests/reference_data/pade/A_opt_pade.npy")
+        self.check_reference = np.load("tests/reference_data/pade/check_pade.npy")
 
     def test_continuation(self):
         self.assertTrue(np.allclose(self.sol.A_opt, self.A_opt_reference))
@@ -184,9 +205,9 @@ class TestMaxentBosonic(unittest.TestCase):
                              stdev=err, model=model,
                              interactive=False, verbose=False)
 
-        self.A_opt_reference = np.load("tests/A_opt_maxent_bosonic.npy")
-        self.backtransform_reference = np.load("tests/backtransform_maxent_bosonic.npy")
-        self.chi2_reference = np.load("tests/chi2_maxent_bosonic.npy")
+        self.A_opt_reference = np.load("tests/reference_data/chi2kink/A_opt_maxent_bosonic.npy")
+        self.backtransform_reference = np.load("tests/reference_data/chi2kink/backtransform_maxent_bosonic.npy")
+        self.chi2_reference = np.load("tests/reference_data/chi2kink/chi2_maxent_bosonic.npy")
 
     def test_continuation(self):
         self.assertTrue(np.allclose(self.sol.A_opt, self.A_opt_reference))
