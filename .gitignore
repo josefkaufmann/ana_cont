@@ -8,5 +8,9 @@ doc/.ipynb_checkpoints/
 doc/tutorial/.ipynb_checkpoints/
 doc/tutorial_ana_cont/
 gui/__pycache__/
- 
+.venv
+.idea
+__pycache__
+MANIFEST
+*.xcf
 
