@@ -296,21 +296,22 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
 
         if not self.offdiag:  # precompute matrices W_ml (W2), W_mil (W3)
             self.W2 = np.einsum('k,km,m,kn,n,ln,l,l->ml', self.E, self.U_svd, self.Xi_svd, self.U_svd, self.Xi_svd,
-                                self.V_svd, self.dw, self.model)
-            self.W3 = self.W2[:, None, :] * (self.V_svd[None, :, :]).transpose((0, 2, 1))
+                                self.V_svd, self.dw, self.model, optimize=True)
+            self.W3 = np.array(self.W2[:, None, :] * (self.V_svd[None, :, :]).transpose((0, 2, 1)), order='C')
 
         else:  # precompute matrices M_ml (M2), M_mil (M3)
             self.M2 = np.einsum('k,km,m,kn,n,ln,l->ml', self.E, self.U_svd, self.Xi_svd, self.U_svd, self.Xi_svd,
-                                self.V_svd, self.dw)
-            self.M3 = self.M2[:, None, :] * (self.V_svd[None, :, :]).transpose((0, 2, 1))
+                                self.V_svd, self.dw, optimize=True)
+            self.M3 = np.array(self.M2[:, None, :] * (self.V_svd[None, :, :]).transpose((0, 2, 1)),order='C')
 
         # precompute the evidence vector Evi_m
-        self.Evi = np.einsum('m,km,k,k->m', self.Xi_svd, self.U_svd, self.E, self.im_data)
+        self.Evi = np.einsum('m,km,k,k->m', self.Xi_svd, self.U_svd, self.E, self.im_data, optimize=True)
 
         # precompute curvature of likelihood function
         self.d2chi2 = np.einsum('i,j,ki,kj,k->ij', self.dw, self.dw,
                                 self.kernel.real_matrix(), self.kernel.real_matrix(),
-                                self.E)
+                                self.E,
+                                optimize=True)
 
         # some arrays that are used later...
         self.chi2arr = []
