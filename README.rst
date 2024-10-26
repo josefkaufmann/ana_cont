@@ -7,11 +7,7 @@ Any questions, suggestions and bug reports will be received gratefully.
 (Mail to: josefkaufma *at* gmail *dot* com)
 
 If you used this package to generate results for a publication, please cite 
-`this preprint by Kaufmann and Held <https://arxiv.org/abs/2105.11211>`_
-(this
-`bibtex file <https://github.com/josefkaufmann/ana_cont/wiki/bibtex/arxiv_kaufmann.bib>`_),
-
-
+`this paper by Kaufmann and Held <https://doi.org/10.1016/j.cpc.2022.108519>`_,
 where some implementation details are described in the Supplementary Material. 
 
 Short description
