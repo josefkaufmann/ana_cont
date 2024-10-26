@@ -1,6 +1,10 @@
 import numpy as np
 import scipy.interpolate as interp
-import scipy.integrate as integ
+
+try:
+    from scipy.integrate import simpson
+except ImportError:
+    from scipy.integrate import simps as simpson
 
 
 class Kernel(object):
@@ -158,7 +162,7 @@ class Kernel(object):
             integrand = 0.5 * (integrand_1 + integrand_2)
         else:
             raise NotImplementedError('No preblur implemented for this kernel.')
-        return integ.simps(integrand, x=self.w_integration, axis=-1)
+        return simpson(integrand, x=self.w_integration, axis=-1)
 
     def blur(self, hidden_spectrum):
         """Convert hidden spectral function to spectral function."""
@@ -174,7 +178,7 @@ class Kernel(object):
                 ext='zeros')
 
         integrand = self.gaussian_numeric[None, :] * h_interp(self.re_axis[:, None] + self.w_integration[None, :])
-        return integ.simps(integrand, x=self.w_integration, axis=-1)
+        return simpson(integrand, x=self.w_integration, axis=-1)
 
     def real_matrix(self):
         """Return real and imaginary part one after another."""
