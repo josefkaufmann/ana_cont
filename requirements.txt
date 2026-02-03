@@ -14,3 +14,4 @@ PyQt5-sip
 python-dateutil
 scipy
 six
+setuptools
