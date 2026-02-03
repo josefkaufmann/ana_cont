@@ -5,6 +5,8 @@ import collections
 from abc import ABC, abstractmethod
 from . import kernels
 
+from . import trapz
+
 if sys.version_info[0] > 2:
     try:
         from . import pade
@@ -447,7 +449,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         np.ndarray
                   Back-transformed Green's function on imaginary axis
         """
-        return np.trapz(np.dot(self.ucov, self.kernel.matrix) * A[None, :],
+        return trapz(np.dot(self.ucov, self.kernel.matrix) * A[None, :],
                         self.re_axis, axis=-1)
 
     def chi2(self, A):
@@ -468,7 +470,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
                   chi-squared deviation
         """
         return np.sum(
-            self.E * (self.im_data - np.trapz(self.kernel.real_matrix() * A[None, :], self.re_axis, axis=-1)) ** 2)
+            self.E * (self.im_data - trapz(self.kernel.real_matrix() * A[None, :], self.re_axis, axis=-1)) ** 2)
 
     def entropy_pos(self, A, u):
         """Compute entropy for positive definite spectral function.
@@ -484,7 +486,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         -------
         float
                   entropy"""
-        return np.trapz(A - self.model - A * np.dot(self.V_svd, u), self.re_axis)
+        return trapz(A - self.model - A * np.dot(self.V_svd, u), self.re_axis)
 
     def entropy_posneg(self, A, u):
         """Compute "positive-negative entropy" for spectral function with norm 0.
@@ -502,7 +504,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
                   entropy
         """
         root = np.sqrt(A ** 2 + 4. * self.model_plus * self.model_minus)
-        return np.trapz(root - self.model_plus - self.model_minus
+        return trapz(root - self.model_plus - self.model_minus
                         - A * np.log((root + A) / (2. * self.model_plus)),
                         self.re_axis)
 
@@ -659,7 +661,7 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         A_opt = self.singular_to_realspace(sol.x)
         entr = self.entropy(A_opt, u_opt)
         chisq = self.chi2(A_opt)  # has to be applied before blurring
-        norm = np.trapz(A_opt, self.re_axis)  # is not changed by blurring
+        norm = trapz(A_opt, self.re_axis)  # is not changed by blurring
 
         # result = OptimizationResult()
         result_dict = {}
@@ -883,14 +885,14 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         alpharr = np.array([o.alpha for o in optarr])
         probarr = np.array([o.probability for o in optarr])
         specarr = np.array([o.A_opt for o in optarr])
-        probarr /= -np.trapz(probarr, alpharr)  # normalize the probability distribution
+        probarr /= -trapz(probarr, alpharr)  # normalize the probability distribution
         if interactive:
             fig = plt.figure()
             plt.plot(np.log10(alpharr), probarr)
             fig.show()
 
         # calculate the weighted average spectrum
-        A_opt = -np.trapz(specarr * probarr[:, None], alpharr,
+        A_opt = -trapz(specarr * probarr[:, None], alpharr,
                           axis=0)  # need a "-" sign, because alpha goes from large to small.
 
         sol = OptimizationResult(A_opt=A_opt,
