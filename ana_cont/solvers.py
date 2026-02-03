@@ -966,50 +966,13 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         alphas = np.asarray(alphas)
         chis = np.asarray(chi)
 
-        def fitfun(x, a, b, c, d):
-            return a + b / (1. + np.exp(-d * (x - c)))
+        alpha_opt = opt_alpha_from_sigmoid_fit(alphas, chis, fit_position)
 
-        try:
-            good_numbers = np.isfinite(chis)
-            popt, pcov = opt.curve_fit(fitfun,
-                                       np.log10(alphas[good_numbers]),
-                                       np.log10(chis[good_numbers]),
-                                       p0=(0., 5., 2., 0.))
-        except ValueError:
-            print('Fermi fit failed.')
-            if interactive:
-                plt.plot(np.log10(alphas), np.log10(chis), marker='s')
-                plt.show()
-                for o in optarr:
-                    plt.plot(o.backtransform)
-                plt.plot(self.im_data)
-                plt.show()
-            return optarr[-1], optarr
+        self.log('Optimal log alpha {}'.format(np.log10(alpha_opt)))
 
-        a, b, c, d = popt
-
-        if interactive:
-            print('Fit parameters {}'.format(popt))
-        if d < 0.:
-            raise RuntimeError('Fermi fit temperature negative.')
-
-        a_opt = c - fit_position / d
-        alpha_opt = 10. ** a_opt
-        self.log('Optimal log alpha {}'.format(a_opt))
-
-        if interactive:
-            plt.plot(np.log10(alphas), np.log10(chis), marker='s', label='chi2')
-            plt.plot(np.log10(alphas), fitfun(np.log10(alphas), *popt), label='fit2lin')
-            #plt.plot(np.log10(alphas), chi2_interp(np.log10(alphas)), label='chi2 fit')
-
-        closest_idx = np.argmin(np.abs(np.log10(alphas) - a_opt))
+        closest_idx = np.argmin(np.abs(np.log10(alphas) - np.log10(alpha_opt)))
         ustart = optarr[closest_idx].u_opt
         sol = self.maxent_optimization(alpha_opt, ustart)
-
-        if interactive:
-            plt.plot(a_opt, np.log10(sol.chi2), marker='s', color='red', label='opt')
-            plt.legend()
-            plt.show()
 
         return sol, optarr
 
@@ -1044,6 +1007,27 @@ class MaxentSolverSVD(AnalyticContinuationSolver):
         else:
             raise ValueError('Unknown alpha determination mode')
 
+
+def opt_alpha_from_sigmoid_fit(
+        alphas: np.ndarray,
+        chis: np.ndarray,
+        fit_position: float,
+    ) -> float:
+
+    def fitfun(x, a, b, c, d):
+            return a + b / (1. + np.exp(-d * (x - c)))
+
+    good_numbers = np.isfinite(chis)
+    popt, _ = opt.curve_fit(
+        fitfun,
+        np.log10(alphas[good_numbers]),
+        np.log10(chis[good_numbers]),
+        p0=(0., 5., 2., 0.),
+        bounds=((-np.inf, 0.0, -np.inf, 0.0), (np.inf, np.inf, np.inf, np.inf)),
+    )
+
+    a_opt = popt[2] - fit_position / popt[3]
+    return 10. ** a_opt
 
 class OptimizationResult(object):
     """Object for holding the result of an optimization.

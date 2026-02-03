@@ -23,3 +23,4 @@ jobs:
               python3 setup.py build_ext --inplace
           - name: Run tests
             run: python3 -m unittest tests/ana_cont_tests.py -v
+            run: pytest tests/
