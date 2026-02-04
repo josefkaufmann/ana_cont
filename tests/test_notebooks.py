@@ -9,6 +9,7 @@ import pytest
         "doc/poorman_test.ipynb",
         "doc/preblur_bosonic.ipynb",
         "doc/preblur_test.ipynb",
+        "doc/tutorial_svo.ipynb",
     ]
 )
 def test_notebook_execution(notebook_path, tmp_path):
