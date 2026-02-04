@@ -26,6 +26,13 @@ setup(name='ana_cont',
     zip_safe=False,
     setup_requires=['Cython'],
     install_requires=['numpy', 'scipy', 'Cython', 'h5py', 'matplotlib', 'PyQt5'],
-    scripts=['scripts/maxent.py', 'scripts/pade.py', 'scripts/maxent_bosonic.py']
+    scripts=['scripts/maxent.py', 'scripts/pade.py', 'scripts/maxent_bosonic.py'],
+    extras_require={
+        "test": [
+            "pytest",
+            "nbclient",
+            "jupyter",
+        ],
+    },
 )
 

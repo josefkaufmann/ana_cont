@@ -21,8 +21,7 @@ jobs:
               python3 -m venv .venv
               source .venv/bin/activate
               .venv/bin/python -m pip install --upgrade pip
-              .venv/bin/python -m pip install -e .
-              .venv/bin/python -m pip install jupyter nbclient
+              .venv/bin/python -m pip install -e .[test]
           - name: Run tests
             run: .venv/bin/python -m unittest tests/ana_cont_tests.py -v
           - name: Run tests (pytest)
