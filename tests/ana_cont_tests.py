@@ -2,13 +2,14 @@ import unittest
 import numpy as np
 import ana_cont.continuation as cont
 import ana_cont.kernels as kernels
+from ana_cont import trapz
 
 
 class TestGreensFunction(unittest.TestCase):
     def setUp(self):
         w = np.linspace(-10., 10., endpoint=True, num=21)  # use larger num for real cases!
         spec = np.exp(-((w-1.)/0.5)**2)
-        spec /= np.trapz(spec, w)
+        spec /= trapz(spec, w)
         self.greens_function = cont.GreensFunction(spectrum=spec, wgrid=w, kind='fermionic')
         self.complex_greens_function = np.array([-9.09358619e-02-1.91865208e-210j, -1.00035695e-01-5.80407090e-174j,
                                                -1.11160191e-01-5.88997340e-141j, -1.25070115e-01-2.00510954e-111j,
@@ -66,14 +67,14 @@ class TestMaxentFermionic(unittest.TestCase):
         # real-frequency grid and example spectrum
         w = np.linspace(-10., 10., num=501, endpoint=True)
         spec = 0.4 * np.exp(-0.5 * (w - 1.8) ** 2) + 0.6 * np.exp(-0.5 * (w + 1.8) ** 2)
-        spec /= np.trapz(spec, w)
+        spec /= trapz(spec, w)
 
         # Matsubara frequency grid and transformation of data
         beta = 10.
         niw = 20
         iw = np.pi / beta * (2. * np.arange(niw) + 1.)
         kernel = 1. / (1j * iw[:, None] - w[None, :])
-        giw = np.trapz(kernel * spec[None, :], w, axis=1)
+        giw = trapz(kernel * spec[None, :], w, axis=1)
 
         # add noise to the data
         rng = np.random.RandomState(4713)
@@ -83,7 +84,7 @@ class TestMaxentFermionic(unittest.TestCase):
         # error bars and default model for analytic continuation
         err = np.ones_like(iw) * noise_ampl
         model = np.ones_like(w)
-        model /= np.trapz(model, w)
+        model /= trapz(model, w)
 
         # specify the analytic continuation problem
         probl = cont.AnalyticContinuationProblem(im_axis=iw, re_axis=w,
@@ -134,14 +135,14 @@ class TestPade(unittest.TestCase):
         # real-frequency grid and example spectrum
         w = np.linspace(-10., 10., num=501, endpoint=True)
         spec = 0.4 * np.exp(-0.5 * (w - 1.8) ** 2) + 0.6 * np.exp(-0.5 * (w + 1.8) ** 2)
-        spec /= np.trapz(spec, w)
+        spec /= trapz(spec, w)
 
         # Matsubara frequency grid and transformation of data
         beta = 10.
         niw = 20
         iw = np.pi / beta * (2. * np.arange(niw) + 1.)
         kernel = 1. / (1j * iw[:, None] - w[None, :])
-        giw = np.trapz(kernel * spec[None, :], w, axis=1)
+        giw = trapz(kernel * spec[None, :], w, axis=1)
 
         # add noise to the data
         rng = np.random.RandomState(4713)
@@ -176,7 +177,7 @@ class TestMaxentBosonic(unittest.TestCase):
         spec_real = np.exp(-(w_real) ** 2 / (2. * 0.2 ** 2))
         spec_real += 0.3 * np.exp(-(w_real - 1.5) ** 2 / (2. * 0.8 ** 2))
         spec_real += 0.3 * np.exp(-(w_real + 1.5) ** 2 / (2. * 0.8 ** 2))  # must be symmetric around 0!
-        spec_real /= np.trapz(spec_real, w_real)  # normalization
+        spec_real /= trapz(spec_real, w_real)  # normalization
 
         beta = 10.
         iw = 2. * np.pi / beta * np.arange(10)
@@ -188,7 +189,7 @@ class TestMaxentBosonic(unittest.TestCase):
         with np.errstate(invalid="ignore"):
             kernel = (w_real ** 2)[None, :] / ((iw ** 2)[:, None] + (w_real ** 2)[None, :])
         kernel[0, 0] = 1.
-        gf_bos = np.trapz(kernel * spec_real[None, :], w_real, axis=1) + noise
+        gf_bos = trapz(kernel * spec_real[None, :], w_real, axis=1) + noise
         norm = gf_bos[0]
         gf_bos /= norm
 
@@ -198,7 +199,7 @@ class TestMaxentBosonic(unittest.TestCase):
 
         err = np.ones_like(iw) * noise_amplitude / norm
         model = np.ones_like(w)
-        model /= np.trapz(model, w)
+        model /= trapz(model, w)
         self.sol, _ = probl.solve(method='maxent_svd',
                              alpha_determination='chi2kink',
                              optimizer='newton',
